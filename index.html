@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Havenote — Speak it. Havenote sorts the rest.</title>
+<meta name="description" content="One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%234CAF93'/%3E%3Ccircle cx='50' cy='50' r='22' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+<style>
+  :root {
+    --accent: #4CAF93;
+    --accent-dark: #3B9679;
+    --accent-light: #E4F5EF;
+    --bg: #FBFBF9;
+    --surface: #FFFFFF;
+    --ink: #17201C;
+    --ink-soft: #5B6862;
+    --border: #E7E9E5;
+    --shadow-color: 152 40% 40%;
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --max-w: 1180px;
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  [data-theme="dark"] {
+    --bg: #14161A;
+    --surface: #1F2029;
+    --ink: #F2F3F1;
+    --ink-soft: #9CA6A0;
+    --border: #2C2E36;
+    --accent-light: #223C33;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  html[dir="rtl"] body { direction: rtl; }
+
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    font-weight: 700;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  .wrap {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Nav ---------- */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+  }
+  .brand-mark {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-mark span {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: white;
+  }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+
+  .lang-switcher { position: relative; }
+  .lang-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--surface);
+    transition: border-color 0.2s ease;
+  }
+  .lang-btn:hover { border-color: var(--accent); }
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 50px -12px hsl(var(--shadow-color) / 0.25);
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    max-height: 70vh;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: all 0.18s ease;
+  }
+  html[dir="rtl"] .lang-menu { right: auto; left: 0; }
+  .lang-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .lang-option {
+    display: block;
+    padding: 9px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lang-option:hover { background: var(--accent-light); color: var(--ink); }
+  .lang-option.active { background: var(--accent); color: white; }
+
+  .theme-toggle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); transform: rotate(15deg); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 15px;
+    white-space: nowrap;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 10px 26px -8px hsl(var(--shadow-color) / 0.55);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -8px hsl(var(--shadow-color) / 0.6); }
+  .btn-primary:active { transform: translateY(0) scale(0.98); }
+  .btn-nav { padding: 11px 20px; font-size: 14px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 88px 0 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    background: var(--accent-light);
+    padding: 7px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  [data-theme="dark"] .eyebrow { color: #7FDDBC; }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .hero h1 {
+    font-size: clamp(38px, 5vw, 58px);
+    margin-bottom: 20px;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+
+  /* Hero visual: voice orb + floating category chips */
+  .hero-visual {
+    position: relative;
+    height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .orb {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, var(--accent) 0%, var(--accent-dark) 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 30px 70px -16px hsl(var(--shadow-color) / 0.5);
+    position: relative;
+    z-index: 3;
+  }
+  .orb i { font-size: 56px; color: white; }
+  .waves { display: flex; align-items: center; gap: 5px; height: 40px; }
+  .waves span {
+    width: 5px; border-radius: 3px; background: white;
+    animation: wave 1.1s ease-in-out infinite;
+  }
+  .waves span:nth-child(1) { height: 14px; animation-delay: -0.9s; }
+  .waves span:nth-child(2) { height: 26px; animation-delay: -0.6s; }
+  .waves span:nth-child(3) { height: 38px; animation-delay: -0.3s; }
+  .waves span:nth-child(4) { height: 22px; animation-delay: -0.15s; }
+  .waves span:nth-child(5) { height: 16px; animation-delay: 0s; }
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.4); }
+    50% { transform: scaleY(1); }
+  }
+
+  /* ---------- Icon animations (feature-section icons) ---------- */
+  .pulse-icon { animation: iconPulse 2.2s ease-in-out infinite; }
+  .pulse-icon-delay { animation: iconPulse 2.2s ease-in-out infinite; animation-delay: 1.1s; }
+  @keyframes iconPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.75; }
+  }
+  .spin-icon { animation: iconSpin 5s linear infinite; }
+  @keyframes iconSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .pop-icon { animation: iconPop 1.8s ease-in-out infinite; }
+  @keyframes iconPop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.22); }
+  }
+  .ring-icon { animation: iconRing 2.4s ease-in-out infinite; transform-origin: top center; }
+  @keyframes iconRing {
+    0%, 92%, 100% { transform: rotate(0deg); }
+    93% { transform: rotate(-14deg); }
+    95% { transform: rotate(12deg); }
+    97% { transform: rotate(-8deg); }
+    99% { transform: rotate(4deg); }
+  }
+  .bounce-icon { animation: iconBounce 1.6s ease-in-out infinite; }
+  @keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-icon, .pulse-icon-delay, .spin-icon, .pop-icon, .ring-icon, .bounce-icon { animation: none !important; }
+  }
+
+  .float-card {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 16px 34px -12px hsl(var(--shadow-color) / 0.22);
+    animation: float 5s ease-in-out infinite;
+    z-index: 2;
+  }
+  .float-card i { color: var(--accent); font-size: 17px; }
+  .fc-1 { top: 6%; left: 2%; animation-delay: 0s; }
+  .fc-2 { top: 14%; right: 0%; animation-delay: -1.2s; }
+  .fc-3 { bottom: 22%; left: -4%; animation-delay: -2.4s; }
+  .fc-4 { bottom: 10%; right: 6%; animation-delay: -3.2s; }
+  .fc-5 { top: 46%; left: 42%; animation-delay: -0.6s; z-index: 1; opacity: 0.9; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-14px); }
+  }
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px dashed var(--border);
+    animation: spin 40s linear infinite;
+  }
+  .ring-1 { width: 340px; height: 340px; }
+  .ring-2 { width: 420px; height: 420px; animation-direction: reverse; animation-duration: 60s; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* ---------- Stats ---------- */
+  .stats {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .stat-label {
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  /* ---------- Feature sections ---------- */
+  .feature {
+    padding: 100px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .feature.reverse .feature-text { order: 2; }
+  .feature.reverse .feature-visual { order: 1; }
+  .feature-text h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 18px; }
+  .feature-text p { font-size: 17px; color: var(--ink-soft); line-height: 1.7; max-width: 48ch; }
+
+  .feature-visual {
+    aspect-ratio: 5 / 4;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-visual::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 75% 15%, var(--accent-light), transparent 60%);
+  }
+  .visual-inner { position: relative; z-index: 1; text-align: center; }
+  .visual-icon-big {
+    width: 92px; height: 92px;
+    border-radius: 26px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 20px 44px -12px hsl(var(--shadow-color) / 0.45);
+  }
+  .visual-icon-big i { font-size: 42px; color: white; }
+
+  /* Mini widget-grid visual */
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 20px;
+  }
+  .widget-tile {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: left;
+  }
+  .widget-tile i { color: var(--accent); font-size: 20px; margin-bottom: 8px; display: block; }
+  .widget-tile .wt-bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 6px; }
+  .widget-tile .wt-bar.short { width: 60%; }
+
+  /* Two-avatar sync visual */
+  .sync-visual { display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .avatar-circle {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--accent);
+  }
+  .avatar-circle i { font-size: 26px; color: var(--accent-dark); }
+  .sync-line { width: 60px; height: 2px; background: var(--border); position: relative; overflow: hidden; }
+  .sync-line::after {
+    content: ""; position: absolute; inset: 0;
+    background: var(--accent);
+    animation: syncmove 2s ease-in-out infinite;
+  }
+  @keyframes syncmove {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Chart bars visual */
+  .chart-visual { display: flex; align-items: flex-end; gap: 10px; height: 110px; }
+  .chart-bar { width: 22px; border-radius: 6px 6px 0 0; background: var(--border); }
+  .chart-bar.hi { background: var(--accent); }
+
+  /* ---------- Scroll progress bar ---------- */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--accent); z-index: 200; transition: width 0.1s linear;
+  }
+
+  /* ---------- Phone mockup (real screenshots) ---------- */
+  .phone {
+    position: relative;
+    width: 240px;
+    border-radius: 34px;
+    background: #0c0d10;
+    padding: 10px;
+    box-shadow:
+      0 40px 80px -20px hsl(var(--shadow-color) / 0.45),
+      0 0 0 1.5px rgba(255,255,255,0.06) inset;
+  }
+  .phone-screen {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 640 / 1330;
+    border-radius: 26px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .phone-screen img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top center;
+    display: block;
+  }
+  .phone-notch {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: 70px; height: 18px; border-radius: 12px; background: #0c0d10; z-index: 5;
+  }
+  .phone.floaty { animation: phoneFloat 6s ease-in-out infinite; }
+  @keyframes phoneFloat {
+    0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+    50% { transform: translateY(-16px) rotate(1deg); }
+  }
+
+  .feature-visual .phone { width: 220px; }
+  .feature-visual.has-phone {
+    background: none; border: none;
+  }
+  .feature-visual.has-phone::before { display: none; }
+  .feature-visual.has-collage {
+    background: none; border: none;
+    aspect-ratio: auto;
+    min-height: 380px;
+    align-items: flex-start;
+  }
+  .feature-visual.has-collage::before { display: none; }
+
+  /* ---------- Widget collage (real widget PNGs, for the widgets section) ---------- */
+  .widget-collage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+  }
+  .wc-card {
+    position: absolute;
+    border-radius: 20px;
+    box-shadow: 0 24px 50px -16px hsl(var(--shadow-color) / 0.3);
+    overflow: hidden;
+    background: white;
+    animation: phoneFloat 7s ease-in-out infinite;
+  }
+  .wc-card img { display: block; width: 100%; height: auto; }
+  .wc-1 { width: 62%; top: 4%; left: 2%; z-index: 3; animation-delay: 0s; }
+  .wc-2 { width: 44%; bottom: 6%; right: 0%; z-index: 2; animation-delay: -2.3s; }
+  .wc-3 { width: 34%; top: 42%; right: 12%; z-index: 4; animation-delay: -4.1s; }
+
+  /* ---------- Count-up stat numbers ---------- */
+  .stat-num[data-count] { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Languages showcase ---------- */
+  /* ---------- Screenshot gallery (horizontal scroll, rounded + shadow only, no phone frame) ---------- */
+  .gallery-section {
+    padding: 100px 0 90px;
+  }
+  .gallery-heading { text-align: center; margin-bottom: 44px; }
+  .gallery-heading h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 12px; }
+  .gallery-heading p { color: var(--ink-soft); font-size: 17px; }
+  .slider-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .screenshot-scroll {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 16px 64px 48px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .screenshot-scroll::-webkit-scrollbar { display: none; }
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 14px 30px -10px hsl(var(--shadow-color) / 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    color: var(--ink);
+    z-index: 10;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .slider-arrow:hover { background: var(--accent); color: white; transform: translateY(-50%) scale(1.08); }
+  .slider-arrow-left { left: 16px; }
+  .slider-arrow-right { right: 16px; }
+  .shot-card {
+    flex: 0 0 auto;
+    width: 160px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 18px 36px -14px hsl(var(--shadow-color) / 0.32);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: zoom-in;
+  }
+  .shot-card:hover { transform: translateY(-8px); box-shadow: 0 26px 46px -14px hsl(var(--shadow-color) / 0.4); }
+  .shot-card img { display: block; width: 100%; height: auto; }
+  /* Only the screenshots matching the current theme are shown — JS
+     toggles the data-theme attribute on the root html element, these
+     rules key off that same attribute so no extra JS logic is needed
+     beyond what already drives every other themed thing on the page. */
+  .shot-card.dark-only { display: none; }
+  [data-theme="dark"] .shot-card.dark-only { display: block; }
+  [data-theme="dark"] .shot-card.light-only { display: none; }
+
+  /* ---------- Widget gallery ---------- */
+  .widget-gallery-section {
+    padding: 100px 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .widget-grid-gallery {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 16px 64px 40px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .widget-grid-gallery::-webkit-scrollbar { display: none; }
+  .widget-gallery-card {
+    flex: 0 0 auto;
+    width: 190px;
+    background: white;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 14px 30px -12px hsl(var(--shadow-color) / 0.28);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: zoom-in;
+  }
+  .widget-gallery-card:hover { transform: translateY(-6px); box-shadow: 0 22px 40px -12px hsl(var(--shadow-color) / 0.35); }
+  .widget-gallery-card img { display: block; width: 100%; height: auto; border-radius: 8px; }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(10, 12, 14, 0.86);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 24px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .lightbox.open { opacity: 1; visibility: visible; }
+  .lightbox img {
+    max-width: min(92vw, 460px);
+    max-height: 88vh;
+    width: auto; height: auto;
+    border-radius: 20px;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6);
+    transform: scale(0.94);
+    transition: transform 0.25s ease;
+  }
+  .lightbox.open img { transform: scale(1); }
+  .lightbox-close {
+    position: absolute; top: 24px; right: 24px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.22); }
+
+  .languages-section {
+    padding: 100px 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .lang-heading { text-align: center; margin-bottom: 48px; }
+  .lang-heading h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 12px; }
+  .lang-heading p { color: var(--ink-soft); font-size: 17px; }
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+  }
+  .lang-chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .lang-chip:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+  /* ---------- Final CTA ---------- */
+  .final-cta {
+    padding: 110px 0;
+    text-align: center;
+  }
+  .final-cta h2 {
+    font-size: clamp(30px, 4vw, 46px);
+    max-width: 18ch;
+    margin: 0 auto 34px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px 0;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer-tagline { color: var(--ink-soft); font-size: 14px; }
+  .footer-links { display: flex; gap: 24px; font-size: 14px; color: var(--ink-soft); }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-rights { font-size: 13px; color: var(--ink-soft); opacity: 0.7; margin-top: 8px; }
+
+  /* ---------- Scroll reveal ---------- */
+  /* Progressive enhancement: content is visible by default. JS adds
+     .reveal-active (which applies the hidden starting state) only to
+     elements it successfully starts observing — so if JS fails to run
+     for any reason, nothing is ever left invisible. */
+  .reveal.reveal-active { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.reveal-active.in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .float-card, .ring, .waves span, .sync-line::after { animation: none !important; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; padding-top: 48px; text-align: center; }
+    .hero-sub { margin-left: auto; margin-right: auto; }
+    .hero-actions { justify-content: center; }
+    .hero-visual { height: 360px; order: -1; }
+    .feature, .feature.reverse { grid-template-columns: 1fr; gap: 36px; }
+    .feature.reverse .feature-text, .feature.reverse .feature-visual { order: initial; }
+    .feature-text { text-align: center; }
+    .feature-text p { margin-left: auto; margin-right: auto; }
+    .feature-visual { margin-top: 8px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .lang-grid { grid-template-columns: repeat(4, 1fr); }
+    .lang-menu { width: 300px; grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding-left: 20px; padding-right: 20px; }
+    .nav-right { gap: 8px; }
+    .btn-nav span.label { display: none; }
+    .brand-text { display: none; }
+    .lang-grid { grid-template-columns: repeat(3, 1fr); }
+    .lang-menu {
+      position: fixed;
+      top: 70px;
+      left: 20px;
+      right: 20px;
+      width: auto;
+      max-width: none;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .float-card { font-size: 11px; padding: 8px 12px; }
+    .ring { display: none; }
+    .stats { padding: 56px 0; }
+    .final-cta { padding: 80px 0; }
+    .screenshot-scroll { padding-left: 50px; padding-right: 50px; }
+    .widget-grid-gallery { padding-left: 50px; padding-right: 50px; }
+    .slider-arrow { width: 38px; height: 38px; font-size: 16px; }
+    .slider-arrow-left { left: 6px; }
+    .slider-arrow-right { right: 6px; }
+    .shot-card { width: 130px; }
+    .widget-gallery-card { width: 160px; }
+    .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+    .footer-links { justify-content: center; }
+    footer .wrap { text-align: center; }
+    .lightbox { padding: 24px 20px; }
+    .lightbox-close { top: 16px; right: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close"><i class="ph-bold ph-x"></i></button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand">
+      <img src="assets/mark-light.svg" alt="Havenote" id="navMark" style="height:40px;width:40px;">
+      <span class="brand-text">Havenote</span>
+    </div>
+    <div class="nav-right">
+      <div class="lang-switcher">
+        <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+          <i class="ph ph-globe"></i>
+          <span id="langBtnLabel">EN</span>
+          <i class="ph ph-caret-down" style="font-size:12px"></i>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu"></div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <i class="ph-fill ph-moon" id="themeIcon"></i>
+      </button>
+      <a class="btn btn-primary btn-nav" href="#" id="playLinkNav" target="_blank" rel="noopener">
+        <i class="ph-bold ph-google-play-logo"></i>
+        <span class="label" data-i18n="nav_cta">Get it on Google Play</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <div>
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="hero_eyebrow">Voice-first. Privacy-first.</span></div>
+      <h1 data-i18n="hero_headline">Speak it. Havenote sorts the rest.</h1>
+      <p class="hero-sub" data-i18n="hero_subtext">One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#" id="playLinkHero" target="_blank" rel="noopener">
+          <i class="ph-bold ph-google-play-logo"></i>
+          <span data-i18n="hero_cta">Get it on Google Play</span>
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual" id="heroVisual">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="orb">
+        <div class="waves"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="float-card fc-1"><i class="ph-fill ph-book-open-text"></i>Journal</div>
+      <div class="float-card fc-2"><i class="ph-fill ph-check-square"></i>Tasks</div>
+      <div class="float-card fc-3"><i class="ph-fill ph-list-checks"></i>Lists</div>
+      <div class="float-card fc-4"><i class="ph-fill ph-bell"></i>Reminders</div>
+      <div class="float-card fc-5"><i class="ph-fill ph-lightbulb"></i>Ideas</div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="wrap stats-grid">
+      <div class="reveal"><div class="stat-num" data-i18n="stats_1_num">5</div><div class="stat-label" data-i18n="stats_1_label">things in one app</div></div>
+      <div class="reveal"><div class="stat-num" data-i18n="stats_2_num">21</div><div class="stat-label" data-i18n="stats_2_label">languages</div></div>
+      <div class="reveal"><div class="stat-num" data-i18n="stats_3_num">10</div><div class="stat-label" data-i18n="stats_3_label">Android widgets</div></div>
+      <div class="reveal"><div class="stat-num" data-i18n="stats_4_num">0</div><div class="stat-label" data-i18n="stats_4_label">accounts needed</div></div>
+    </div>
+  </section>
+
+  <section class="feature wrap reveal">
+    <div class="feature-text">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_voice_eyebrow">How it works</span></div>
+      <h2 data-i18n="section_voice_title">Talk. Havenote listens.</h2>
+      <p data-i18n="section_voice_body">Tap once, say what's on your mind, and Havenote figures out where it belongs — journal, task, list, reminder, or idea. No menus, no typing, no friction.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="visual-inner">
+        <div class="visual-icon-big"><i class="ph-fill ph-microphone"></i></div>
+        <div class="waves" style="justify-content:center;height:30px;"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature reverse wrap reveal">
+    <div class="feature-text">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_privacy_eyebrow">Privacy</span></div>
+      <h2 data-i18n="section_privacy_title">Your voice never leaves your side</h2>
+      <p data-i18n="section_privacy_body">No accounts, ever. Your recording is transcribed on your own phone and deleted right after — nothing raw ever touches our servers. Only the text you choose to analyze goes anywhere at all.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="visual-inner">
+        <div class="visual-icon-big pulse-icon"><i class="ph-fill ph-shield-check"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature wrap reveal">
+    <div class="feature-text">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_ai_eyebrow">AI insights</span></div>
+      <h2 data-i18n="section_ai_title">See the patterns you'd never notice</h2>
+      <p data-i18n="section_ai_body">A weekly or monthly recap surfaces the themes you keep returning to and how your mood has been moving — generated only when you ask for it, never in the background.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="chart-visual">
+        <div class="chart-bar" style="height:38%"></div>
+        <div class="chart-bar hi" style="height:70%"></div>
+        <div class="chart-bar" style="height:52%"></div>
+        <div class="chart-bar hi" style="height:88%"></div>
+        <div class="chart-bar" style="height:44%"></div>
+        <div class="chart-bar hi" style="height:64%"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature reverse wrap reveal">
+    <div class="feature-text">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_widgets_eyebrow">Android widgets</span></div>
+      <h2 data-i18n="section_widgets_title">Your week, right on your home screen</h2>
+      <p data-i18n="section_widgets_body">Ten home-screen widgets — journal, tasks, reminders, mood — glanceable without ever opening the app. Most journaling apps don't have one. Havenote has ten.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="widget-grid">
+        <div class="widget-tile"><i class="ph-fill ph-book-open-text spin-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
+        <div class="widget-tile"><i class="ph-fill ph-check-square pop-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
+        <div class="widget-tile"><i class="ph-fill ph-bell ring-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
+        <div class="widget-tile"><i class="ph-fill ph-smiley pop-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature wrap reveal">
+    <div class="feature-text">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_shared_eyebrow">Shared journals</span></div>
+      <h2 data-i18n="section_shared_title">Journal together, in real time</h2>
+      <p data-i18n="section_shared_body">Start a shared space with one other person — a couple's journal, a trip log, anything. Both of you see new entries the moment they're added.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="sync-visual">
+        <div class="avatar-circle"><i class="ph-fill ph-user pulse-icon"></i></div>
+        <div class="sync-line"></div>
+        <div class="avatar-circle"><i class="ph-fill ph-user pulse-icon-delay"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature reverse wrap reveal">
+    <div class="feature-text">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_dates_eyebrow">Never forget</span></div>
+      <h2 data-i18n="section_dates_title">Birthdays remember themselves</h2>
+      <p data-i18n="section_dates_body">Add an important date once. Havenote reminds you ahead of time, suggests a gift, and resurfaces every memory from that same day, every year.</p>
+    </div>
+    <div class="feature-visual">
+      <div class="visual-inner">
+        <div class="visual-icon-big"><i class="ph-fill ph-cake bounce-icon"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-section">
+    <div class="wrap">
+      <div class="gallery-heading reveal">
+        <h2 data-i18n="gallery_shots_title">See it for yourself</h2>
+        <p data-i18n="gallery_shots_body">A quick look around the app, in both light and dark.</p>
+      </div>
+    </div>
+    <div class="slider-wrap">
+      <button class="slider-arrow slider-arrow-left" onclick="scrollSlider('screenshotSlider', -1)" aria-label="Previous"><i class="ph-bold ph-caret-left"></i></button>
+      <div class="screenshot-scroll reveal" id="screenshotSlider">
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot1.jpg')"><img src="assets/shot1.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot2.jpg')"><img src="assets/shot2.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot3.jpg')"><img src="assets/shot3.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot4.jpg')"><img src="assets/shot4.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot5.jpg')"><img src="assets/shot5.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot6.jpg')"><img src="assets/shot6.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot7.jpg')"><img src="assets/shot7.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot8.jpg')"><img src="assets/shot8.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot9.jpg')"><img src="assets/shot9.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot10.jpg')"><img src="assets/shot10.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot11.jpg')"><img src="assets/shot11.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot12.jpg')"><img src="assets/shot12.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot13.jpg')"><img src="assets/shot13.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot14.jpg')"><img src="assets/shot14.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot15.jpg')"><img src="assets/shot15.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot16.jpg')"><img src="assets/shot16.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot17.jpg')"><img src="assets/shot17.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot18.jpg')"><img src="assets/shot18.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot19.jpg')"><img src="assets/shot19.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot20.jpg')"><img src="assets/shot20.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot21.jpg')"><img src="assets/shot21.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot22.jpg')"><img src="assets/shot22.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot23.jpg')"><img src="assets/shot23.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot24.jpg')"><img src="assets/shot24.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot25.jpg')"><img src="assets/shot25.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot26.jpg')"><img src="assets/shot26.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot27.jpg')"><img src="assets/shot27.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot28.jpg')"><img src="assets/shot28.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="shot-card light-only" onclick="openLightbox('assets/shot29.jpg')"><img src="assets/shot29.jpg" alt="Havenote screenshot" loading="lazy"></div>
+      <div class="shot-card dark-only" onclick="openLightbox('assets/shot30.jpg')"><img src="assets/shot30.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      </div>
+      <button class="slider-arrow slider-arrow-right" onclick="scrollSlider('screenshotSlider', 1)" aria-label="Next"><i class="ph-bold ph-caret-right"></i></button>
+    </div>
+  </section>
+
+  <section class="widget-gallery-section">
+    <div class="wrap">
+      <div class="gallery-heading reveal">
+        <h2 data-i18n="gallery_widgets_title">Ten widgets, right on your home screen</h2>
+        <p data-i18n="gallery_widgets_body">A glanceable look at your day without ever opening the app.</p>
+      </div>
+    </div>
+    <div class="slider-wrap">
+      <button class="slider-arrow slider-arrow-left" onclick="scrollSlider('widgetSlider', -1)" aria-label="Previous"><i class="ph-bold ph-caret-left"></i></button>
+      <div class="widget-grid-gallery reveal" id="widgetSlider">
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget1.png')"><img src="assets/widget1.png" alt="Diary this week widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget2.png')"><img src="assets/widget2.png" alt="Reminders this week widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget3.png')"><img src="assets/widget3.png" alt="Tasks this week widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget4.png')"><img src="assets/widget4.png" alt="Featured list widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget5.png')"><img src="assets/widget5.png" alt="Mood trend widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget6.png')"><img src="assets/widget6.png" alt="Fortune Cookie widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget7.png')"><img src="assets/widget7.png" alt="Active reminders widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget8.png')"><img src="assets/widget8.png" alt="List items left widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget9.png')"><img src="assets/widget9.png" alt="Open tasks widget" loading="lazy"></div>
+        <div class="widget-gallery-card" onclick="openLightbox('assets/widget10.png')"><img src="assets/widget10.png" alt="Diary total entries widget" loading="lazy"></div>
+      </div>
+      <button class="slider-arrow slider-arrow-right" onclick="scrollSlider('widgetSlider', 1)" aria-label="Next"><i class="ph-bold ph-caret-right"></i></button>
+    </div>
+  </section>
+
+  <section class="languages-section">
+    <div class="wrap">
+      <div class="lang-heading reveal">
+        <h2 data-i18n="languages_title">Written for how you actually speak</h2>
+        <p data-i18n="languages_body">21 languages, built in from day one — not bolted on later.</p>
+      </div>
+      <div class="lang-grid reveal" id="langShowcase"></div>
+    </div>
+  </section>
+
+  <section class="final-cta wrap reveal">
+    <h2 data-i18n="final_cta_title">Your thoughts, organized the moment you say them.</h2>
+    <a class="btn btn-primary" href="#" id="playLinkFinal" target="_blank" rel="noopener">
+      <i class="ph-bold ph-google-play-logo"></i>
+      <span data-i18n="final_cta_button">Get it on Google Play</span>
+    </a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div>
+        <div class="brand" style="margin-bottom:8px;font-size:16px;">
+          <img src="assets/mark-light.svg" alt="" id="footerMark" style="height:20px;width:20px;">
+          Havenote
+        </div>
+        <div class="footer-tagline" data-i18n="footer_tagline">Speak it. Havenote sorts the rest.</div>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="terms.html" data-i18n="footer_terms">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-rights" data-i18n="footer_rights">All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+// ---------- i18n data ----------
+const LANG_NAMES = {
+  en: "English", sr: "Srpski", es: "Español", fr: "Français", pt: "Português",
+  ru: "Русский", zh: "中文", hi: "हिन्दी", ar: "العربية", bn: "বাংলা",
+  id: "Indonesia", de: "Deutsch", ja: "日本語", ko: "한국어", it: "Italiano",
+  nl: "Nederlands", pl: "Polski", sv: "Svenska", tr: "Türkçe", no: "Norsk", da: "Dansk"
+};
+const LANG_ORDER = ["en","sr","es","fr","pt","ru","zh","hi","ar","bn","id","de","ja","ko","it","nl","pl","sv","tr","no","da"];
+const RTL_LANGS = ["ar"];
+
+const TRANSLATIONS = {
+  "en": {
+    "nav_cta": "Get it on Google Play",
+    "hero_eyebrow": "Voice-first. Privacy-first.",
+    "hero_headline": "Speak it. Havenote sorts the rest.",
+    "hero_subtext": "One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.",
+    "hero_cta": "Get it on Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "things in one app",
+    "stats_2_num": "21",
+    "stats_2_label": "languages",
+    "stats_3_num": "10",
+    "stats_3_label": "Android widgets",
+    "stats_4_num": "0",
+    "stats_4_label": "accounts needed",
+    "section_voice_eyebrow": "How it works",
+    "section_voice_title": "Talk. Havenote listens.",
+    "section_voice_body": "Tap once, say what's on your mind, and Havenote figures out where it belongs — journal, task, list, reminder, or idea. No menus, no typing, no friction.",
+    "section_privacy_eyebrow": "Privacy",
+    "section_privacy_title": "Your voice never leaves your side",
+    "section_privacy_body": "No accounts, ever. Your recording is transcribed on your own phone and deleted right after — nothing raw ever touches our servers. Only the text you choose to analyze goes anywhere at all.",
+    "section_ai_eyebrow": "AI insights",
+    "section_ai_title": "See the patterns you'd never notice",
+    "section_ai_body": "A weekly or monthly recap surfaces the themes you keep returning to and how your mood has been moving — generated only when you ask for it, never in the background.",
+    "section_widgets_eyebrow": "Android widgets",
+    "section_widgets_title": "Your week, right on your home screen",
+    "section_widgets_body": "Ten home-screen widgets — journal, tasks, reminders, mood — glanceable without ever opening the app. Most journaling apps don't have one. Havenote has ten.",
+    "section_shared_eyebrow": "Shared journals",
+    "section_shared_title": "Journal together, in real time",
+    "section_shared_body": "Start a shared space with one other person — a couple's journal, a trip log, anything. Both of you see new entries the moment they're added.",
+    "section_dates_eyebrow": "Never forget",
+    "section_dates_title": "Birthdays remember themselves",
+    "section_dates_body": "Add an important date once. Havenote reminds you ahead of time, suggests a gift, and resurfaces every memory from that same day, every year.",
+    "languages_title": "Written for how you actually speak",
+    "languages_body": "21 languages, built in from day one — not bolted on later.",
+    "final_cta_title": "Your thoughts, organized the moment you say them.",
+    "final_cta_button": "Get it on Google Play",
+    "footer_tagline": "Speak it. Havenote sorts the rest.",
+    "footer_privacy": "Privacy Policy",
+    "footer_terms": "Terms of Service",
+    "footer_rights": "All rights reserved.",
+    "gallery_shots_title": "See it for yourself",
+    "gallery_shots_body": "A quick look around the app, in both light and dark.",
+    "gallery_widgets_title": "Ten widgets, right on your home screen",
+    "gallery_widgets_body": "A glanceable look at your day without ever opening the app."
+
+  },
+  "sr": {
+    "nav_cta": "Preuzmi sa Google Play-a",
+    "hero_eyebrow": "Prvo glas. Prvo privatnost.",
+    "hero_headline": "Izgovori. Havenote sredi ostalo.",
+    "hero_subtext": "Jedna glasovna poruka postaje unos u dnevnik, zadatak, lista, podsetnik ili ideja — automatski, privatno, na 21 jeziku.",
+    "hero_cta": "Preuzmi sa Google Play-a",
+    "stats_1_num": "5",
+    "stats_1_label": "stvari u jednoj aplikaciji",
+    "stats_2_num": "21",
+    "stats_2_label": "jezik",
+    "stats_3_num": "10",
+    "stats_3_label": "Android vidžeta",
+    "stats_4_num": "0",
+    "stats_4_label": "naloga potrebno",
+    "section_voice_eyebrow": "Kako radi",
+    "section_voice_title": "Pričaj. Havenote sluša.",
+    "section_voice_body": "Dodirni jednom, reci šta ti je na umu, i Havenote sam prepozna gde to pripada — dnevnik, zadatak, lista, podsetnik ili ideja. Bez menija, bez kucanja, bez trenja.",
+    "section_privacy_eyebrow": "Privatnost",
+    "section_privacy_title": "Tvoj glas nikad ne napušta tvoj telefon",
+    "section_privacy_body": "Nikad nema naloga. Snimak se prepoznaje u tekst direktno na tvom telefonu i odmah briše — ništa sirovo nikad ne stiže na naše servere. Jedino tekst koji sam izabereš za analizu ide bilo gde.",
+    "section_ai_eyebrow": "AI uvidi",
+    "section_ai_title": "Vidiš obrasce koje sam nikad ne bi primetio",
+    "section_ai_body": "Nedeljni ili mesečni pregled izvlači teme kojima se stalno vraćaš i kako ti se raspoloženje kretalo — generiše se samo kad ga sam zatražiš, nikad u pozadini.",
+    "section_widgets_eyebrow": "Android vidžeti",
+    "section_widgets_title": "Tvoja nedelja, direktno na početnom ekranu",
+    "section_widgets_body": "Deset vidžeta za početni ekran — dnevnik, zadaci, podsetnici, raspoloženje — sve na pogled, bez otvaranja aplikacije. Većina dnevničkih aplikacija nema nijedan. Havenote ima deset.",
+    "section_shared_eyebrow": "Deljeni dnevnici",
+    "section_shared_title": "Vodite dnevnik zajedno, uživo",
+    "section_shared_body": "Napravi deljeni prostor sa još jednom osobom — dnevnik para, dnevnik putovanja, bilo šta. Oboje vidite nove unose istog trenutka kad se dodaju.",
+    "section_dates_eyebrow": "Nikad ne zaboravi",
+    "section_dates_title": "Rođendani se sami podsete",
+    "section_dates_body": "Dodaj važan datum jednom. Havenote te podseti unapred, predloži poklon, i ponovo prikaže svaku uspomenu sa tog istog dana, svake godine.",
+    "languages_title": "Napravljeno za to kako stvarno govoriš",
+    "languages_body": "21 jezik, ugrađen od prvog dana — ne dodat naknadno.",
+    "final_cta_title": "Tvoje misli, sređene u trenutku kad ih izgovoriš.",
+    "final_cta_button": "Preuzmi sa Google Play-a",
+    "footer_tagline": "Izgovori. Havenote sredi ostalo.",
+    "footer_privacy": "Politika privatnosti",
+    "footer_terms": "Uslovi korišćenja",
+    "footer_rights": "Sva prava zadržana.",
+    "gallery_shots_title": "Pogledaj sam",
+    "gallery_shots_body": "Kratak pregled aplikacije, i u svetloj i u tamnoj temi.",
+    "gallery_widgets_title": "Deset vidžeta, direktno na početnom ekranu",
+    "gallery_widgets_body": "Pogled na tvoj dan bez otvaranja aplikacije."
+
+  },
+  "es": {
+    "nav_cta": "Consíguela en Google Play",
+    "hero_eyebrow": "La voz primero. La privacidad primero.",
+    "hero_headline": "Dilo. Havenote organiza el resto.",
+    "hero_subtext": "Una nota de voz se convierte en una entrada de diario, tarea, lista, recordatorio o idea — automáticamente, en privado, en 21 idiomas.",
+    "hero_cta": "Consíguela en Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "cosas en una sola app",
+    "stats_2_num": "21",
+    "stats_2_label": "idiomas",
+    "stats_3_num": "10",
+    "stats_3_label": "widgets de Android",
+    "stats_4_num": "0",
+    "stats_4_label": "cuentas necesarias",
+    "section_voice_eyebrow": "Cómo funciona",
+    "section_voice_title": "Habla. Havenote escucha.",
+    "section_voice_body": "Toca una vez, di lo que tienes en mente, y Havenote descubre dónde va — diario, tarea, lista, recordatorio o idea. Sin menús, sin escribir, sin fricción.",
+    "section_privacy_eyebrow": "Privacidad",
+    "section_privacy_title": "Tu voz nunca sale de tu lado",
+    "section_privacy_body": "Nunca hay cuentas. Tu grabación se transcribe en tu propio teléfono y se elimina justo después — nada sin procesar toca nuestros servidores. Solo el texto que decides analizar va a algún lado.",
+    "section_ai_eyebrow": "Perspectivas con IA",
+    "section_ai_title": "Ve los patrones que nunca notarías",
+    "section_ai_body": "Un resumen semanal o mensual saca a la luz los temas a los que vuelves y cómo se ha movido tu estado de ánimo — generado solo cuando lo pides, nunca en segundo plano.",
+    "section_widgets_eyebrow": "Widgets de Android",
+    "section_widgets_title": "Tu semana, directo en tu pantalla de inicio",
+    "section_widgets_body": "Diez widgets para la pantalla de inicio — diario, tareas, recordatorios, estado de ánimo — visibles de un vistazo, sin abrir la app. La mayoría de apps de diario no tiene ninguno. Havenote tiene diez.",
+    "section_shared_eyebrow": "Diarios compartidos",
+    "section_shared_title": "Lleva un diario junto a alguien, en tiempo real",
+    "section_shared_body": "Crea un espacio compartido con otra persona — un diario de pareja, un registro de viaje, lo que sea. Ambos ven las entradas nuevas en el momento en que se agregan.",
+    "section_dates_eyebrow": "Nunca lo olvides",
+    "section_dates_title": "Los cumpleaños se recuerdan solos",
+    "section_dates_body": "Agrega una fecha importante una vez. Havenote te avisa con anticipación, sugiere un regalo, y vuelve a mostrar cada recuerdo de ese mismo día, cada año.",
+    "languages_title": "Escrito para cómo hablas de verdad",
+    "languages_body": "21 idiomas, incorporados desde el primer día — no añadidos después.",
+    "final_cta_title": "Tus pensamientos, organizados en el momento en que los dices.",
+    "final_cta_button": "Consíguela en Google Play",
+    "footer_tagline": "Dilo. Havenote organiza el resto.",
+    "footer_privacy": "Política de privacidad",
+    "footer_terms": "Términos de servicio",
+    "footer_rights": "Todos los derechos reservados.",
+    "gallery_shots_title": "Compruébalo tú mismo",
+    "gallery_shots_body": "Un vistazo rápido a la aplicación, en modo claro y oscuro.",
+    "gallery_widgets_title": "Diez widgets, directo en tu pantalla de inicio",
+    "gallery_widgets_body": "Un vistazo a tu día sin abrir la aplicación."
+
+  },
+  "fr": {
+    "nav_cta": "Disponible sur Google Play",
+    "hero_eyebrow": "La voix d'abord. La confidentialité d'abord.",
+    "hero_headline": "Dis-le. Havenote range le reste.",
+    "hero_subtext": "Une note vocale devient une entrée de journal, une tâche, une liste, un rappel ou une idée — automatiquement, en privé, en 21 langues.",
+    "hero_cta": "Disponible sur Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "choses dans une seule appli",
+    "stats_2_num": "21",
+    "stats_2_label": "langues",
+    "stats_3_num": "10",
+    "stats_3_label": "widgets Android",
+    "stats_4_num": "0",
+    "stats_4_label": "compte nécessaire",
+    "section_voice_eyebrow": "Comment ça marche",
+    "section_voice_title": "Parle. Havenote écoute.",
+    "section_voice_body": "Touche une fois, dis ce que tu as en tête, et Havenote comprend où ça va — journal, tâche, liste, rappel ou idée. Pas de menus, pas de frappe, aucune friction.",
+    "section_privacy_eyebrow": "Confidentialité",
+    "section_privacy_title": "Ta voix ne quitte jamais ton téléphone",
+    "section_privacy_body": "Jamais de compte. Ton enregistrement est transcrit directement sur ton téléphone puis supprimé aussitôt — rien de brut n'atteint jamais nos serveurs. Seul le texte que tu choisis d'analyser part quelque part.",
+    "section_ai_eyebrow": "Analyses IA",
+    "section_ai_title": "Vois les tendances que tu ne remarquerais jamais",
+    "section_ai_body": "Un résumé hebdomadaire ou mensuel fait ressortir les thèmes qui reviennent et l'évolution de ton humeur — généré uniquement quand tu le demandes, jamais en arrière-plan.",
+    "section_widgets_eyebrow": "Widgets Android",
+    "section_widgets_title": "Ta semaine, directement sur ton écran d'accueil",
+    "section_widgets_body": "Dix widgets pour l'écran d'accueil — journal, tâches, rappels, humeur — visibles d'un coup d'œil, sans ouvrir l'appli. La plupart des applis de journal n'en ont aucun. Havenote en a dix.",
+    "section_shared_eyebrow": "Journaux partagés",
+    "section_shared_title": "Tenez un journal ensemble, en temps réel",
+    "section_shared_body": "Crée un espace partagé avec une autre personne — journal de couple, carnet de voyage, n'importe quoi. Vous voyez tous les deux les nouvelles entrées dès qu'elles sont ajoutées.",
+    "section_dates_eyebrow": "N'oublie jamais",
+    "section_dates_title": "Les anniversaires se rappellent tout seuls",
+    "section_dates_body": "Ajoute une date importante une fois. Havenote te le rappelle à l'avance, suggère un cadeau, et refait apparaître chaque souvenir de ce même jour, chaque année.",
+    "languages_title": "Pensé pour la façon dont tu parles vraiment",
+    "languages_body": "21 langues, intégrées dès le premier jour — pas ajoutées après coup.",
+    "final_cta_title": "Tes pensées, organisées au moment où tu les prononces.",
+    "final_cta_button": "Disponible sur Google Play",
+    "footer_tagline": "Dis-le. Havenote range le reste.",
+    "footer_privacy": "Politique de confidentialité",
+    "footer_terms": "Conditions d'utilisation",
+    "footer_rights": "Tous droits réservés.",
+    "gallery_shots_title": "Vois par toi-même",
+    "gallery_shots_body": "Un aperçu rapide de l'application, en mode clair et sombre.",
+    "gallery_widgets_title": "Dix widgets, directement sur ton écran d'accueil",
+    "gallery_widgets_body": "Un coup d'œil sur ta journée sans jamais ouvrir l'appli."
+
+  },
+  "pt": {
+    "nav_cta": "Disponível no Google Play",
+    "hero_eyebrow": "Voz primeiro. Privacidade primeiro.",
+    "hero_headline": "Diz. O Havenote trata do resto.",
+    "hero_subtext": "Uma nota de voz transforma-se numa entrada de diário, tarefa, lista, lembrete ou ideia — automaticamente, em privado, em 21 idiomas.",
+    "hero_cta": "Disponível no Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "coisas numa só app",
+    "stats_2_num": "21",
+    "stats_2_label": "idiomas",
+    "stats_3_num": "10",
+    "stats_3_label": "widgets Android",
+    "stats_4_num": "0",
+    "stats_4_label": "contas necessárias",
+    "section_voice_eyebrow": "Como funciona",
+    "section_voice_title": "Fala. O Havenote escuta.",
+    "section_voice_body": "Toca uma vez, diz o que tens em mente, e o Havenote descobre onde deve ficar — diário, tarefa, lista, lembrete ou ideia. Sem menus, sem digitar, sem fricção.",
+    "section_privacy_eyebrow": "Privacidade",
+    "section_privacy_title": "A tua voz nunca sai do teu lado",
+    "section_privacy_body": "Nunca há contas. A tua gravação é transcrita no teu próprio telemóvel e apagada logo a seguir — nada em bruto chega aos nossos servidores. Só o texto que escolheres analisar vai para algum lado.",
+    "section_ai_eyebrow": "Perspetivas de IA",
+    "section_ai_title": "Vê os padrões que nunca notarias",
+    "section_ai_body": "Um resumo semanal ou mensal revela os temas a que voltas sempre e como o teu humor se tem movido — gerado só quando pedes, nunca em segundo plano.",
+    "section_widgets_eyebrow": "Widgets Android",
+    "section_widgets_title": "A tua semana, direto no ecrã inicial",
+    "section_widgets_body": "Dez widgets para o ecrã inicial — diário, tarefas, lembretes, humor — visíveis num relance, sem abrir a app. A maioria das apps de diário não tem nenhum. O Havenote tem dez.",
+    "section_shared_eyebrow": "Diários partilhados",
+    "section_shared_title": "Escrevam um diário juntos, em tempo real",
+    "section_shared_body": "Cria um espaço partilhado com outra pessoa — diário de casal, registo de viagem, o que quiseres. Ambos veem as novas entradas assim que são adicionadas.",
+    "section_dates_eyebrow": "Nunca te esqueças",
+    "section_dates_title": "Os aniversários lembram-se sozinhos",
+    "section_dates_body": "Adiciona uma data importante uma vez. O Havenote lembra-te com antecedência, sugere uma prenda, e volta a mostrar cada memória desse mesmo dia, todos os anos.",
+    "languages_title": "Feito para a forma como realmente falas",
+    "languages_body": "21 idiomas, incorporados desde o primeiro dia — não acrescentados depois.",
+    "final_cta_title": "Os teus pensamentos, organizados no momento em que os dizes.",
+    "final_cta_button": "Disponível no Google Play",
+    "footer_tagline": "Diz. O Havenote trata do resto.",
+    "footer_privacy": "Política de Privacidade",
+    "footer_terms": "Termos de Serviço",
+    "footer_rights": "Todos os direitos reservados.",
+    "gallery_shots_title": "Vê por ti mesmo",
+    "gallery_shots_body": "Uma vista rápida da app, no modo claro e escuro.",
+    "gallery_widgets_title": "Dez widgets, direto no teu ecrã inicial",
+    "gallery_widgets_body": "Um relance sobre o teu dia sem abrir a app."
+
+  },
+  "ru": {
+    "nav_cta": "Доступно в Google Play",
+    "hero_eyebrow": "Сначала голос. Сначала приватность.",
+    "hero_headline": "Скажи. Havenote разберётся с остальным.",
+    "hero_subtext": "Одна голосовая заметка становится записью в дневнике, задачей, списком, напоминанием или идеей — автоматически, приватно, на 21 языке.",
+    "hero_cta": "Доступно в Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "функций в одном приложении",
+    "stats_2_num": "21",
+    "stats_2_label": "язык",
+    "stats_3_num": "10",
+    "stats_3_label": "виджетов Android",
+    "stats_4_num": "0",
+    "stats_4_label": "аккаунтов не нужно",
+    "section_voice_eyebrow": "Как это работает",
+    "section_voice_title": "Говори. Havenote слушает.",
+    "section_voice_body": "Нажми один раз, скажи, что у тебя на уме, и Havenote сам поймёт, куда это отнести — дневник, задача, список, напоминание или идея. Без меню, без набора текста, без трения.",
+    "section_privacy_eyebrow": "Приватность",
+    "section_privacy_title": "Твой голос никогда не покидает твой телефон",
+    "section_privacy_body": "Никаких аккаунтов, никогда. Запись распознаётся прямо на твоём телефоне и сразу удаляется — необработанные данные никогда не попадают на наши серверы. Только текст, который ты сам выбираешь для анализа, куда-то уходит.",
+    "section_ai_eyebrow": "AI-обзоры",
+    "section_ai_title": "Замечай закономерности, которые сам бы не увидел",
+    "section_ai_body": "Еженедельный или ежемесячный обзор выявляет темы, к которым ты постоянно возвращаешься, и то, как менялось твоё настроение — создаётся только по твоему запросу, никогда в фоне.",
+    "section_widgets_eyebrow": "Виджеты Android",
+    "section_widgets_title": "Твоя неделя прямо на главном экране",
+    "section_widgets_body": "Десять виджетов для главного экрана — дневник, задачи, напоминания, настроение — всё видно с одного взгляда, без открытия приложения. У большинства дневниковых приложений нет ни одного. У Havenote — десять.",
+    "section_shared_eyebrow": "Общие дневники",
+    "section_shared_title": "Ведите дневник вместе, в реальном времени",
+    "section_shared_body": "Создай общее пространство с ещё одним человеком — дневник пары, журнал поездки, что угодно. Вы оба видите новые записи в момент их добавления.",
+    "section_dates_eyebrow": "Никогда не забывай",
+    "section_dates_title": "Дни рождения напоминают о себе сами",
+    "section_dates_body": "Добавь важную дату один раз. Havenote напомнит заранее, предложит идею подарка и снова покажет каждое воспоминание с этого же дня, каждый год.",
+    "languages_title": "Создано для того, как ты говоришь на самом деле",
+    "languages_body": "21 язык, встроенные с первого дня — не добавленные позже.",
+    "final_cta_title": "Твои мысли, организованные в момент, когда ты их произносишь.",
+    "final_cta_button": "Доступно в Google Play",
+    "footer_tagline": "Скажи. Havenote разберётся с остальным.",
+    "footer_privacy": "Политика конфиденциальности",
+    "footer_terms": "Условия использования",
+    "footer_rights": "Все права защищены.",
+    "gallery_shots_title": "Посмотри сам",
+    "gallery_shots_body": "Быстрый обзор приложения, в светлом и тёмном режиме.",
+    "gallery_widgets_title": "Десять виджетов прямо на главном экране",
+    "gallery_widgets_body": "Взгляд на твой день без открытия приложения."
+
+  },
+  "zh": {
+    "nav_cta": "前往 Google Play 获取",
+    "hero_eyebrow": "语音优先，隐私优先。",
+    "hero_headline": "说出来，剩下的交给 Havenote。",
+    "hero_subtext": "一条语音笔记自动变成日记、任务、清单、提醒或想法——全程私密，支持 21 种语言。",
+    "hero_cta": "前往 Google Play 获取",
+    "stats_1_num": "5",
+    "stats_1_label": "功能合而为一",
+    "stats_2_num": "21",
+    "stats_2_label": "种语言",
+    "stats_3_num": "10",
+    "stats_3_label": "个安卓小组件",
+    "stats_4_num": "0",
+    "stats_4_label": "无需注册账号",
+    "section_voice_eyebrow": "运作方式",
+    "section_voice_title": "开口说，Havenote 在听。",
+    "section_voice_body": "点一下，说出你想到的事，Havenote 自动判断该归到哪里——日记、任务、清单、提醒还是想法。没有菜单，不用打字，毫无阻力。",
+    "section_privacy_eyebrow": "隐私",
+    "section_privacy_title": "你的声音从不离开你的手机",
+    "section_privacy_body": "从不需要账号。录音在你自己的手机上转成文字后立即删除——原始音频从不接触我们的服务器。只有你主动选择分析的文字才会被发送。",
+    "section_ai_eyebrow": "AI 洞察",
+    "section_ai_title": "看见你自己从未察觉的规律",
+    "section_ai_body": "每周或每月的回顾会浮现你反复提到的主题，以及你的情绪变化趋势——只有在你主动请求时才会生成，绝不在后台运行。",
+    "section_widgets_eyebrow": "安卓小组件",
+    "section_widgets_title": "你的一周，就在主屏幕上",
+    "section_widgets_body": "十个主屏幕小组件——日记、任务、提醒、心情——无需打开应用即可一目了然。大多数日记应用一个都没有，Havenote 有十个。",
+    "section_shared_eyebrow": "共享日记",
+    "section_shared_title": "和另一个人实时共写日记",
+    "section_shared_body": "和另一个人一起开启共享空间——情侣日记、旅行记录，什么都可以。新记录一添加，你们俩立刻都能看到。",
+    "section_dates_eyebrow": "永不遗忘",
+    "section_dates_title": "生日会自己提醒你",
+    "section_dates_body": "只需添加一次重要日期，Havenote 会提前提醒你、给出礼物建议，并且每年都重新呈现这一天的每一段回忆。",
+    "languages_title": "为你真实说话的方式而生",
+    "languages_body": "21 种语言，从第一天起就内置——不是后来硬加上去的。",
+    "final_cta_title": "你的想法，说出口的那一刻就已井井有条。",
+    "final_cta_button": "前往 Google Play 获取",
+    "footer_tagline": "说出来，剩下的交给 Havenote。",
+    "footer_privacy": "隐私政策",
+    "footer_terms": "服务条款",
+    "footer_rights": "版权所有。",
+    "gallery_shots_title": "亲自看看",
+    "gallery_shots_body": "快速浏览应用，浅色和深色模式都有。",
+    "gallery_widgets_title": "十个小组件，就在主屏幕上",
+    "gallery_widgets_body": "无需打开应用，一眼看清你的一天。"
+
+  },
+  "hi": {
+    "nav_cta": "Google Play पर पाएं",
+    "hero_eyebrow": "पहले आवाज़। पहले निजता।",
+    "hero_headline": "बोलिए। बाकी Havenote संभालेगा।",
+    "hero_subtext": "एक आवाज़ का नोट अपने आप डायरी एंट्री, कार्य, सूची, रिमाइंडर या आइडिया बन जाता है — अपने आप, निजी तौर पर, 21 भाषाओं में।",
+    "hero_cta": "Google Play पर पाएं",
+    "stats_1_num": "5",
+    "stats_1_label": "चीज़ें एक ऐप में",
+    "stats_2_num": "21",
+    "stats_2_label": "भाषाएं",
+    "stats_3_num": "10",
+    "stats_3_label": "Android विजेट",
+    "stats_4_num": "0",
+    "stats_4_label": "अकाउंट की जरूरत नहीं",
+    "section_voice_eyebrow": "यह कैसे काम करता है",
+    "section_voice_title": "बोलिए। Havenote सुनता है।",
+    "section_voice_body": "एक बार टैप करें, जो मन में है वह कहें, और Havenote खुद समझ लेता है कि यह कहां जाता है — डायरी, कार्य, सूची, रिमाइंडर या आइडिया। कोई मेनू नहीं, टाइपिंग नहीं, कोई रुकावट नहीं।",
+    "section_privacy_eyebrow": "निजता",
+    "section_privacy_title": "आपकी आवाज़ कभी आपका फोन नहीं छोड़ती",
+    "section_privacy_body": "कभी कोई अकाउंट नहीं। आपकी रिकॉर्डिंग आपके ही फोन पर टेक्स्ट में बदलती है और तुरंत बाद डिलीट हो जाती है — कोई भी कच्चा डेटा हमारे सर्वर तक कभी नहीं पहुंचता। सिर्फ वह टेक्स्ट जिसे आप विश्लेषण के लिए चुनते हैं, कहीं जाता है।",
+    "section_ai_eyebrow": "AI इनसाइट्स",
+    "section_ai_title": "वे पैटर्न देखें जो आप कभी खुद नोटिस न करते",
+    "section_ai_body": "साप्ताहिक या मासिक रीकैप उन थीम को सामने लाता है जिनकी तरफ आप बार-बार लौटते हैं और आपका मूड कैसे बदलता रहा है — यह सिर्फ तब बनता है जब आप मांगते हैं, कभी बैकग्राउंड में नहीं।",
+    "section_widgets_eyebrow": "Android विजेट",
+    "section_widgets_title": "आपका हफ्ता, सीधे आपकी होम स्क्रीन पर",
+    "section_widgets_body": "होम स्क्रीन के लिए दस विजेट — डायरी, कार्य, रिमाइंडर, मूड — ऐप खोले बिना एक नज़र में दिख जाते हैं। ज्यादातर डायरी ऐप्स के पास एक भी नहीं है। Havenote के पास दस हैं।",
+    "section_shared_eyebrow": "साझा डायरी",
+    "section_shared_title": "साथ में डायरी लिखें, रीयल टाइम में",
+    "section_shared_body": "किसी और के साथ एक साझा जगह बनाएं — कपल की डायरी, यात्रा का लॉग, कुछ भी। जोड़ी गई नई एंट्री उसी पल आप दोनों को दिख जाती है।",
+    "section_dates_eyebrow": "कभी मत भूलिए",
+    "section_dates_title": "जन्मदिन खुद याद दिलाते हैं",
+    "section_dates_body": "एक जरूरी तारीख एक बार जोड़ें। Havenote आपको पहले से याद दिलाता है, उपहार का सुझाव देता है, और हर साल उसी दिन की हर याद फिर से सामने लाता है।",
+    "languages_title": "आप जैसे असल में बोलते हैं, उसके लिए बना",
+    "languages_body": "21 भाषाएं, पहले दिन से ही शामिल — बाद में जोड़ी नहीं गईं।",
+    "final_cta_title": "आपके विचार, बोलते ही व्यवस्थित।",
+    "final_cta_button": "Google Play पर पाएं",
+    "footer_tagline": "बोलिए। बाकी Havenote संभालेगा।",
+    "footer_privacy": "गोपनीयता नीति",
+    "footer_terms": "सेवा की शर्तें",
+    "footer_rights": "सर्वाधिकार सुरक्षित।",
+    "gallery_shots_title": "खुद देखें",
+    "gallery_shots_body": "ऐप की एक झलक, लाइट और डार्क दोनों मोड में।",
+    "gallery_widgets_title": "दस विजेट, सीधे आपकी होम स्क्रीन पर",
+    "gallery_widgets_body": "ऐप खोले बिना अपने दिन पर एक नज़र।"
+
+  },
+  "ar": {
+    "nav_cta": "احصل عليه من Google Play",
+    "hero_eyebrow": "الصوت أولاً. الخصوصية أولاً.",
+    "hero_headline": "قله. Havenote يرتب الباقي.",
+    "hero_subtext": "تتحول ملاحظة صوتية واحدة إلى مذكرة يومية، أو مهمة، أو قائمة، أو تذكير، أو فكرة — تلقائيًا، بخصوصية تامة، بـ21 لغة.",
+    "hero_cta": "احصل عليه من Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "أشياء في تطبيق واحد",
+    "stats_2_num": "21",
+    "stats_2_label": "لغة",
+    "stats_3_num": "10",
+    "stats_3_label": "أدوات أندرويد",
+    "stats_4_num": "0",
+    "stats_4_label": "لا حاجة لحساب",
+    "section_voice_eyebrow": "كيف يعمل",
+    "section_voice_title": "تحدث. Havenote يستمع.",
+    "section_voice_body": "اضغط مرة واحدة، قل ما يدور في ذهنك، ويكتشف Havenote أين ينتمي — يوميات، مهمة، قائمة، تذكير، أو فكرة. بلا قوائم، بلا كتابة، بلا أي عناء.",
+    "section_privacy_eyebrow": "الخصوصية",
+    "section_privacy_title": "صوتك لا يغادر جهازك أبدًا",
+    "section_privacy_body": "لا حسابات أبدًا. يتم تحويل تسجيلك إلى نص على هاتفك أنت، ثم يُحذف فورًا — لا شيء خام يصل إلى خوادمنا مطلقًا. فقط النص الذي تختار تحليله هو ما يُرسل.",
+    "section_ai_eyebrow": "رؤى الذكاء الاصطناعي",
+    "section_ai_title": "شاهد الأنماط التي لن تلاحظها أبدًا بنفسك",
+    "section_ai_body": "يُظهر الملخص الأسبوعي أو الشهري المواضيع التي تعود إليها باستمرار وكيف تغير مزاجك — يُنشأ فقط عند طلبك له، ولا يعمل أبدًا في الخلفية.",
+    "section_widgets_eyebrow": "أدوات أندرويد",
+    "section_widgets_title": "أسبوعك، مباشرة على شاشتك الرئيسية",
+    "section_widgets_body": "عشر أدوات للشاشة الرئيسية — يوميات، مهام، تذكيرات، مزاج — تراها بلمحة دون فتح التطبيق. معظم تطبيقات اليوميات لا تملك ولا واحدة. Havenote يملك عشرًا.",
+    "section_shared_eyebrow": "يوميات مشتركة",
+    "section_shared_title": "دوّنا يومياتكما معًا، في الوقت الفعلي",
+    "section_shared_body": "ابدأ مساحة مشتركة مع شخص آخر — يوميات لزوجين، سجل رحلة، أي شيء. يرى كلاكما المذكرات الجديدة لحظة إضافتها.",
+    "section_dates_eyebrow": "لا تنسَ أبدًا",
+    "section_dates_title": "أعياد الميلاد تُذكِّر بنفسها",
+    "section_dates_body": "أضف تاريخًا مهمًا مرة واحدة. يذكّرك Havenote مسبقًا، ويقترح هدية، ويعيد إظهار كل ذكرى من ذلك اليوم نفسه، كل عام.",
+    "languages_title": "مصمم لطريقة حديثك الحقيقية",
+    "languages_body": "21 لغة، مدمجة منذ اليوم الأول — لم تُضَف لاحقًا.",
+    "final_cta_title": "أفكارك، منظمة في اللحظة التي تنطق بها.",
+    "final_cta_button": "احصل عليه من Google Play",
+    "footer_tagline": "قله. Havenote يرتب الباقي.",
+    "footer_privacy": "سياسة الخصوصية",
+    "footer_terms": "شروط الخدمة",
+    "footer_rights": "جميع الحقوق محفوظة.",
+    "gallery_shots_title": "شاهد بنفسك",
+    "gallery_shots_body": "لمحة سريعة عن التطبيق، في الوضعين الفاتح والداكن.",
+    "gallery_widgets_title": "عشر أدوات، مباشرة على شاشتك الرئيسية",
+    "gallery_widgets_body": "نظرة سريعة على يومك دون فتح التطبيق."
+
+  },
+  "bn": {
+    "nav_cta": "Google Play থেকে নিন",
+    "hero_eyebrow": "আগে ভয়েস। আগে গোপনীয়তা।",
+    "hero_headline": "বলুন। বাকিটা সামলাবে Havenote।",
+    "hero_subtext": "একটি ভয়েস নোট নিজে থেকেই ডায়েরি এন্ট্রি, কাজ, তালিকা, রিমাইন্ডার বা আইডিয়া হয়ে যায় — স্বয়ংক্রিয়ভাবে, ব্যক্তিগতভাবে, ২১টি ভাষায়।",
+    "hero_cta": "Google Play থেকে নিন",
+    "stats_1_num": "৫",
+    "stats_1_label": "একটি অ্যাপে পাঁচটি কাজ",
+    "stats_2_num": "২১",
+    "stats_2_label": "ভাষা",
+    "stats_3_num": "১০",
+    "stats_3_label": "Android উইজেট",
+    "stats_4_num": "০",
+    "stats_4_label": "অ্যাকাউন্টের প্রয়োজন নেই",
+    "section_voice_eyebrow": "এটি কীভাবে কাজ করে",
+    "section_voice_title": "কথা বলুন। Havenote শোনে।",
+    "section_voice_body": "একবার ট্যাপ করুন, মনে যা আছে বলুন, আর Havenote নিজেই বুঝে নেয় এটা কোথায় যাবে — ডায়েরি, কাজ, তালিকা, রিমাইন্ডার বা আইডিয়া। কোনো মেনু নেই, টাইপ করা নেই, কোনো বাধা নেই।",
+    "section_privacy_eyebrow": "গোপনীয়তা",
+    "section_privacy_title": "আপনার ভয়েস কখনো আপনার ফোন ছাড়ে না",
+    "section_privacy_body": "কখনোই কোনো অ্যাকাউন্ট নেই। আপনার রেকর্ডিং আপনার নিজের ফোনেই টেক্সটে রূপান্তরিত হয় এবং সাথে সাথে মুছে যায় — কাঁচা কোনো ডেটা কখনো আমাদের সার্ভারে পৌঁছায় না। শুধু আপনি বিশ্লেষণের জন্য বেছে নেওয়া টেক্সটই কোথাও যায়।",
+    "section_ai_eyebrow": "AI ইনসাইট",
+    "section_ai_title": "যে প্যাটার্নগুলো আপনি নিজে কখনো খেয়াল করতেন না",
+    "section_ai_body": "সাপ্তাহিক বা মাসিক রিক্যাপ সেই থিমগুলো তুলে ধরে যেগুলোতে আপনি বারবার ফিরে আসেন এবং আপনার মেজাজ কীভাবে বদলেছে — শুধু আপনি চাইলেই তৈরি হয়, কখনো ব্যাকগ্রাউন্ডে নয়।",
+    "section_widgets_eyebrow": "Android উইজেট",
+    "section_widgets_title": "আপনার সপ্তাহ, সরাসরি হোম স্ক্রিনে",
+    "section_widgets_body": "হোম স্ক্রিনের জন্য দশটি উইজেট — ডায়েরি, কাজ, রিমাইন্ডার, মেজাজ — অ্যাপ না খুলেই এক নজরে দেখা যায়। বেশিরভাগ ডায়েরি অ্যাপের একটিও নেই। Havenote-এর আছে দশটি।",
+    "section_shared_eyebrow": "শেয়ার্ড ডায়েরি",
+    "section_shared_title": "একসাথে ডায়েরি লিখুন, রিয়েল টাইমে",
+    "section_shared_body": "আরেকজনের সাথে একটি শেয়ার্ড জায়গা তৈরি করুন — কাপলের ডায়েরি, ভ্রমণের লগ, যা খুশি। নতুন এন্ট্রি যোগ হওয়া মাত্রই আপনারা দুজনেই দেখতে পাবেন।",
+    "section_dates_eyebrow": "কখনো ভুলবেন না",
+    "section_dates_title": "জন্মদিন নিজেই মনে করিয়ে দেয়",
+    "section_dates_body": "একবার একটি গুরুত্বপূর্ণ তারিখ যোগ করুন। Havenote আগে থেকেই মনে করিয়ে দেয়, উপহারের পরামর্শ দেয়, এবং প্রতি বছর সেই একই দিনের প্রতিটি স্মৃতি আবার সামনে আনে।",
+    "languages_title": "আপনি আসলে যেভাবে কথা বলেন, তার জন্যই তৈরি",
+    "languages_body": "২১টি ভাষা, প্রথম দিন থেকেই অন্তর্ভুক্ত — পরে যোগ করা নয়।",
+    "final_cta_title": "আপনার চিন্তাগুলো, বলার মুহূর্তেই গোছানো।",
+    "final_cta_button": "Google Play থেকে নিন",
+    "footer_tagline": "বলুন। বাকিটা সামলাবে Havenote।",
+    "footer_privacy": "গোপনীয়তা নীতি",
+    "footer_terms": "সেবার শর্তাবলী",
+    "footer_rights": "সর্বস্বত্ব সংরক্ষিত।",
+    "gallery_shots_title": "নিজেই দেখুন",
+    "gallery_shots_body": "লাইট এবং ডার্ক উভয় মোডে অ্যাপের একটি দ্রুত পরিদর্শন।",
+    "gallery_widgets_title": "দশটি উইজেট, সরাসরি আপনার হোম স্ক্রিনে",
+    "gallery_widgets_body": "অ্যাপ না খুলেই আপনার দিনের এক ঝলক।"
+
+  },
+  "id": {
+    "nav_cta": "Dapatkan di Google Play",
+    "hero_eyebrow": "Suara dulu. Privasi dulu.",
+    "hero_headline": "Ucapkan. Havenote yang beresin sisanya.",
+    "hero_subtext": "Satu catatan suara langsung jadi entri jurnal, tugas, daftar, pengingat, atau ide — otomatis, privat, dalam 21 bahasa.",
+    "hero_cta": "Dapatkan di Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "hal dalam satu aplikasi",
+    "stats_2_num": "21",
+    "stats_2_label": "bahasa",
+    "stats_3_num": "10",
+    "stats_3_label": "widget Android",
+    "stats_4_num": "0",
+    "stats_4_label": "akun diperlukan",
+    "section_voice_eyebrow": "Cara kerjanya",
+    "section_voice_title": "Bicara. Havenote mendengarkan.",
+    "section_voice_body": "Ketuk sekali, katakan apa yang ada di pikiranmu, dan Havenote sendiri yang menentukan ke mana itu harus pergi — jurnal, tugas, daftar, pengingat, atau ide. Tanpa menu, tanpa mengetik, tanpa hambatan.",
+    "section_privacy_eyebrow": "Privasi",
+    "section_privacy_title": "Suaramu tidak pernah meninggalkan ponselmu",
+    "section_privacy_body": "Tidak pernah ada akun. Rekamanmu ditranskripsi langsung di ponselmu sendiri lalu langsung dihapus — tidak ada data mentah yang pernah menyentuh server kami. Hanya teks yang kamu pilih untuk dianalisis yang benar-benar dikirim.",
+    "section_ai_eyebrow": "Wawasan AI",
+    "section_ai_title": "Lihat pola yang tidak akan pernah kamu sadari sendiri",
+    "section_ai_body": "Rekap mingguan atau bulanan memunculkan tema yang terus kamu ulangi dan bagaimana suasana hatimu bergerak — hanya dibuat saat kamu memintanya, tidak pernah di latar belakang.",
+    "section_widgets_eyebrow": "Widget Android",
+    "section_widgets_title": "Minggumu, langsung di layar utama",
+    "section_widgets_body": "Sepuluh widget layar utama — jurnal, tugas, pengingat, suasana hati — terlihat sekilas tanpa membuka aplikasi. Kebanyakan aplikasi jurnal tidak punya satu pun. Havenote punya sepuluh.",
+    "section_shared_eyebrow": "Jurnal bersama",
+    "section_shared_title": "Menulis jurnal bersama, secara real-time",
+    "section_shared_body": "Mulai ruang bersama dengan satu orang lain — jurnal pasangan, catatan perjalanan, apa saja. Kalian berdua langsung melihat entri baru saat ditambahkan.",
+    "section_dates_eyebrow": "Jangan pernah lupa",
+    "section_dates_title": "Ulang tahun mengingatkan dirinya sendiri",
+    "section_dates_body": "Tambahkan tanggal penting sekali saja. Havenote mengingatkanmu lebih awal, menyarankan ide hadiah, dan menampilkan kembali setiap kenangan dari hari yang sama, setiap tahun.",
+    "languages_title": "Dibuat untuk cara kamu benar-benar berbicara",
+    "languages_body": "21 bahasa, dibangun sejak hari pertama — bukan ditambahkan belakangan.",
+    "final_cta_title": "Pikiranmu, tersusun rapi begitu kamu mengucapkannya.",
+    "final_cta_button": "Dapatkan di Google Play",
+    "footer_tagline": "Ucapkan. Havenote yang beresin sisanya.",
+    "footer_privacy": "Kebijakan Privasi",
+    "footer_terms": "Ketentuan Layanan",
+    "footer_rights": "Semua hak dilindungi.",
+    "gallery_shots_title": "Lihat sendiri",
+    "gallery_shots_body": "Sekilas tentang aplikasi, dalam mode terang dan gelap.",
+    "gallery_widgets_title": "Sepuluh widget, langsung di layar utamamu",
+    "gallery_widgets_body": "Sekilas pandang harimu tanpa membuka aplikasi."
+
+  },
+  "de": {
+    "nav_cta": "Bei Google Play holen",
+    "hero_eyebrow": "Stimme zuerst. Privatsphäre zuerst.",
+    "hero_headline": "Sag es. Havenote ordnet den Rest.",
+    "hero_subtext": "Eine Sprachnotiz wird automatisch zu einem Tagebucheintrag, einer Aufgabe, Liste, Erinnerung oder Idee — automatisch, privat, in 21 Sprachen.",
+    "hero_cta": "Bei Google Play holen",
+    "stats_1_num": "5",
+    "stats_1_label": "Dinge in einer App",
+    "stats_2_num": "21",
+    "stats_2_label": "Sprachen",
+    "stats_3_num": "10",
+    "stats_3_label": "Android-Widgets",
+    "stats_4_num": "0",
+    "stats_4_label": "Konten nötig",
+    "section_voice_eyebrow": "So funktioniert's",
+    "section_voice_title": "Sprich. Havenote hört zu.",
+    "section_voice_body": "Einmal tippen, sagen, was dir im Kopf herumgeht, und Havenote findet selbst heraus, wohin es gehört — Tagebuch, Aufgabe, Liste, Erinnerung oder Idee. Keine Menüs, kein Tippen, keine Reibung.",
+    "section_privacy_eyebrow": "Privatsphäre",
+    "section_privacy_title": "Deine Stimme verlässt nie dein Handy",
+    "section_privacy_body": "Niemals Konten. Deine Aufnahme wird direkt auf deinem eigenen Handy transkribiert und gleich danach gelöscht — nichts Rohes erreicht je unsere Server. Nur der Text, den du selbst zur Analyse auswählst, geht überhaupt irgendwohin.",
+    "section_ai_eyebrow": "KI-Einblicke",
+    "section_ai_title": "Erkenne Muster, die dir selbst nie auffallen würden",
+    "section_ai_body": "Eine wöchentliche oder monatliche Zusammenfassung zeigt die Themen, zu denen du immer wieder zurückkehrst, und wie sich deine Stimmung entwickelt hat — nur erstellt, wenn du danach fragst, nie im Hintergrund.",
+    "section_widgets_eyebrow": "Android-Widgets",
+    "section_widgets_title": "Deine Woche, direkt auf deinem Startbildschirm",
+    "section_widgets_body": "Zehn Startbildschirm-Widgets — Tagebuch, Aufgaben, Erinnerungen, Stimmung — auf einen Blick sichtbar, ohne die App zu öffnen. Die meisten Tagebuch-Apps haben nicht ein einziges. Havenote hat zehn.",
+    "section_shared_eyebrow": "Geteilte Tagebücher",
+    "section_shared_title": "Führt gemeinsam Tagebuch, in Echtzeit",
+    "section_shared_body": "Starte einen geteilten Raum mit einer anderen Person — ein Paar-Tagebuch, ein Reisetagebuch, was auch immer. Ihr beide seht neue Einträge in dem Moment, in dem sie hinzugefügt werden.",
+    "section_dates_eyebrow": "Nie mehr vergessen",
+    "section_dates_title": "Geburtstage erinnern sich von selbst",
+    "section_dates_body": "Füge ein wichtiges Datum einmal hinzu. Havenote erinnert dich rechtzeitig, schlägt ein Geschenk vor und zeigt jede Erinnerung von genau diesem Tag jedes Jahr wieder.",
+    "languages_title": "Gemacht für die Art, wie du wirklich sprichst",
+    "languages_body": "21 Sprachen, von Anfang an eingebaut — nicht später drangeflanscht.",
+    "final_cta_title": "Deine Gedanken, organisiert in dem Moment, in dem du sie aussprichst.",
+    "final_cta_button": "Bei Google Play holen",
+    "footer_tagline": "Sag es. Havenote ordnet den Rest.",
+    "footer_privacy": "Datenschutzerklärung",
+    "footer_terms": "Nutzungsbedingungen",
+    "footer_rights": "Alle Rechte vorbehalten.",
+    "gallery_shots_title": "Überzeug dich selbst",
+    "gallery_shots_body": "Ein kurzer Blick auf die App, im hellen und dunklen Modus.",
+    "gallery_widgets_title": "Zehn Widgets, direkt auf deinem Startbildschirm",
+    "gallery_widgets_body": "Dein Tag auf einen Blick, ohne die App zu öffnen."
+
+  },
+  "ja": {
+    "nav_cta": "Google Playで入手",
+    "hero_eyebrow": "音声ファースト。プライバシーファースト。",
+    "hero_headline": "話すだけ。あとはHavenoteが整理します。",
+    "hero_subtext": "1つの音声メモが、日記のエントリー、タスク、リスト、リマインダー、アイデアに自動で変わります——プライベートに、21言語で。",
+    "hero_cta": "Google Playで入手",
+    "stats_1_num": "5",
+    "stats_1_label": "つの機能が1つのアプリに",
+    "stats_2_num": "21",
+    "stats_2_label": "言語",
+    "stats_3_num": "10",
+    "stats_3_label": "個のAndroidウィジェット",
+    "stats_4_num": "0",
+    "stats_4_label": "アカウント不要",
+    "section_voice_eyebrow": "使い方",
+    "section_voice_title": "話してください。Havenoteが聞いています。",
+    "section_voice_body": "一度タップして、頭に浮かんでいることを話すだけ。Havenoteが日記、タスク、リスト、リマインダー、アイデアのどこに属するか自動で判断します。メニューなし、入力なし、手間なし。",
+    "section_privacy_eyebrow": "プライバシー",
+    "section_privacy_title": "あなたの声は、あなたのそばから離れません",
+    "section_privacy_body": "アカウントは一切不要です。録音はあなた自身のスマホ上でテキスト化され、すぐに削除されます——生データがサーバーに触れることはありません。あなたが分析のために選んだテキストだけが送信されます。",
+    "section_ai_eyebrow": "AIインサイト",
+    "section_ai_title": "自分では気づかないパターンが見えてくる",
+    "section_ai_body": "週間・月間のレキャップが、あなたが何度も戻ってくるテーマや気分の変化を浮かび上がらせます——あなたがリクエストしたときだけ生成され、バックグラウンドでは決して動きません。",
+    "section_widgets_eyebrow": "Androidウィジェット",
+    "section_widgets_title": "あなたの1週間が、そのままホーム画面に",
+    "section_widgets_body": "10種類のホーム画面ウィジェット——日記、タスク、リマインダー、気分——アプリを開かずに一目で確認できます。ほとんどの日記アプリはウィジェットを1つも持っていません。Havenoteは10個あります。",
+    "section_shared_eyebrow": "共有日記",
+    "section_shared_title": "誰かとリアルタイムで一緒に日記をつける",
+    "section_shared_body": "もう一人と共有スペースを作りましょう——カップルの日記、旅の記録、何でも。新しいエントリーが追加された瞬間、お互いに見ることができます。",
+    "section_dates_eyebrow": "決して忘れない",
+    "section_dates_title": "誕生日は自分で思い出させてくれる",
+    "section_dates_body": "大切な日付を一度登録するだけ。Havenoteが事前に知らせ、プレゼントの提案をし、毎年その同じ日のすべての思い出を再び見せてくれます。",
+    "languages_title": "あなたが実際に話す言葉のために作られた",
+    "languages_body": "21言語、最初から組み込まれています——後から付け足したものではありません。",
+    "final_cta_title": "あなたの考えは、話したその瞬間に整理されます。",
+    "final_cta_button": "Google Playで入手",
+    "footer_tagline": "話すだけ。あとはHavenoteが整理します。",
+    "footer_privacy": "プライバシーポリシー",
+    "footer_terms": "利用規約",
+    "footer_rights": "全著作権所有。",
+    "gallery_shots_title": "実際に見てみる",
+    "gallery_shots_body": "ライト・ダーク両モードでのアプリの様子。",
+    "gallery_widgets_title": "10個のウィジェットが、ホーム画面に直接",
+    "gallery_widgets_body": "アプリを開かずに、あなたの一日を一目で。"
+
+  },
+  "ko": {
+    "nav_cta": "Google Play에서 받기",
+    "hero_eyebrow": "음성 우선. 프라이버시 우선.",
+    "hero_headline": "말하세요. 나머지는 Havenote가 정리해요.",
+    "hero_subtext": "음성 메모 하나가 일기, 할 일, 목록, 알림, 아이디어로 자동 변환돼요 — 사적으로, 21개 언어로.",
+    "hero_cta": "Google Play에서 받기",
+    "stats_1_num": "5",
+    "stats_1_label": "가지 기능이 하나의 앱에",
+    "stats_2_num": "21",
+    "stats_2_label": "개 언어",
+    "stats_3_num": "10",
+    "stats_3_label": "개 안드로이드 위젯",
+    "stats_4_num": "0",
+    "stats_4_label": "계정 필요 없음",
+    "section_voice_eyebrow": "작동 방식",
+    "section_voice_title": "말하세요. Havenote가 듣고 있어요.",
+    "section_voice_body": "한 번 탭하고 마음속 이야기를 말하면, Havenote가 어디에 속하는지 스스로 파악해요 — 일기, 할 일, 목록, 알림, 아이디어. 메뉴도, 타이핑도, 번거로움도 없어요.",
+    "section_privacy_eyebrow": "프라이버시",
+    "section_privacy_title": "당신의 목소리는 절대 휴대폰을 떠나지 않아요",
+    "section_privacy_body": "계정은 절대 필요 없어요. 녹음은 당신의 휴대폰에서 바로 텍스트로 변환되고 곧바로 삭제돼요 — 원본 데이터는 절대 저희 서버에 닿지 않아요. 오직 분석을 위해 직접 선택한 텍스트만 전송돼요.",
+    "section_ai_eyebrow": "AI 인사이트",
+    "section_ai_title": "스스로는 절대 알아채지 못할 패턴을 확인하세요",
+    "section_ai_body": "주간 또는 월간 리캡이 당신이 계속 돌아가는 주제와 기분의 흐름을 드러내줘요 — 당신이 요청할 때만 생성되고, 백그라운드에서는 절대 작동하지 않아요.",
+    "section_widgets_eyebrow": "안드로이드 위젯",
+    "section_widgets_title": "당신의 한 주가, 바로 홈 화면에",
+    "section_widgets_body": "홈 화면 위젯 10개 — 일기, 할 일, 알림, 기분 — 앱을 열지 않고도 한눈에 확인해요. 대부분의 일기 앱은 위젯이 하나도 없어요. Havenote는 10개예요.",
+    "section_shared_eyebrow": "공유 일기",
+    "section_shared_title": "실시간으로 함께 일기를 써요",
+    "section_shared_body": "다른 한 사람과 공유 공간을 시작하세요 — 커플 일기, 여행 기록, 무엇이든요. 새 기록이 추가되는 순간 둘 다 바로 볼 수 있어요.",
+    "section_dates_eyebrow": "절대 잊지 마세요",
+    "section_dates_title": "생일이 스스로 알려줘요",
+    "section_dates_body": "중요한 날짜를 한 번만 추가하세요. Havenote가 미리 알려주고, 선물 아이디어를 제안하고, 매년 그날의 모든 추억을 다시 보여줘요.",
+    "languages_title": "당신이 실제로 말하는 방식을 위해 만들어졌어요",
+    "languages_body": "21개 언어, 처음부터 내장되어 있어요 — 나중에 덧붙인 게 아니에요.",
+    "final_cta_title": "당신의 생각이, 말하는 그 순간 정리돼요.",
+    "final_cta_button": "Google Play에서 받기",
+    "footer_tagline": "말하세요. 나머지는 Havenote가 정리해요.",
+    "footer_privacy": "개인정보 처리방침",
+    "footer_terms": "서비스 약관",
+    "footer_rights": "모든 권리 보유.",
+    "gallery_shots_title": "직접 확인해보세요",
+    "gallery_shots_body": "라이트 모드와 다크 모드 모두에서 앱을 살짝 둘러보세요.",
+    "gallery_widgets_title": "열 개의 위젯이, 바로 홈 화면에",
+    "gallery_widgets_body": "앱을 열지 않고도 하루를 한눈에."
+
+  },
+  "it": {
+    "nav_cta": "Scaricala su Google Play",
+    "hero_eyebrow": "Prima la voce. Prima la privacy.",
+    "hero_headline": "Dillo. Havenote sistema il resto.",
+    "hero_subtext": "Una nota vocale diventa una voce di diario, un'attività, una lista, un promemoria o un'idea — automaticamente, in privato, in 21 lingue.",
+    "hero_cta": "Scaricala su Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "funzioni in un'unica app",
+    "stats_2_num": "21",
+    "stats_2_label": "lingue",
+    "stats_3_num": "10",
+    "stats_3_label": "widget Android",
+    "stats_4_num": "0",
+    "stats_4_label": "account richiesti",
+    "section_voice_eyebrow": "Come funziona",
+    "section_voice_title": "Parla. Havenote ascolta.",
+    "section_voice_body": "Tocca una volta, di' cosa hai in mente, e Havenote capisce da solo dove deve andare — diario, attività, lista, promemoria o idea. Niente menu, niente digitazione, nessun attrito.",
+    "section_privacy_eyebrow": "Privacy",
+    "section_privacy_title": "La tua voce non lascia mai il tuo telefono",
+    "section_privacy_body": "Mai account. La tua registrazione viene trascritta direttamente sul tuo telefono e cancellata subito dopo — nessun dato grezzo tocca mai i nostri server. Solo il testo che scegli di analizzare va da qualche parte.",
+    "section_ai_eyebrow": "Approfondimenti IA",
+    "section_ai_title": "Scopri gli schemi che non noteresti mai da solo",
+    "section_ai_body": "Un riepilogo settimanale o mensile fa emergere i temi a cui torni sempre e come si è mosso il tuo umore — generato solo quando lo richiedi, mai in background.",
+    "section_widgets_eyebrow": "Widget Android",
+    "section_widgets_title": "La tua settimana, direttamente sulla schermata home",
+    "section_widgets_body": "Dieci widget per la schermata home — diario, attività, promemoria, umore — visibili a colpo d'occhio senza aprire l'app. La maggior parte delle app di diario non ne ha nemmeno uno. Havenote ne ha dieci.",
+    "section_shared_eyebrow": "Diari condivisi",
+    "section_shared_title": "Tenete un diario insieme, in tempo reale",
+    "section_shared_body": "Crea uno spazio condiviso con un'altra persona — un diario di coppia, un diario di viaggio, qualsiasi cosa. Entrambi vedete le nuove voci nel momento in cui vengono aggiunte.",
+    "section_dates_eyebrow": "Non dimenticare mai",
+    "section_dates_title": "I compleanni si ricordano da soli",
+    "section_dates_body": "Aggiungi una data importante una volta sola. Havenote te lo ricorda in anticipo, suggerisce un regalo, e fa riemergere ogni ricordo di quello stesso giorno, ogni anno.",
+    "languages_title": "Pensato per come parli davvero",
+    "languages_body": "21 lingue, integrate fin dal primo giorno — non aggiunte in seguito.",
+    "final_cta_title": "I tuoi pensieri, organizzati nel momento in cui li dici.",
+    "final_cta_button": "Scaricala su Google Play",
+    "footer_tagline": "Dillo. Havenote sistema il resto.",
+    "footer_privacy": "Informativa sulla privacy",
+    "footer_terms": "Termini di servizio",
+    "footer_rights": "Tutti i diritti riservati.",
+    "gallery_shots_title": "Vedi con i tuoi occhi",
+    "gallery_shots_body": "Uno sguardo veloce all'app, in modalità chiara e scura.",
+    "gallery_widgets_title": "Dieci widget, direttamente sulla tua schermata home",
+    "gallery_widgets_body": "Un'occhiata alla tua giornata senza aprire l'app."
+
+  },
+  "nl": {
+    "nav_cta": "Verkrijgbaar via Google Play",
+    "hero_eyebrow": "Stem eerst. Privacy eerst.",
+    "hero_headline": "Zeg het. Havenote regelt de rest.",
+    "hero_subtext": "Eén spraaknotitie wordt automatisch een dagboeknotitie, taak, lijst, herinnering of idee — automatisch, privé, in 21 talen.",
+    "hero_cta": "Verkrijgbaar via Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "dingen in één app",
+    "stats_2_num": "21",
+    "stats_2_label": "talen",
+    "stats_3_num": "10",
+    "stats_3_label": "Android-widgets",
+    "stats_4_num": "0",
+    "stats_4_label": "accounts nodig",
+    "section_voice_eyebrow": "Zo werkt het",
+    "section_voice_title": "Praat. Havenote luistert.",
+    "section_voice_body": "Tik één keer, zeg wat je op je hart hebt, en Havenote bedenkt zelf waar het thuishoort — dagboek, taak, lijst, herinnering of idee. Geen menu's, geen typen, geen gedoe.",
+    "section_privacy_eyebrow": "Privacy",
+    "section_privacy_title": "Je stem verlaat nooit je eigen toestel",
+    "section_privacy_body": "Nooit accounts. Je opname wordt op je eigen telefoon omgezet in tekst en meteen daarna verwijderd — er komt nooit ruwe data op onze servers terecht. Alleen de tekst die je zelf kiest om te analyseren, gaat ergens heen.",
+    "section_ai_eyebrow": "AI-inzichten",
+    "section_ai_title": "Zie patronen die je zelf nooit zou opmerken",
+    "section_ai_body": "Een wekelijks of maandelijks overzicht brengt de thema's naar boven waar je steeds op terugkomt en hoe je stemming is verlopen — alleen gegenereerd wanneer je erom vraagt, nooit op de achtergrond.",
+    "section_widgets_eyebrow": "Android-widgets",
+    "section_widgets_title": "Jouw week, direct op je startscherm",
+    "section_widgets_body": "Tien widgets voor je startscherm — dagboek, taken, herinneringen, stemming — in één oogopslag zichtbaar zonder de app te openen. De meeste dagboek-apps hebben er niet één. Havenote heeft er tien.",
+    "section_shared_eyebrow": "Gedeelde dagboeken",
+    "section_shared_title": "Houd samen een dagboek bij, in realtime",
+    "section_shared_body": "Begin een gedeelde ruimte met iemand anders — een dagboek voor stellen, een reisverslag, wat dan ook. Jullie zien allebei nieuwe notities zodra ze zijn toegevoegd.",
+    "section_dates_eyebrow": "Vergeet nooit iets",
+    "section_dates_title": "Verjaardagen herinneren zichzelf",
+    "section_dates_body": "Voeg één keer een belangrijke datum toe. Havenote herinnert je van tevoren, stelt een cadeau voor, en laat elk jaar weer elke herinnering van diezelfde dag zien.",
+    "languages_title": "Gemaakt voor hoe jij echt praat",
+    "languages_body": "21 talen, vanaf dag één ingebouwd — niet later toegevoegd.",
+    "final_cta_title": "Jouw gedachten, geordend op het moment dat je ze uitspreekt.",
+    "final_cta_button": "Verkrijgbaar via Google Play",
+    "footer_tagline": "Zeg het. Havenote regelt de rest.",
+    "footer_privacy": "Privacybeleid",
+    "footer_terms": "Servicevoorwaarden",
+    "footer_rights": "Alle rechten voorbehouden.",
+    "gallery_shots_title": "Zie het zelf",
+    "gallery_shots_body": "Een korte blik op de app, in licht en donker.",
+    "gallery_widgets_title": "Tien widgets, direct op je startscherm",
+    "gallery_widgets_body": "Een blik op je dag zonder de app te openen."
+
+  },
+  "pl": {
+    "nav_cta": "Pobierz w Google Play",
+    "hero_eyebrow": "Najpierw głos. Najpierw prywatność.",
+    "hero_headline": "Powiedz. Havenote uporządkuje resztę.",
+    "hero_subtext": "Jedna notatka głosowa automatycznie staje się wpisem w dzienniku, zadaniem, listą, przypomnieniem lub pomysłem — automatycznie, prywatnie, w 21 językach.",
+    "hero_cta": "Pobierz w Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "funkcji w jednej aplikacji",
+    "stats_2_num": "21",
+    "stats_2_label": "języków",
+    "stats_3_num": "10",
+    "stats_3_label": "widżetów na Androida",
+    "stats_4_num": "0",
+    "stats_4_label": "kont wymaganych",
+    "section_voice_eyebrow": "Jak to działa",
+    "section_voice_title": "Mów. Havenote słucha.",
+    "section_voice_body": "Dotknij raz, powiedz, co masz na myśli, a Havenote sam ustali, gdzie to trafi — dziennik, zadanie, lista, przypomnienie lub pomysł. Bez menu, bez pisania, bez tarcia.",
+    "section_privacy_eyebrow": "Prywatność",
+    "section_privacy_title": "Twój głos nigdy nie opuszcza Twojego telefonu",
+    "section_privacy_body": "Nigdy żadnych kont. Twoje nagranie jest zamieniane na tekst bezpośrednio na Twoim telefonie i od razu usuwane — żadne surowe dane nigdy nie trafiają na nasze serwery. Wysyłany jest tylko tekst, który sam wybierzesz do analizy.",
+    "section_ai_eyebrow": "Wglądy AI",
+    "section_ai_title": "Zobacz wzorce, których sam nigdy byś nie zauważył",
+    "section_ai_body": "Cotygodniowe lub comiesięczne podsumowanie wydobywa tematy, do których stale wracasz, i pokazuje, jak zmieniał się Twój nastrój — generowane tylko na Twoje żądanie, nigdy w tle.",
+    "section_widgets_eyebrow": "Widżety na Androida",
+    "section_widgets_title": "Twój tydzień, prosto na ekranie głównym",
+    "section_widgets_body": "Dziesięć widżetów na ekran główny — dziennik, zadania, przypomnienia, nastrój — widoczne na pierwszy rzut oka, bez otwierania aplikacji. Większość aplikacji do prowadzenia dziennika nie ma ani jednego. Havenote ma dziesięć.",
+    "section_shared_eyebrow": "Wspólne dzienniki",
+    "section_shared_title": "Prowadźcie dziennik razem, w czasie rzeczywistym",
+    "section_shared_body": "Załóż wspólną przestrzeń z drugą osobą — dziennik pary, dziennik podróży, cokolwiek. Oboje widzicie nowe wpisy w chwili ich dodania.",
+    "section_dates_eyebrow": "Nigdy nie zapomnij",
+    "section_dates_title": "Urodziny same o sobie przypominają",
+    "section_dates_body": "Dodaj ważną datę raz. Havenote przypomni Ci wcześniej, zaproponuje pomysł na prezent i co roku przywoła każde wspomnienie z tego samego dnia.",
+    "languages_title": "Stworzone dla sposobu, w jaki naprawdę mówisz",
+    "languages_body": "21 języków, wbudowanych od pierwszego dnia — nie dodanych później.",
+    "final_cta_title": "Twoje myśli, uporządkowane w chwili, gdy je wypowiadasz.",
+    "final_cta_button": "Pobierz w Google Play",
+    "footer_tagline": "Powiedz. Havenote uporządkuje resztę.",
+    "footer_privacy": "Polityka prywatności",
+    "footer_terms": "Warunki korzystania z usługi",
+    "footer_rights": "Wszelkie prawa zastrzeżone.",
+    "gallery_shots_title": "Zobacz sam",
+    "gallery_shots_body": "Krótkie spojrzenie na aplikację, w trybie jasnym i ciemnym.",
+    "gallery_widgets_title": "Dziesięć widżetów prosto na Twoim ekranie głównym",
+    "gallery_widgets_body": "Rzut oka na Twój dzień bez otwierania aplikacji."
+
+  },
+  "sv": {
+    "nav_cta": "Hämta på Google Play",
+    "hero_eyebrow": "Rösten först. Integriteten först.",
+    "hero_headline": "Säg det. Havenote sorterar resten.",
+    "hero_subtext": "En röstanteckning blir automatiskt en dagboksanteckning, uppgift, lista, påminnelse eller idé — automatiskt, privat, på 21 språk.",
+    "hero_cta": "Hämta på Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "saker i en app",
+    "stats_2_num": "21",
+    "stats_2_label": "språk",
+    "stats_3_num": "10",
+    "stats_3_label": "Android-widgetar",
+    "stats_4_num": "0",
+    "stats_4_label": "konton behövs",
+    "section_voice_eyebrow": "Så fungerar det",
+    "section_voice_title": "Prata. Havenote lyssnar.",
+    "section_voice_body": "Tryck en gång, säg vad du tänker på, och Havenote listar ut var det hör hemma — dagbok, uppgift, lista, påminnelse eller idé. Inga menyer, ingen inmatning, ingen friktion.",
+    "section_privacy_eyebrow": "Integritet",
+    "section_privacy_title": "Din röst lämnar aldrig din sida",
+    "section_privacy_body": "Aldrig några konton. Din inspelning transkriberas direkt på din egen telefon och raderas genast efteråt — inget rådata når någonsin våra servrar. Bara texten du själv väljer att analysera skickas någonstans.",
+    "section_ai_eyebrow": "AI-insikter",
+    "section_ai_title": "Se mönster du aldrig själv skulle märka",
+    "section_ai_body": "En vecko- eller månadssammanfattning lyfter fram teman du ständigt återkommer till och hur ditt humör har rört sig — genereras bara när du ber om det, aldrig i bakgrunden.",
+    "section_widgets_eyebrow": "Android-widgetar",
+    "section_widgets_title": "Din vecka, direkt på hemskärmen",
+    "section_widgets_body": "Tio hemskärmswidgetar — dagbok, uppgifter, påminnelser, humör — synliga med en blick utan att öppna appen. De flesta dagboksappar har ingen alls. Havenote har tio.",
+    "section_shared_eyebrow": "Delade dagböcker",
+    "section_shared_title": "För dagbok tillsammans, i realtid",
+    "section_shared_body": "Starta ett delat utrymme med en annan person — en pardagbok, en resedagbok, vad som helst. Ni ser båda nya anteckningar i samma stund de läggs till.",
+    "section_dates_eyebrow": "Glöm aldrig",
+    "section_dates_title": "Födelsedagar påminner om sig själva",
+    "section_dates_body": "Lägg till ett viktigt datum en gång. Havenote påminner dig i förväg, föreslår en present, och tar fram varje minne från just den dagen igen, varje år.",
+    "languages_title": "Skapad för hur du faktiskt pratar",
+    "languages_body": "21 språk, inbyggda från dag ett — inte tillagda i efterhand.",
+    "final_cta_title": "Dina tankar, organiserade i stunden du säger dem.",
+    "final_cta_button": "Hämta på Google Play",
+    "footer_tagline": "Säg det. Havenote sorterar resten.",
+    "footer_privacy": "Integritetspolicy",
+    "footer_terms": "Användarvillkor",
+    "footer_rights": "Alla rättigheter förbehållna.",
+    "gallery_shots_title": "Se själv",
+    "gallery_shots_body": "En snabb titt på appen, i både ljust och mörkt läge.",
+    "gallery_widgets_title": "Tio widgetar, direkt på din hemskärm",
+    "gallery_widgets_body": "En snabb blick på din dag utan att öppna appen."
+
+  },
+  "tr": {
+    "nav_cta": "Google Play'den edin",
+    "hero_eyebrow": "Önce ses. Önce gizlilik.",
+    "hero_headline": "Söyle. Gerisini Havenote halletsin.",
+    "hero_subtext": "Tek bir sesli not otomatik olarak günlük kaydına, göreve, listeye, hatırlatıcıya veya fikre dönüşür — otomatik, özel, 21 dilde.",
+    "hero_cta": "Google Play'den edin",
+    "stats_1_num": "5",
+    "stats_1_label": "özellik tek uygulamada",
+    "stats_2_num": "21",
+    "stats_2_label": "dil",
+    "stats_3_num": "10",
+    "stats_3_label": "Android widget'ı",
+    "stats_4_num": "0",
+    "stats_4_label": "hesap gerekmiyor",
+    "section_voice_eyebrow": "Nasıl çalışır",
+    "section_voice_title": "Konuş. Havenote dinliyor.",
+    "section_voice_body": "Bir kez dokun, aklındakini söyle, Havenote nereye ait olduğunu kendisi bulsun — günlük, görev, liste, hatırlatıcı veya fikir. Menü yok, yazma yok, sürtünme yok.",
+    "section_privacy_eyebrow": "Gizlilik",
+    "section_privacy_title": "Sesin asla telefonundan ayrılmaz",
+    "section_privacy_body": "Asla hesap yok. Kaydın kendi telefonunda metne dönüştürülür ve hemen ardından silinir — hiçbir ham veri sunucularımıza asla ulaşmaz. Sadece analiz için seçtiğin metin bir yere gider.",
+    "section_ai_eyebrow": "Yapay zeka içgörüleri",
+    "section_ai_title": "Kendi başına asla fark etmeyeceğin örüntüleri gör",
+    "section_ai_body": "Haftalık veya aylık özet, sürekli döndüğün temaları ve ruh halinin nasıl değiştiğini ortaya çıkarır — yalnızca sen istediğinde oluşturulur, asla arka planda değil.",
+    "section_widgets_eyebrow": "Android widget'ları",
+    "section_widgets_title": "Haftan, doğrudan ana ekranında",
+    "section_widgets_body": "Ana ekran için on widget — günlük, görevler, hatırlatıcılar, ruh hali — uygulamayı açmadan tek bakışta görünür. Çoğu günlük uygulamasının hiçbiri yok. Havenote'ta on tane var.",
+    "section_shared_eyebrow": "Paylaşılan günlükler",
+    "section_shared_title": "Birlikte, gerçek zamanlı günlük tutun",
+    "section_shared_body": "Başka biriyle paylaşılan bir alan başlat — çift günlüğü, seyahat kaydı, ne istersen. İkiniz de yeni kayıtları eklendiği anda görürsünüz.",
+    "section_dates_eyebrow": "Asla unutma",
+    "section_dates_title": "Doğum günleri kendini hatırlatır",
+    "section_dates_body": "Önemli bir tarihi bir kez ekle. Havenote önceden hatırlatır, hediye fikri önerir ve her yıl o günün her anısını yeniden gösterir.",
+    "languages_title": "Gerçekten konuştuğun şekle göre tasarlandı",
+    "languages_body": "21 dil, ilk günden itibaren dahil — sonradan eklenmedi.",
+    "final_cta_title": "Düşüncelerin, onları söylediğin anda düzenlenir.",
+    "final_cta_button": "Google Play'den edin",
+    "footer_tagline": "Söyle. Gerisini Havenote halletsin.",
+    "footer_privacy": "Gizlilik Politikası",
+    "footer_terms": "Hizmet Şartları",
+    "footer_rights": "Tüm hakları saklıdır.",
+    "gallery_shots_title": "Kendin gör",
+    "gallery_shots_body": "Açık ve koyu modda uygulamaya hızlı bir bakış.",
+    "gallery_widgets_title": "On widget, doğrudan ana ekranında",
+    "gallery_widgets_body": "Uygulamayı açmadan gününe hızlı bir bakış."
+
+  },
+  "no": {
+    "nav_cta": "Hent på Google Play",
+    "hero_eyebrow": "Stemme først. Personvern først.",
+    "hero_headline": "Si det. Havenote ordner resten.",
+    "hero_subtext": "Én talenotat blir automatisk en dagboknotat, oppgave, liste, påminnelse eller idé — automatisk, privat, på 21 språk.",
+    "hero_cta": "Hent på Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "ting i én app",
+    "stats_2_num": "21",
+    "stats_2_label": "språk",
+    "stats_3_num": "10",
+    "stats_3_label": "Android-widgeter",
+    "stats_4_num": "0",
+    "stats_4_label": "kontoer trengs",
+    "section_voice_eyebrow": "Slik fungerer det",
+    "section_voice_title": "Snakk. Havenote lytter.",
+    "section_voice_body": "Trykk én gang, si hva du tenker på, og Havenote finner selv ut hvor det hører hjemme — dagbok, oppgave, liste, påminnelse eller idé. Ingen menyer, ingen skriving, ingen friksjon.",
+    "section_privacy_eyebrow": "Personvern",
+    "section_privacy_title": "Stemmen din forlater aldri siden din",
+    "section_privacy_body": "Aldri kontoer. Opptaket ditt transkriberes direkte på din egen telefon og slettes umiddelbart etterpå — ingen rådata når noensinne serverne våre. Bare teksten du selv velger å analysere, sendes noe sted.",
+    "section_ai_eyebrow": "AI-innsikt",
+    "section_ai_title": "Se mønstre du aldri selv ville lagt merke til",
+    "section_ai_body": "En ukentlig eller månedlig oppsummering løfter frem temaene du stadig vender tilbake til, og hvordan humøret ditt har beveget seg — genereres bare når du ber om det, aldri i bakgrunnen.",
+    "section_widgets_eyebrow": "Android-widgeter",
+    "section_widgets_title": "Uken din, rett på hjemskjermen",
+    "section_widgets_body": "Ti hjemskjerm-widgeter — dagbok, oppgaver, påminnelser, humør — synlige med et blikk uten å åpne appen. De fleste dagbokapper har ingen. Havenote har ti.",
+    "section_shared_eyebrow": "Delte dagbøker",
+    "section_shared_title": "Før dagbok sammen, i sanntid",
+    "section_shared_body": "Start et delt rom med én annen person — en pardagbok, en reisedagbok, hva som helst. Dere ser begge nye oppføringer i det øyeblikket de legges til.",
+    "section_dates_eyebrow": "Glem aldri",
+    "section_dates_title": "Bursdager minner om seg selv",
+    "section_dates_body": "Legg til en viktig dato én gang. Havenote minner deg på det i forkant, foreslår en gave, og viser frem hvert minne fra akkurat den dagen igjen, hvert år.",
+    "languages_title": "Laget for slik du faktisk snakker",
+    "languages_body": "21 språk, innebygd fra dag én — ikke lagt til i etterkant.",
+    "final_cta_title": "Tankene dine, organisert i det øyeblikket du sier dem.",
+    "final_cta_button": "Hent på Google Play",
+    "footer_tagline": "Si det. Havenote ordner resten.",
+    "footer_privacy": "Personvernerklæring",
+    "footer_terms": "Bruksvilkår",
+    "footer_rights": "Med enerett.",
+    "gallery_shots_title": "Se selv",
+    "gallery_shots_body": "Et raskt blikk på appen, i både lyst og mørkt modus.",
+    "gallery_widgets_title": "Ti widgeter, rett på hjemskjermen din",
+    "gallery_widgets_body": "Et raskt blikk på dagen din uten å åpne appen."
+
+  },
+  "da": {
+    "nav_cta": "Hent på Google Play",
+    "hero_eyebrow": "Stemme først. Privatliv først.",
+    "hero_headline": "Sig det. Havenote ordner resten.",
+    "hero_subtext": "Én talebesked bliver automatisk til et dagbogsopslag, en opgave, liste, påmindelse eller idé — automatisk, privat, på 21 sprog.",
+    "hero_cta": "Hent på Google Play",
+    "stats_1_num": "5",
+    "stats_1_label": "ting i én app",
+    "stats_2_num": "21",
+    "stats_2_label": "sprog",
+    "stats_3_num": "10",
+    "stats_3_label": "Android-widgets",
+    "stats_4_num": "0",
+    "stats_4_label": "konti nødvendige",
+    "section_voice_eyebrow": "Sådan fungerer det",
+    "section_voice_title": "Tal. Havenote lytter.",
+    "section_voice_body": "Tryk én gang, sig hvad du tænker på, og Havenote finder selv ud af, hvor det hører til — dagbog, opgave, liste, påmindelse eller idé. Ingen menuer, ingen indtastning, ingen friktion.",
+    "section_privacy_eyebrow": "Privatliv",
+    "section_privacy_title": "Din stemme forlader aldrig din side",
+    "section_privacy_body": "Aldrig konti. Din optagelse transskriberes direkte på din egen telefon og slettes straks bagefter — ingen rådata når nogensinde vores servere. Kun den tekst, du selv vælger at analysere, sendes nogen steder.",
+    "section_ai_eyebrow": "AI-indsigter",
+    "section_ai_title": "Se mønstre, du aldrig selv ville lægge mærke til",
+    "section_ai_body": "En ugentlig eller månedlig opsummering fremhæver de temaer, du bliver ved med at vende tilbage til, og hvordan dit humør har bevæget sig — genereres kun, når du beder om det, aldrig i baggrunden.",
+    "section_widgets_eyebrow": "Android-widgets",
+    "section_widgets_title": "Din uge, direkte på din startskærm",
+    "section_widgets_body": "Ti startskærm-widgets — dagbog, opgaver, påmindelser, humør — synlige med et enkelt blik uden at åbne appen. De fleste dagbogsapps har ingen. Havenote har ti.",
+    "section_shared_eyebrow": "Delte dagbøger",
+    "section_shared_title": "Før dagbog sammen, i realtid",
+    "section_shared_body": "Start et delt rum med en anden person — en pardagbog, en rejsedagbog, hvad som helst. I ser begge nye indlæg i det øjeblik de tilføjes.",
+    "section_dates_eyebrow": "Glem aldrig",
+    "section_dates_title": "Fødselsdage minder om sig selv",
+    "section_dates_body": "Tilføj en vigtig dato én gang. Havenote minder dig om det i forvejen, foreslår en gave, og viser hvert minde fra netop den dag igen, hvert år.",
+    "languages_title": "Lavet til den måde, du faktisk taler på",
+    "languages_body": "21 sprog, indbygget fra dag ét — ikke tilføjet senere.",
+    "final_cta_title": "Dine tanker, organiseret i det øjeblik du siger dem.",
+    "final_cta_button": "Hent på Google Play",
+    "footer_tagline": "Sig det. Havenote ordner resten.",
+    "footer_privacy": "Privatlivspolitik",
+    "footer_terms": "Servicevilkår",
+    "footer_rights": "Alle rettigheder forbeholdes.",
+    "gallery_shots_title": "Se selv",
+    "gallery_shots_body": "Et hurtigt kig på appen, i både lyst og mørkt tema.",
+    "gallery_widgets_title": "Ti widgets, direkte på din startskærm",
+    "gallery_widgets_body": "Et hurtigt blik på din dag uden at åbne appen."
+
+  }
+};
+
+const GOOGLE_PLAY_URL = "#"; // placeholder — swap in the real Play Store link once available
+
+function applyLanguage(lang) {
+  const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (dict[key] !== undefined) el.textContent = dict[key];
+  });
+  document.getElementById("html-root").setAttribute("lang", lang);
+  document.getElementById("html-root").setAttribute("dir", RTL_LANGS.includes(lang) ? "rtl" : "ltr");
+  document.getElementById("langBtnLabel").textContent = lang.toUpperCase();
+  document.querySelectorAll(".lang-option").forEach(el => {
+    el.classList.toggle("active", el.dataset.lang === lang);
+  });
+  localStorage.setItem("havenote_lang", lang);
+}
+
+function detectInitialLanguage() {
+  const saved = localStorage.getItem("havenote_lang");
+  if (saved && TRANSLATIONS[saved]) return saved;
+  const browserLangs = navigator.languages || [navigator.language || "en"];
+  for (const bl of browserLangs) {
+    const short = bl.slice(0, 2).toLowerCase();
+    if (TRANSLATIONS[short]) return short;
+  }
+  return "en";
+}
+
+function buildLangMenu() {
+  const menu = document.getElementById("langMenu");
+  LANG_ORDER.forEach(code => {
+    const a = document.createElement("a");
+    a.href = "#";
+    a.className = "lang-option";
+    a.dataset.lang = code;
+    a.textContent = LANG_NAMES[code];
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      applyLanguage(code);
+      closeLangMenu();
+    });
+    menu.appendChild(a);
+  });
+}
+
+function buildLangShowcase() {
+  const grid = document.getElementById("langShowcase");
+  LANG_ORDER.forEach(code => {
+    const chip = document.createElement("div");
+    chip.className = "lang-chip";
+    chip.textContent = LANG_NAMES[code];
+    grid.appendChild(chip);
+  });
+}
+
+function closeLangMenu() {
+  document.getElementById("langMenu").classList.remove("open");
+  document.getElementById("langBtn").setAttribute("aria-expanded", "false");
+}
+
+// ---------- Language dropdown ----------
+document.getElementById("langBtn").addEventListener("click", (e) => {
+  e.stopPropagation();
+  const menu = document.getElementById("langMenu");
+  const willOpen = !menu.classList.contains("open");
+  menu.classList.toggle("open", willOpen);
+  document.getElementById("langBtn").setAttribute("aria-expanded", String(willOpen));
+});
+document.addEventListener("click", closeLangMenu);
+
+// ---------- Theme toggle ----------
+const THEMED_IMAGES = {
+  navMark: { light: "assets/mark-light.svg", dark: "assets/mark-dark.svg" },
+  footerMark: { light: "assets/mark-light.svg", dark: "assets/mark-dark.svg" },
+};
+function applyThemedImages(theme) {
+  Object.entries(THEMED_IMAGES).forEach(([id, srcs]) => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute("src", theme === "dark" ? srcs.dark : srcs.light);
+  });
+}
+function applyTheme(theme) {
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    document.getElementById("themeIcon").className = "ph-fill ph-sun";
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    document.getElementById("themeIcon").className = "ph-fill ph-moon";
+  }
+  applyThemedImages(theme);
+  localStorage.setItem("havenote_theme", theme);
+}
+function detectInitialTheme() {
+  const saved = localStorage.getItem("havenote_theme");
+  if (saved) return saved;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+document.getElementById("themeToggle").addEventListener("click", () => {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  applyTheme(isDark ? "light" : "dark");
+});
+
+// ---------- Slider arrow navigation ----------
+function scrollSlider(id, direction) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Scroll by roughly one and a half cards' worth of the visible
+  // width so each click moves a meaningful amount without jumping
+  // the entire track at once.
+  const amount = Math.round(el.clientWidth * 0.7);
+  el.scrollBy({ left: direction * amount, behavior: "smooth" });
+}
+
+// ---------- Lightbox (screenshot/widget click-to-enlarge) ----------
+function openLightbox(src) {
+  const lightbox = document.getElementById("lightbox");
+  document.getElementById("lightboxImg").setAttribute("src", src);
+  lightbox.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeLightbox() {
+  const lightbox = document.getElementById("lightbox");
+  lightbox.classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeLightbox();
+});
+// Clicking the image itself shouldn't close the lightbox (only the
+// backdrop/close button should) — stop the click from bubbling up
+// to the backdrop's own onclick.
+document.getElementById("lightboxImg").addEventListener("click", (e) => e.stopPropagation());
+
+// ---------- Google Play links ----------
+function wirePlayLinks() {
+  ["playLinkNav", "playLinkHero", "playLinkFinal"].forEach(id => {
+    document.getElementById(id).setAttribute("href", GOOGLE_PLAY_URL);
+  });
+}
+
+// ---------- Scroll reveal ----------
+function setupScrollReveal() {
+  const revealEls = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window)) {
+    // No IntersectionObserver support — leave elements in their
+    // default visible state entirely (never add the hidden-state class).
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => {
+    el.classList.add("reveal-active");
+    observer.observe(el);
+  });
+}
+
+// ---------- Scroll progress bar ----------
+function setupScrollProgress() {
+  const bar = document.getElementById("scrollProgress");
+  if (!bar) return;
+  const update = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+    bar.style.width = pct + "%";
+  };
+  window.addEventListener("scroll", update, { passive: true });
+  update();
+}
+
+// ---------- Count-up stat numbers ----------
+// Reads each stat's own printed number as the target (so it works
+// correctly across every language's own numeral text) and animates
+// from 0 up to it once the stats strip scrolls into view. A stat
+// whose text isn't a plain integer (rare, but not guaranteed across
+// 21 languages' number formatting) is left exactly as printed rather
+// than risking a broken animation.
+function setupCountUp() {
+  const nums = document.querySelectorAll(".stat-num");
+  if (!("IntersectionObserver" in window) || nums.length === 0) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      const el = entry.target;
+      const target = parseInt(el.textContent.trim(), 10);
+      if (Number.isNaN(target)) return; // non-numeric label — leave as-is
+      const duration = 1100;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        el.textContent = Math.round(target * eased).toString();
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toString();
+      }
+      requestAnimationFrame(tick);
+    });
+  }, { threshold: 0.5 });
+  nums.forEach(el => observer.observe(el));
+}
+
+// ---------- Hero mouse parallax (desktop only, subtle) ----------
+function setupHeroParallax() {
+  const visual = document.getElementById("heroVisual");
+  const orb = visual ? visual.querySelector(".orb") : null;
+  if (!visual || !orb) return;
+  if (window.matchMedia("(hover: none)").matches) return; // skip on touch devices
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  // Only the orb gets the parallax offset — the floating widget cards
+  // already have their own CSS keyframe animation on `transform` (the
+  // float bob), which would fight with an inline style set here.
+  visual.addEventListener("mousemove", (e) => {
+    const rect = visual.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    orb.style.transform = `translate(${x * 14}px, ${y * 14}px)`;
+  });
+  visual.addEventListener("mouseleave", () => {
+    orb.style.transform = "";
+  });
+}
+
+// ---------- Init ----------
+buildLangMenu();
+buildLangShowcase();
+applyLanguage(detectInitialLanguage());
+applyTheme(detectInitialTheme());
+wirePlayLinks();
+setupScrollReveal();
+setupScrollProgress();
+setupCountUp();
+setupHeroParallax();
+</script>
+
+</body>
+
+</html>
+

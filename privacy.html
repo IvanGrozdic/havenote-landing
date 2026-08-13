@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Havenote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #4CAF93; --accent-light: #E4F5EF;
+    --bg: #FBFBF9; --surface: #FFFFFF; --ink: #17201C; --ink-soft: #5B6862; --border: #E7E9E5;
+    --font-display: 'Outfit', sans-serif; --font-body: 'Plus Jakarta Sans', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14161A; --surface: #1F2029; --ink: #F2F3F1; --ink-soft: #9CA6A0; --border: #2C2E36; --accent-light: #223C33; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.7; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
+  header { padding: 28px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+  .header-inner { max-width: 760px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 19px; text-decoration: none; color: var(--ink); }
+  .brand-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); display: flex; align-items: center; justify-content: center; }
+  .brand-mark span { width: 11px; height: 11px; border-radius: 50%; background: white; }
+  .back { font-size: 14px; color: var(--ink-soft); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  h1 { font-family: var(--font-display); font-size: 34px; margin-bottom: 6px; }
+  .updated { color: var(--ink-soft); font-size: 14px; margin-bottom: 40px; }
+  h2 { font-family: var(--font-display); font-size: 21px; margin-top: 40px; margin-bottom: 12px; }
+  p, li { color: var(--ink-soft); font-size: 15.5px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 8px; }
+  strong { color: var(--ink); }
+  .callout {
+    background: var(--accent-light); border-radius: 16px; padding: 18px 22px;
+    margin: 32px 0; font-size: 14.5px; color: var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <img src="assets/logo-light.png" alt="Havenote" style="height:22px;">
+    </a>
+    <a class="back" href="index.html">← Back to Havenote</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: [add date on publish]</p>
+
+  <div class="callout">
+    <strong>The short version:</strong> Havenote doesn't have accounts. Your voice recordings are transcribed directly on your own phone and deleted immediately after — they never reach our servers. Only the text you explicitly choose to send for AI analysis, or content you choose to share with another person, ever leaves your device.
+  </div>
+
+  <h2>Who we are</h2>
+  <p>Havenote is a voice-capture journaling app. This policy explains what information the app and its backend service handle, and why.</p>
+
+  <h2>No accounts, no personal sign-up data</h2>
+  <p>Havenote does not require or support creating an account. There is no name, email, or password collected at any point. Each installation is identified only by an anonymous, randomly generated device ID, used solely to check premium subscription status and to enforce the free-tier usage limit.</p>
+
+  <h2>Voice recordings</h2>
+  <p>When you record a voice note, the audio is transcribed to text directly on your device. The audio recording itself is stored locally on your phone (so you can play it back within the app) and is never uploaded to our servers as part of that process.</p>
+
+  <h2>What does reach our servers</h2>
+  <ul>
+    <li><strong>AI analysis requests:</strong> if you use a feature that calls our AI (entry analysis, weekly/monthly recaps, idea expansion, list parsing from voice, transcript correction), the relevant text is sent to our backend, which forwards it to our AI provider (Anthropic) to generate a response. This text is not stored permanently on our servers beyond what's needed to process the request.</li>
+    <li><strong>Shared journals and shared lists:</strong> if you choose to share a journal or list with another person, the entries/items in that shared space (including any photos or voice recordings attached to them) are stored on our servers so they can sync between both participants' devices. This only happens for content inside a space you deliberately created and shared — nothing in your private journal, tasks, lists, reminders, or ideas is ever sent anywhere unless you take this explicit action.</li>
+    <li><strong>Purchase verification:</strong> if you subscribe to Havenote Premium, your purchase token is verified against Google Play's servers to activate premium features tied to your anonymous device ID.</li>
+  </ul>
+
+  <h2>Data you keep entirely on your device</h2>
+  <p>Your journal entries, tasks, lists, reminders, ideas, important dates, photos, and voice recordings are stored locally on your phone by default. You control backup and export yourself — Havenote does not automatically back this data up to any server.</p>
+
+  <h2>Third-party services</h2>
+  <p>Havenote's backend uses Anthropic's Claude API to generate AI analysis and recaps, and Google Play's billing and developer notification services to handle subscriptions. These providers process only the specific data described above, for the specific purpose of fulfilling your request.</p>
+
+  <h2>Your choices</h2>
+  <ul>
+    <li>Every AI-analysis feature is opt-in — nothing is analyzed automatically or in the background.</li>
+    <li>Location and weather tagging on entries is off by default and only activated per-entry, by you.</li>
+    <li>You can mark any journal entry as private, delete individual entries or your whole local database, and export your data at any time.</li>
+  </ul>
+
+  <h2>Children's privacy</h2>
+  <p>Havenote is not directed at children and does not knowingly collect information from children.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes, the updated version will be posted here with a new "last updated" date.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy: [add contact email on publish]</p>
+
+  <div class="callout">
+    This is a working draft based on Havenote's actual data handling as built. It has not been reviewed by a lawyer — have it checked against your specific legal obligations (including regional requirements like GDPR/CCPA) before publishing it as your live policy.
+  </div>
+</div>
+
+</body>
+</html>
