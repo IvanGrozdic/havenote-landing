@@ -5,6 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Havenote — Speak it. Havenote sorts the rest.</title>
 <meta name="description" content="One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.">
+<link rel="canonical" href="https://havenote.app/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://havenote.app/">
+<meta property="og:site_name" content="Havenote">
+<meta property="og:title" content="Havenote — Speak it. Havenote sorts the rest.">
+<meta property="og:description" content="One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.">
+<meta property="og:image" content="https://havenote.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Havenote — Speak it. Havenote sorts the rest.">
+<meta name="twitter:description" content="One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.">
+<meta name="twitter:image" content="https://havenote.app/assets/og-image.png">
+
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%234CAF93'/%3E%3Ccircle cx='50' cy='50' r='22' fill='white'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -230,6 +248,9 @@
     line-height: 1.6;
   }
   .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .trust-badges { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 26px; }
+  .trust-badge { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .trust-badge i { color: var(--accent); font-size: 16px; flex-shrink: 0; }
 
   /* Hero visual: voice orb + floating category chips */
   .hero-visual {
@@ -663,6 +684,97 @@
   }
   .lang-chip:hover { border-color: var(--accent); transform: translateY(-3px); }
 
+  /* ---------- Pricing ---------- */
+  .pricing-section { padding: 100px 0; }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .pricing-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px 30px;
+    position: relative;
+  }
+  .pricing-card-featured {
+    border: 2px solid var(--accent);
+    box-shadow: 0 20px 50px -12px hsl(var(--shadow-color) / 0.25);
+  }
+  .pricing-card-badge {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .pricing-card-name { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin-bottom: 14px; }
+  .pricing-card-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
+  .pricing-amount { font-family: var(--font-display); font-weight: 700; font-size: 40px; }
+  .pricing-period { color: var(--ink-soft); font-size: 15px; }
+  .pricing-yearly-note { color: var(--ink-soft); font-size: 13px; margin-bottom: 22px; }
+  .pricing-card:not(.pricing-card-featured) .pricing-card-price { margin-bottom: 22px; }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; }
+  .pricing-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+  .pricing-features li i { color: var(--accent); font-size: 15px; margin-top: 2px; flex-shrink: 0; }
+  .pricing-btn { width: 100%; justify-content: center; }
+
+  /* ---------- Founder note ---------- */
+  .founder-section { padding: 20px 0 60px; }
+  .founder-card {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .founder-quote-icon { font-size: 26px; color: var(--accent); margin-bottom: 16px; }
+  .founder-text { font-size: 16px; line-height: 1.7; color: var(--ink); margin-bottom: 16px; }
+  .founder-name { font-weight: 700; color: var(--ink-soft); font-size: 14px; }
+
+  /* ---------- FAQ ---------- */
+  .faq-section { padding: 20px 0 80px; }
+  .faq-list { max-width: 720px; margin: 0 auto; }
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 4px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .faq-icon { color: var(--accent); font-size: 16px; flex-shrink: 0; transition: transform 0.2s ease; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+  .faq-item.open .faq-answer { max-height: 240px; }
+  .faq-answer p { padding: 0 4px 22px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+
   /* ---------- Final CTA ---------- */
   .final-cta {
     padding: 110px 0;
@@ -709,6 +821,7 @@
     .hero { grid-template-columns: 1fr; padding-top: 48px; text-align: center; }
     .hero-sub { margin-left: auto; margin-right: auto; }
     .hero-actions { justify-content: center; }
+    .trust-badges { justify-content: center; }
     .hero-visual { height: 360px; order: -1; }
     .feature, .feature.reverse { grid-template-columns: 1fr; gap: 36px; }
     .feature.reverse .feature-text, .feature.reverse .feature-visual { order: initial; }
@@ -718,6 +831,7 @@
     .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
     .lang-grid { grid-template-columns: repeat(4, 1fr); }
     .lang-menu { width: 300px; grid-template-columns: repeat(2, 1fr); }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 380px; }
   }
   @media (max-width: 560px) {
     .wrap { padding-left: 20px; padding-right: 20px; }
@@ -746,12 +860,53 @@
     .shot-card { width: 130px; }
     .widget-gallery-card { width: 160px; }
     .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+    .footer-inner .brand { justify-content: center; }
     .footer-links { justify-content: center; }
     footer .wrap { text-align: center; }
     .lightbox { padding: 24px 20px; }
     .lightbox-close { top: 16px; right: 16px; }
+    .pricing-card { padding: 28px 22px; }
+    .pricing-amount { font-size: 34px; }
   }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Havenote",
+  "operatingSystem": "Android",
+  "applicationCategory": "ProductivityApplication",
+  "description": "One voice note becomes a journal entry, task, list, reminder, or idea — automatically, privately, in 21 languages.",
+  "url": "https://havenote.app/",
+  "image": "https://havenote.app/assets/og-image.png",
+  "inLanguage": ["en","sr","es","fr","pt","ru","zh","hi","ar","bn","id","de","ja","ko","it","nl","pl","sv","tr","no","da"],
+  "offers": [
+    { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
+    {
+      "@type": "Offer",
+      "name": "Premium Monthly",
+      "priceSpecification": { "@type": "UnitPriceSpecification", "price": "6.99", "priceCurrency": "USD", "billingDuration": "P1M" }
+    },
+    {
+      "@type": "Offer",
+      "name": "Premium Yearly",
+      "priceSpecification": { "@type": "UnitPriceSpecification", "price": "59.99", "priceCurrency": "USD", "billingDuration": "P1Y" }
+    }
+  ]
+}
+</script>
+<!-- Deliberately no aggregateRating/review block above — there are no
+     real ratings yet. Add one only once genuine Play Store reviews
+     exist; fabricated ratings violate Google's structured-data
+     guidelines and can get markup disqualified. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Havenote",
+  "url": "https://havenote.app/"
+}
+</script>
 </head>
 <body>
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -798,6 +953,11 @@
           <i class="ph-bold ph-google-play-logo"></i>
           <span data-i18n="hero_cta">Get it on Google Play</span>
         </a>
+      </div>
+      <div class="trust-badges">
+        <div class="trust-badge"><i class="ph-fill ph-shield-check"></i><span data-i18n="trust_1">No account required</span></div>
+        <div class="trust-badge"><i class="ph-fill ph-lock-key"></i><span data-i18n="trust_2">Your voice never leaves your phone</span></div>
+        <div class="trust-badge"><i class="ph-fill ph-translate"></i><span data-i18n="trust_3">21 languages, built in</span></div>
       </div>
     </div>
     <div class="hero-visual" id="heroVisual">
@@ -992,6 +1152,106 @@
     </div>
   </section>
 
+  <section class="pricing-section" id="pricing">
+    <div class="wrap">
+      <div class="lang-heading reveal">
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="pricing_eyebrow">Pricing</span></div>
+        <h2 data-i18n="pricing_title">Free to start. Upgrade when you're ready.</h2>
+        <p data-i18n="pricing_subtext">No account needed either way — premium just removes the caps.</p>
+      </div>
+      <div class="pricing-grid reveal">
+        <div class="pricing-card">
+          <div class="pricing-card-name" data-i18n="pricing_free_name">Free</div>
+          <div class="pricing-card-price"><span class="pricing-amount" data-i18n="pricing_free_price">$0</span></div>
+          <ul class="pricing-features">
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_free_1">5 journal entries a month</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_free_2">3 tasks, 2 reminders, 2 ideas, 1 list at a time</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_free_3">Voice capture, list-forming, and cleanup — always unlimited</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_free_4">2 home screen widgets</span></li>
+          </ul>
+        </div>
+        <div class="pricing-card pricing-card-featured">
+          <div class="pricing-card-badge" data-i18n="pricing_badge">Most popular</div>
+          <div class="pricing-card-name" data-i18n="pricing_premium_name">Premium</div>
+          <div class="pricing-card-price">
+            <span class="pricing-amount">$6.99</span><span class="pricing-period" data-i18n="pricing_premium_period">/month</span>
+          </div>
+          <div class="pricing-yearly-note" data-i18n="pricing_premium_yearly_note">or $59.99/year — save 29%</div>
+          <ul class="pricing-features">
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_1">Unlimited journal entries, tasks, lists, reminders, and ideas</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_2">Unlimited AI insights & weekly and monthly recaps</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_3">Create and share journals and lists</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_4">Full backup, restore, and export</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_5">PIN &amp; biometric lock, all widgets, full sticker library</span></li>
+          </ul>
+          <a class="btn btn-primary pricing-btn" href="#" id="playLinkPricing" target="_blank" rel="noopener">
+            <i class="ph-bold ph-google-play-logo"></i>
+            <span data-i18n="pricing_cta">Get Havenote</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="founder-section wrap reveal">
+    <div class="founder-card">
+      <i class="ph-fill ph-quotes founder-quote-icon"></i>
+      <p class="founder-text" data-i18n="founder_text">Havenote started from a simple frustration: journaling apps make you type, task apps make you type, list apps make you type — and it's hard to think clearly while typing on a phone. I wanted one thing I could just talk to, in whatever language I happened to be thinking in.</p>
+      <div class="founder-name" data-i18n="founder_name">— Havenote's creator</div>
+    </div>
+  </section>
+
+  <section class="faq-section wrap reveal">
+    <div class="lang-heading reveal">
+      <div class="eyebrow"><span class="dot"></span><span data-i18n="faq_eyebrow">FAQ</span></div>
+      <h2 data-i18n="faq_title">Questions people actually ask</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" type="button">
+          <span data-i18n="faq_q1">Do I need to create an account?</span>
+          <i class="ph-bold ph-plus faq-icon"></i>
+        </button>
+        <div class="faq-answer"><p data-i18n="faq_a1">No. Havenote works with just your device — no sign-up, no email, no password.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" type="button">
+          <span data-i18n="faq_q2">What happens to my voice after I record?</span>
+          <i class="ph-bold ph-plus faq-icon"></i>
+        </button>
+        <div class="faq-answer"><p data-i18n="faq_a2">It's transcribed right on your phone and deleted immediately after. Nothing raw ever reaches our servers — only the text you choose to have analyzed does.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" type="button">
+          <span data-i18n="faq_q3">Can I cancel my subscription anytime?</span>
+          <i class="ph-bold ph-plus faq-icon"></i>
+        </button>
+        <div class="faq-answer"><p data-i18n="faq_a3">Yes, anytime, right from Google Play. You keep Premium until the end of the period you already paid for.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" type="button">
+          <span data-i18n="faq_q4">Does Havenote work in my language?</span>
+          <i class="ph-bold ph-plus faq-icon"></i>
+        </button>
+        <div class="faq-answer"><p data-i18n="faq_a4">It supports 21 languages, built in from day one — speak in whichever one you're thinking in.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" type="button">
+          <span data-i18n="faq_q5">What's the difference between Free and Premium?</span>
+          <i class="ph-bold ph-plus faq-icon"></i>
+        </button>
+        <div class="faq-answer"><p data-i18n="faq_a5">Free covers real daily use with sensible limits — a handful of journal entries, tasks, reminders, and ideas at a time. Premium removes those limits and adds sharing, backup, and more.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" type="button">
+          <span data-i18n="faq_q6">Does it work without an internet connection?</span>
+          <i class="ph-bold ph-plus faq-icon"></i>
+        </button>
+        <div class="faq-answer"><p data-i18n="faq_a6">You can always record and save — Havenote falls back to simple automatic formatting if you're offline. The smarter AI cleanup and insights need a connection.</p></div>
+      </div>
+    </div>
+  </section>
+
   <section class="final-cta wrap reveal">
     <h2 data-i18n="final_cta_title">Your thoughts, organized the moment you say them.</h2>
     <a class="btn btn-primary" href="#" id="playLinkFinal" target="_blank" rel="noopener">
@@ -1073,6 +1333,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Privacy Policy",
     "footer_terms": "Terms of Service",
     "footer_rights": "All rights reserved.",
+    "pricing_eyebrow": "Pricing",
+    "pricing_title": "Free to start. Upgrade when you're ready.",
+    "pricing_subtext": "No account needed either way — premium just removes the caps.",
+    "pricing_free_name": "Free",
+    "pricing_free_price": "$0",
+    "pricing_free_1": "5 journal entries a month",
+    "pricing_free_2": "3 tasks, 2 reminders, 2 ideas, 1 list at a time",
+    "pricing_free_3": "Voice capture, list-forming, and cleanup — always unlimited",
+    "pricing_free_4": "2 home screen widgets",
+    "pricing_badge": "Most popular",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/month",
+    "pricing_premium_yearly_note": "or $59.99/year — save 29%",
+    "pricing_premium_1": "Unlimited journal entries, tasks, lists, reminders, and ideas",
+    "pricing_premium_2": "Unlimited AI insights & weekly and monthly recaps",
+    "pricing_premium_3": "Create and share journals and lists",
+    "pricing_premium_4": "Full backup, restore, and export",
+    "pricing_premium_5": "PIN & biometric lock, all widgets, full sticker library",
+    "pricing_cta": "Get Havenote",
+    "trust_1": "No account required",
+    "trust_2": "Your voice never leaves your phone",
+    "trust_3": "21 languages, built in",
+    "founder_text": "Havenote started from a simple frustration: journaling apps make you type, task apps make you type, list apps make you type — and it's hard to think clearly while typing on a phone. I wanted one thing I could just talk to, in whatever language I happened to be thinking in.",
+    "founder_name": "— Havenote's creator",
+    "faq_q1": "Do I need to create an account?",
+    "faq_a1": "No. Havenote works with just your device — no sign-up, no email, no password.",
+    "faq_q2": "What happens to my voice after I record?",
+    "faq_a2": "It's transcribed right on your phone and deleted immediately after. Nothing raw ever reaches our servers — only the text you choose to have analyzed does.",
+    "faq_q3": "Can I cancel my subscription anytime?",
+    "faq_a3": "Yes, anytime, right from Google Play. You keep Premium until the end of the period you already paid for.",
+    "faq_q4": "Does Havenote work in my language?",
+    "faq_a4": "It supports 21 languages, built in from day one — speak in whichever one you're thinking in.",
+    "faq_q5": "What's the difference between Free and Premium?",
+    "faq_a5": "Free covers real daily use with sensible limits — a handful of journal entries, tasks, reminders, and ideas at a time. Premium removes those limits and adds sharing, backup, and more.",
+    "faq_q6": "Does it work without an internet connection?",
+    "faq_a6": "You can always record and save — Havenote falls back to simple automatic formatting if you're offline. The smarter AI cleanup and insights need a connection.",
+    "faq_eyebrow": "FAQ",
+    "faq_title": "Questions people actually ask",
     "gallery_shots_title": "See it for yourself",
     "gallery_shots_body": "A quick look around the app, in both light and dark.",
     "gallery_widgets_title": "Ten widgets, right on your home screen",
@@ -1119,6 +1417,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Politika privatnosti",
     "footer_terms": "Uslovi korišćenja",
     "footer_rights": "Sva prava zadržana.",
+    "pricing_eyebrow": "Cene",
+    "pricing_title": "Besplatno za početak. Nadogradi kad budeš spreman/na.",
+    "pricing_subtext": "Nalog ti ne treba ni u jednom slučaju — premium samo uklanja limite.",
+    "pricing_free_name": "Besplatno",
+    "pricing_free_price": "0€",
+    "pricing_free_1": "5 zapisa u dnevniku mesečno",
+    "pricing_free_2": "3 zadatka, 2 podsetnika, 2 ideje, 1 lista u isto vreme",
+    "pricing_free_3": "Snimanje glasa, formiranje liste i sređivanje teksta — uvek neograničeno",
+    "pricing_free_4": "2 widget-a za početni ekran",
+    "pricing_badge": "Najpopularnije",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/mesečno",
+    "pricing_premium_yearly_note": "ili 59,99€/godišnje — uštedi 29%",
+    "pricing_premium_1": "Neograničeni zapisi u dnevniku, zadaci, liste, podsetnici i ideje",
+    "pricing_premium_2": "Neograničeni AI uvidi i nedeljni i mesečni rezimei",
+    "pricing_premium_3": "Kreiraj i deli dnevnike i liste",
+    "pricing_premium_4": "Puna rezervna kopija, vraćanje i izvoz",
+    "pricing_premium_5": "PIN i biometrijsko zaključavanje, svi widget-i, puna biblioteka stikera",
+    "pricing_cta": "Preuzmi Havenote",
+    "trust_1": "Nije potreban nalog",
+    "trust_2": "Tvoj glas ne napušta telefon",
+    "trust_3": "21 jezik, ugrađeno od početka",
+    "founder_text": "Havenote je počeo od jedne jednostavne frustracije: aplikacije za dnevnik traže da kucaš, aplikacije za zadatke traže da kucaš, aplikacije za liste traže da kucaš — a teško je jasno razmišljati dok kucaš na telefonu. Hteo sam jednu stvar kojoj mogu prosto da pričam, na jeziku na kom trenutno razmišljam.",
+    "founder_name": "— tvorac Havenote-a",
+    "faq_q1": "Da li mi je potreban nalog?",
+    "faq_a1": "Ne. Havenote radi samo sa tvojim uređajem — bez registracije, bez emaila, bez lozinke.",
+    "faq_q2": "Šta se dešava sa mojim glasom nakon snimanja?",
+    "faq_a2": "Transkribuje se odmah na tvom telefonu i odmah zatim briše. Ništa sirovo nikad ne stiže do naših servera — samo tekst koji ti izabereš da se analizira.",
+    "faq_q3": "Mogu li da otkažem pretplatu kad god hoću?",
+    "faq_a3": "Da, u bilo kom trenutku, direktno iz Google Play-a. Zadržavaš Premium do kraja perioda koji si već platio/la.",
+    "faq_q4": "Da li Havenote radi na mom jeziku?",
+    "faq_a4": "Podržava 21 jezik, ugrađen od prvog dana — govori na jeziku na kom trenutno razmišljaš.",
+    "faq_q5": "Koja je razlika između Free i Premium verzije?",
+    "faq_a5": "Free pokriva stvarnu svakodnevnu upotrebu sa razumnim limitima — nekoliko zapisa u dnevniku, zadataka, podsetnika i ideja u isto vreme. Premium uklanja te limite i dodaje deljenje, rezervnu kopiju i još toga.",
+    "faq_q6": "Da li radi bez internet konekcije?",
+    "faq_a6": "Uvek možeš da snimiš i sačuvaš — Havenote se oslanja na jednostavno automatsko sređivanje kad si offline. Pametnije AI čišćenje i uvidi traže konekciju.",
+    "faq_eyebrow": "Česta pitanja",
+    "faq_title": "Pitanja koja ljudi stvarno postavljaju",
     "gallery_shots_title": "Pogledaj sam",
     "gallery_shots_body": "Kratak pregled aplikacije, i u svetloj i u tamnoj temi.",
     "gallery_widgets_title": "Deset vidžeta, direktno na početnom ekranu",
@@ -1165,6 +1501,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Política de privacidad",
     "footer_terms": "Términos de servicio",
     "footer_rights": "Todos los derechos reservados.",
+    "pricing_eyebrow": "Precios",
+    "pricing_title": "Gratis para empezar. Mejora cuando quieras.",
+    "pricing_subtext": "No necesitas cuenta en ningún caso — premium solo elimina los límites.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "0 €",
+    "pricing_free_1": "5 entradas de diario al mes",
+    "pricing_free_2": "3 tareas, 2 recordatorios, 2 ideas, 1 lista a la vez",
+    "pricing_free_3": "Captura de voz, formación de listas y limpieza de texto — siempre ilimitado",
+    "pricing_free_4": "2 widgets de pantalla de inicio",
+    "pricing_badge": "Más popular",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/mes",
+    "pricing_premium_yearly_note": "o 59,99 €/año — ahorra 29%",
+    "pricing_premium_1": "Entradas de diario, tareas, listas, recordatorios e ideas ilimitados",
+    "pricing_premium_2": "Análisis de IA ilimitados y resúmenes semanales y mensuales",
+    "pricing_premium_3": "Crea y comparte diarios y listas",
+    "pricing_premium_4": "Copia de seguridad, restauración y exportación completas",
+    "pricing_premium_5": "Bloqueo con PIN y biometría, todos los widgets, biblioteca completa de stickers",
+    "pricing_cta": "Consigue Havenote",
+    "trust_1": "No necesitas cuenta",
+    "trust_2": "Tu voz nunca sale de tu teléfono",
+    "trust_3": "21 idiomas, incorporados desde el principio",
+    "founder_text": "Havenote nació de una frustración sencilla: las apps de diario te hacen escribir, las de tareas te hacen escribir, las de listas te hacen escribir — y es difícil pensar con claridad mientras escribes en el móvil. Quería algo a lo que simplemente pudiera hablarle, en el idioma en el que estuviera pensando.",
+    "founder_name": "— El creador de Havenote",
+    "faq_q1": "¿Necesito crear una cuenta?",
+    "faq_a1": "No. Havenote funciona solo con tu dispositivo — sin registro, sin correo, sin contraseña.",
+    "faq_q2": "¿Qué pasa con mi voz después de grabar?",
+    "faq_a2": "Se transcribe directamente en tu teléfono y se elimina justo después. Nada en bruto llega nunca a nuestros servidores — solo el texto que decidas analizar.",
+    "faq_q3": "¿Puedo cancelar mi suscripción cuando quiera?",
+    "faq_a3": "Sí, en cualquier momento, directamente desde Google Play. Conservas Premium hasta el final del periodo que ya pagaste.",
+    "faq_q4": "¿Havenote funciona en mi idioma?",
+    "faq_a4": "Admite 21 idiomas, incorporados desde el primer día — habla en el que estés pensando.",
+    "faq_q5": "¿Cuál es la diferencia entre Free y Premium?",
+    "faq_a5": "Free cubre el uso diario real con límites razonables — algunas entradas de diario, tareas, recordatorios e ideas a la vez. Premium elimina esos límites y añade compartir, copia de seguridad y más.",
+    "faq_q6": "¿Funciona sin conexión a internet?",
+    "faq_a6": "Siempre puedes grabar y guardar — Havenote recurre a un formato automático simple si estás sin conexión. La limpieza con IA más inteligente y los análisis necesitan conexión.",
+    "faq_eyebrow": "Preguntas frecuentes",
+    "faq_title": "Preguntas que la gente realmente hace",
     "gallery_shots_title": "Compruébalo tú mismo",
     "gallery_shots_body": "Un vistazo rápido a la aplicación, en modo claro y oscuro.",
     "gallery_widgets_title": "Diez widgets, directo en tu pantalla de inicio",
@@ -1211,6 +1585,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Politique de confidentialité",
     "footer_terms": "Conditions d'utilisation",
     "footer_rights": "Tous droits réservés.",
+    "pricing_eyebrow": "Tarifs",
+    "pricing_title": "Gratuit pour commencer. Passe à Premium quand tu veux.",
+    "pricing_subtext": "Aucun compte requis dans les deux cas — Premium ne fait que retirer les limites.",
+    "pricing_free_name": "Gratuit",
+    "pricing_free_price": "0 €",
+    "pricing_free_1": "5 entrées de journal par mois",
+    "pricing_free_2": "3 tâches, 2 rappels, 2 idées, 1 liste à la fois",
+    "pricing_free_3": "Capture vocale, création de listes et nettoyage du texte — toujours illimités",
+    "pricing_free_4": "2 widgets d'écran d'accueil",
+    "pricing_badge": "Le plus populaire",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/mois",
+    "pricing_premium_yearly_note": "ou 59,99 €/an — économise 29 %",
+    "pricing_premium_1": "Entrées de journal, tâches, listes, rappels et idées illimités",
+    "pricing_premium_2": "Analyses IA illimitées et résumés hebdomadaires et mensuels",
+    "pricing_premium_3": "Crée et partage des journaux et des listes",
+    "pricing_premium_4": "Sauvegarde, restauration et export complets",
+    "pricing_premium_5": "Verrouillage par code et biométrie, tous les widgets, bibliothèque complète d'autocollants",
+    "pricing_cta": "Obtenir Havenote",
+    "trust_1": "Aucun compte nécessaire",
+    "trust_2": "Ta voix ne quitte jamais ton téléphone",
+    "trust_3": "21 langues, intégrées dès le départ",
+    "founder_text": "Havenote est né d'une frustration simple : les applis de journal te font taper, les applis de tâches te font taper, les applis de listes te font taper — et il est difficile de penser clairement en tapant sur un téléphone. Je voulais une seule chose à qui simplement parler, dans la langue où je pensais sur le moment.",
+    "founder_name": "— Le créateur de Havenote",
+    "faq_q1": "Ai-je besoin de créer un compte ?",
+    "faq_a1": "Non. Havenote fonctionne uniquement avec ton appareil — pas d'inscription, pas d'e-mail, pas de mot de passe.",
+    "faq_q2": "Qu'arrive-t-il à ma voix après l'enregistrement ?",
+    "faq_a2": "Elle est transcrite directement sur ton téléphone puis supprimée aussitôt après. Rien de brut n'atteint jamais nos serveurs — seul le texte que tu choisis de faire analyser y va.",
+    "faq_q3": "Puis-je annuler mon abonnement à tout moment ?",
+    "faq_a3": "Oui, à tout moment, directement depuis Google Play. Tu gardes Premium jusqu'à la fin de la période déjà payée.",
+    "faq_q4": "Havenote fonctionne-t-il dans ma langue ?",
+    "faq_a4": "Il prend en charge 21 langues, intégrées dès le premier jour — parle dans celle où tu penses.",
+    "faq_q5": "Quelle est la différence entre Free et Premium ?",
+    "faq_a5": "Free couvre un usage quotidien réel avec des limites raisonnables — quelques entrées de journal, tâches, rappels et idées à la fois. Premium supprime ces limites et ajoute le partage, la sauvegarde et plus encore.",
+    "faq_q6": "Fonctionne-t-il sans connexion internet ?",
+    "faq_a6": "Tu peux toujours enregistrer et sauvegarder — Havenote passe à une mise en forme automatique simple hors ligne. Le nettoyage IA plus intelligent et les analyses nécessitent une connexion.",
+    "faq_eyebrow": "FAQ",
+    "faq_title": "Les questions qu'on nous pose vraiment",
     "gallery_shots_title": "Vois par toi-même",
     "gallery_shots_body": "Un aperçu rapide de l'application, en mode clair et sombre.",
     "gallery_widgets_title": "Dix widgets, directement sur ton écran d'accueil",
@@ -1257,6 +1669,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Política de Privacidade",
     "footer_terms": "Termos de Serviço",
     "footer_rights": "Todos os direitos reservados.",
+    "pricing_eyebrow": "Preços",
+    "pricing_title": "Grátis para começar. Atualiza quando quiseres.",
+    "pricing_subtext": "Não precisas de conta em nenhum dos casos — o premium só remove os limites.",
+    "pricing_free_name": "Grátis",
+    "pricing_free_price": "0 €",
+    "pricing_free_1": "5 entradas de diário por mês",
+    "pricing_free_2": "3 tarefas, 2 lembretes, 2 ideias, 1 lista de cada vez",
+    "pricing_free_3": "Captura de voz, criação de listas e limpeza de texto — sempre ilimitados",
+    "pricing_free_4": "2 widgets do ecrã principal",
+    "pricing_badge": "Mais popular",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/mês",
+    "pricing_premium_yearly_note": "ou 59,99 €/ano — poupa 29%",
+    "pricing_premium_1": "Entradas de diário, tarefas, listas, lembretes e ideias ilimitados",
+    "pricing_premium_2": "Análises de IA ilimitadas e resumos semanais e mensais",
+    "pricing_premium_3": "Cria e partilha diários e listas",
+    "pricing_premium_4": "Cópia de segurança, restauro e exportação completos",
+    "pricing_premium_5": "Bloqueio por PIN e biometria, todos os widgets, biblioteca completa de autocolantes",
+    "pricing_cta": "Obter o Havenote",
+    "trust_1": "Não é preciso conta",
+    "trust_2": "A tua voz nunca sai do telemóvel",
+    "trust_3": "21 idiomas, incorporados desde o início",
+    "founder_text": "O Havenote nasceu de uma frustração simples: as apps de diário obrigam-te a escrever, as de tarefas obrigam-te a escrever, as de listas obrigam-te a escrever — e é difícil pensar com clareza enquanto escreves no telemóvel. Eu queria uma única coisa a que pudesse simplesmente falar, na língua em que estivesse a pensar.",
+    "founder_name": "— O criador do Havenote",
+    "faq_q1": "Preciso de criar uma conta?",
+    "faq_a1": "Não. O Havenote funciona apenas com o teu dispositivo — sem registo, sem e-mail, sem palavra-passe.",
+    "faq_q2": "O que acontece à minha voz depois de gravar?",
+    "faq_a2": "É transcrita diretamente no teu telemóvel e eliminada logo a seguir. Nada em bruto chega aos nossos servidores — apenas o texto que escolheres analisar.",
+    "faq_q3": "Posso cancelar a minha subscrição a qualquer momento?",
+    "faq_a3": "Sim, a qualquer momento, diretamente pelo Google Play. Mantens o Premium até ao fim do período já pago.",
+    "faq_q4": "O Havenote funciona no meu idioma?",
+    "faq_a4": "Suporta 21 idiomas, incorporados desde o primeiro dia — fala naquele em que estiveres a pensar.",
+    "faq_q5": "Qual é a diferença entre Free e Premium?",
+    "faq_a5": "O Free cobre o uso diário real com limites razoáveis — algumas entradas de diário, tarefas, lembretes e ideias de cada vez. O Premium remove esses limites e adiciona partilha, cópia de segurança e mais.",
+    "faq_q6": "Funciona sem ligação à internet?",
+    "faq_a6": "Podes sempre gravar e guardar — o Havenote recorre a formatação automática simples quando estás offline. A limpeza por IA mais inteligente e as análises precisam de ligação.",
+    "faq_eyebrow": "Perguntas frequentes",
+    "faq_title": "Perguntas que as pessoas realmente fazem",
     "gallery_shots_title": "Vê por ti mesmo",
     "gallery_shots_body": "Uma vista rápida da app, no modo claro e escuro.",
     "gallery_widgets_title": "Dez widgets, direto no teu ecrã inicial",
@@ -1303,6 +1753,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Политика конфиденциальности",
     "footer_terms": "Условия использования",
     "footer_rights": "Все права защищены.",
+    "pricing_eyebrow": "Цены",
+    "pricing_title": "Бесплатно для начала. Обновитесь, когда будете готовы.",
+    "pricing_subtext": "Аккаунт не нужен в любом случае — подписка просто снимает ограничения.",
+    "pricing_free_name": "Бесплатно",
+    "pricing_free_price": "0 ₽",
+    "pricing_free_1": "5 записей в дневнике в месяц",
+    "pricing_free_2": "3 задачи, 2 напоминания, 2 идеи, 1 список одновременно",
+    "pricing_free_3": "Голосовой ввод, формирование списков и очистка текста — всегда без ограничений",
+    "pricing_free_4": "2 виджета главного экрана",
+    "pricing_badge": "Самый популярный",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/месяц",
+    "pricing_premium_yearly_note": "или 59,99 €/год — экономия 29%",
+    "pricing_premium_1": "Неограниченные записи в дневнике, задачи, списки, напоминания и идеи",
+    "pricing_premium_2": "Неограниченный ИИ-анализ и еженедельные и ежемесячные сводки",
+    "pricing_premium_3": "Создавайте и делитесь дневниками и списками",
+    "pricing_premium_4": "Полное резервное копирование, восстановление и экспорт",
+    "pricing_premium_5": "Защита PIN-кодом и биометрией, все виджеты, полная библиотека стикеров",
+    "pricing_cta": "Получить Havenote",
+    "trust_1": "Аккаунт не нужен",
+    "trust_2": "Ваш голос никогда не покидает телефон",
+    "trust_3": "21 язык, встроено с самого начала",
+    "founder_text": "Havenote родился из простого раздражения: приложения для дневника заставляют печатать, для задач — печатать, для списков — печатать, а ясно думать, печатая на телефоне, сложно. Мне хотелось одну вещь, которой можно просто говорить, на том языке, на котором я в этот момент думаю.",
+    "founder_name": "— создатель Havenote",
+    "faq_q1": "Нужен ли мне аккаунт?",
+    "faq_a1": "Нет. Havenote работает только с вашим устройством — без регистрации, без email, без пароля.",
+    "faq_q2": "Что происходит с моим голосом после записи?",
+    "faq_a2": "Он расшифровывается прямо на телефоне и сразу удаляется. Ничего необработанного никогда не попадает на наши серверы — только текст, который вы решите отправить на анализ.",
+    "faq_q3": "Могу ли я отменить подписку в любой момент?",
+    "faq_a3": "Да, в любой момент, прямо в Google Play. Premium сохраняется до конца уже оплаченного периода.",
+    "faq_q4": "Работает ли Havenote на моём языке?",
+    "faq_a4": "Поддерживается 21 язык, встроенных с первого дня — говорите на том, на котором думаете.",
+    "faq_q5": "В чём разница между Free и Premium?",
+    "faq_a5": "Free покрывает реальное повседневное использование с разумными лимитами — несколько записей в дневнике, задач, напоминаний и идей одновременно. Premium снимает эти лимиты и добавляет общий доступ, резервное копирование и многое другое.",
+    "faq_q6": "Работает ли без интернета?",
+    "faq_a6": "Вы всегда можете записать и сохранить — без сети Havenote переходит на простое автоматическое форматирование. Более умная ИИ-очистка и анализ требуют подключения.",
+    "faq_eyebrow": "Частые вопросы",
+    "faq_title": "Вопросы, которые действительно задают",
     "gallery_shots_title": "Посмотри сам",
     "gallery_shots_body": "Быстрый обзор приложения, в светлом и тёмном режиме.",
     "gallery_widgets_title": "Десять виджетов прямо на главном экране",
@@ -1349,6 +1837,44 @@ const TRANSLATIONS = {
     "footer_privacy": "隐私政策",
     "footer_terms": "服务条款",
     "footer_rights": "版权所有。",
+    "pricing_eyebrow": "价格",
+    "pricing_title": "免费开始，随时升级。",
+    "pricing_subtext": "无论哪种方案都无需账号 — 高级版只是取消限制。",
+    "pricing_free_name": "免费",
+    "pricing_free_price": "¥0",
+    "pricing_free_1": "每月 5 篇日记条目",
+    "pricing_free_2": "3 个任务、2 个提醒、2 个想法、1 个清单（同时）",
+    "pricing_free_3": "语音记录、清单生成和文本整理 — 始终无限制",
+    "pricing_free_4": "2 个主屏幕小组件",
+    "pricing_badge": "最受欢迎",
+    "pricing_premium_name": "高级版",
+    "pricing_premium_period": "/月",
+    "pricing_premium_yearly_note": "或 ¥59.99/年 — 节省 29%",
+    "pricing_premium_1": "无限日记条目、任务、清单、提醒和想法",
+    "pricing_premium_2": "无限 AI 洞察，以及每周和每月总结",
+    "pricing_premium_3": "创建并分享日记和清单",
+    "pricing_premium_4": "完整备份、恢复和导出",
+    "pricing_premium_5": "密码和生物识别锁定、所有小组件、完整贴纸库",
+    "pricing_cta": "获取 Havenote",
+    "trust_1": "无需账号",
+    "trust_2": "你的声音从不离开手机",
+    "trust_3": "从第一天起就内置 21 种语言",
+    "founder_text": "Havenote 源于一个简单的烦恼：日记应用要你打字，任务应用要你打字，清单应用要你打字——而在手机上打字时很难清晰地思考。我想要一样东西，能让我直接对它说话，用我当下正在思考的语言。",
+    "founder_name": "— Havenote 的创作者",
+    "faq_q1": "我需要创建账号吗？",
+    "faq_a1": "不需要。Havenote 只需要你的设备即可运行——无需注册、无需邮箱、无需密码。",
+    "faq_q2": "录音后我的声音会怎样？",
+    "faq_a2": "它会立即在你的手机上转成文字，随后马上删除。原始录音从不会到达我们的服务器——只有你选择分析的文字才会。",
+    "faq_q3": "我可以随时取消订阅吗？",
+    "faq_a3": "可以，随时可以，直接在 Google Play 中操作。你的高级版会保留到已付费周期结束。",
+    "faq_q4": "Havenote 支持我的语言吗？",
+    "faq_a4": "它从第一天起就内置支持 21 种语言——用你正在思考的那种语言说话即可。",
+    "faq_q5": "免费版和高级版有什么区别？",
+    "faq_a5": "免费版能满足真实的日常使用，有合理的限额——同时可保留少量日记条目、任务、提醒和想法。高级版取消这些限额，并增加共享、备份等功能。",
+    "faq_q6": "没有网络连接也能用吗？",
+    "faq_a6": "你随时都可以录音并保存——离线时 Havenote 会使用简单的自动格式化。更智能的 AI 整理和洞察需要联网。",
+    "faq_eyebrow": "常见问题",
+    "faq_title": "大家真正会问的问题",
     "gallery_shots_title": "亲自看看",
     "gallery_shots_body": "快速浏览应用，浅色和深色模式都有。",
     "gallery_widgets_title": "十个小组件，就在主屏幕上",
@@ -1395,6 +1921,44 @@ const TRANSLATIONS = {
     "footer_privacy": "गोपनीयता नीति",
     "footer_terms": "सेवा की शर्तें",
     "footer_rights": "सर्वाधिकार सुरक्षित।",
+    "pricing_eyebrow": "मूल्य",
+    "pricing_title": "शुरुआत के लिए मुफ़्त। जब तैयार हों तब अपग्रेड करें।",
+    "pricing_subtext": "दोनों में से किसी में भी अकाउंट की ज़रूरत नहीं — प्रीमियम सिर्फ़ सीमाएं हटाता है।",
+    "pricing_free_name": "मुफ़्त",
+    "pricing_free_price": "₹0",
+    "pricing_free_1": "महीने में 5 डायरी एंट्री",
+    "pricing_free_2": "3 कार्य, 2 रिमाइंडर, 2 विचार, 1 सूची एक साथ",
+    "pricing_free_3": "वॉयस कैप्चर, सूची बनाना और टेक्स्ट सुधार — हमेशा असीमित",
+    "pricing_free_4": "2 होम स्क्रीन विजेट",
+    "pricing_badge": "सबसे लोकप्रिय",
+    "pricing_premium_name": "प्रीमियम",
+    "pricing_premium_period": "/माह",
+    "pricing_premium_yearly_note": "या ₹4,999/वर्ष — 29% बचाएं",
+    "pricing_premium_1": "असीमित डायरी एंट्री, कार्य, सूचियाँ, रिमाइंडर और विचार",
+    "pricing_premium_2": "असीमित AI विश्लेषण और साप्ताहिक-मासिक सारांश",
+    "pricing_premium_3": "डायरी और सूचियाँ बनाएं और साझा करें",
+    "pricing_premium_4": "पूरा बैकअप, पुनर्स्थापन और एक्सपोर्ट",
+    "pricing_premium_5": "पिन और बायोमेट्रिक लॉक, सभी विजेट, पूरी स्टिकर लाइब्रेरी",
+    "pricing_cta": "Havenote पाएं",
+    "trust_1": "अकाउंट की ज़रूरत नहीं",
+    "trust_2": "आपकी आवाज़ कभी आपके फ़ोन से बाहर नहीं जाती",
+    "trust_3": "शुरू से ही 21 भाषाएं शामिल",
+    "founder_text": "Havenote एक साधारण परेशानी से शुरू हुआ: डायरी ऐप्स टाइप करवाते हैं, टास्क ऐप्स टाइप करवाते हैं, लिस्ट ऐप्स टाइप करवाते हैं — और फ़ोन पर टाइप करते हुए साफ़ सोचना मुश्किल होता है। मुझे बस एक ऐसी चीज़ चाहिए थी जिससे मैं सीधे बात कर सकूं, उसी भाषा में जिसमें मैं उस पल सोच रहा हूं।",
+    "founder_name": "— Havenote के निर्माता",
+    "faq_q1": "क्या मुझे अकाउंट बनाना ज़रूरी है?",
+    "faq_a1": "नहीं। Havenote सिर्फ़ आपके डिवाइस से काम करता है — कोई साइन-अप नहीं, कोई ईमेल नहीं, कोई पासवर्ड नहीं।",
+    "faq_q2": "रिकॉर्ड करने के बाद मेरी आवाज़ का क्या होता है?",
+    "faq_a2": "यह आपके फ़ोन पर ही ट्रांसक्राइब होती है और तुरंत बाद डिलीट हो जाती है। कच्चा डेटा कभी भी हमारे सर्वर तक नहीं पहुंचता — सिर्फ़ वह टेक्स्ट जिसे आप एनालाइज़ करवाना चुनते हैं, वही जाता है।",
+    "faq_q3": "क्या मैं कभी भी सब्सक्रिप्शन कैंसल कर सकता हूं?",
+    "faq_a3": "हां, कभी भी, सीधे Google Play से। आपने जिस अवधि के लिए पहले ही भुगतान किया है, उसके अंत तक आपके पास प्रीमियम बना रहता है।",
+    "faq_q4": "क्या Havenote मेरी भाषा में काम करता है?",
+    "faq_a4": "यह शुरू से ही 21 भाषाओं को सपोर्ट करता है — जिस भाषा में आप सोच रहे हों, उसी में बोलें।",
+    "faq_q5": "Free और Premium में क्या फ़र्क़ है?",
+    "faq_a5": "Free असली रोज़ की ज़रूरत को उचित सीमाओं के साथ पूरा करता है — एक बार में कुछ डायरी एंट्री, कार्य, रिमाइंडर और विचार। Premium इन सीमाओं को हटाता है और शेयरिंग, बैकअप और भी बहुत कुछ जोड़ता है।",
+    "faq_q6": "क्या यह बिना इंटरनेट कनेक्शन के काम करता है?",
+    "faq_a6": "आप हमेशा रिकॉर्ड और सेव कर सकते हैं — ऑफ़लाइन होने पर Havenote सरल ऑटोमैटिक फ़ॉर्मेटिंग पर चला जाता है। ज़्यादा स्मार्ट AI क्लीनअप और इनसाइट्स के लिए कनेक्शन चाहिए।",
+    "faq_eyebrow": "सामान्य सवाल",
+    "faq_title": "जो सवाल लोग वाकई पूछते हैं",
     "gallery_shots_title": "खुद देखें",
     "gallery_shots_body": "ऐप की एक झलक, लाइट और डार्क दोनों मोड में।",
     "gallery_widgets_title": "दस विजेट, सीधे आपकी होम स्क्रीन पर",
@@ -1441,6 +2005,44 @@ const TRANSLATIONS = {
     "footer_privacy": "سياسة الخصوصية",
     "footer_terms": "شروط الخدمة",
     "footer_rights": "جميع الحقوق محفوظة.",
+    "pricing_eyebrow": "الأسعار",
+    "pricing_title": "مجاني للبدء. قم بالترقية عندما تكون مستعدًا.",
+    "pricing_subtext": "لا تحتاج إلى حساب في أي من الحالتين — النسخة المميزة تزيل الحدود فقط.",
+    "pricing_free_name": "مجاني",
+    "pricing_free_price": "0 ر.س",
+    "pricing_free_1": "5 مذكرات يوميات شهريًا",
+    "pricing_free_2": "3 مهام، تذكيرين، فكرتين، وقائمة واحدة في كل مرة",
+    "pricing_free_3": "التقاط الصوت وتكوين القوائم وتنظيف النص — غير محدود دائمًا",
+    "pricing_free_4": "أداتان لشاشة الرئيسية",
+    "pricing_badge": "الأكثر شيوعًا",
+    "pricing_premium_name": "بريميوم",
+    "pricing_premium_period": "/شهريًا",
+    "pricing_premium_yearly_note": "أو 59.99 دولار/سنويًا — وفّر 29%",
+    "pricing_premium_1": "عدد غير محدود من مذكرات اليوميات والمهام والقوائم والتذكيرات والأفكار",
+    "pricing_premium_2": "تحليلات ذكاء اصطناعي غير محدودة وملخصات أسبوعية وشهرية",
+    "pricing_premium_3": "أنشئ اليوميات والقوائم وشاركها",
+    "pricing_premium_4": "نسخ احتياطي واستعادة وتصدير كامل",
+    "pricing_premium_5": "قفل برمز PIN وبصمة، جميع الأدوات، مكتبة كاملة من الملصقات",
+    "pricing_cta": "احصل على Havenote",
+    "trust_1": "لا حاجة لحساب",
+    "trust_2": "صوتك لا يغادر هاتفك أبدًا",
+    "trust_3": "21 لغة، مدمجة منذ اليوم الأول",
+    "founder_text": "بدأ Havenote من إحباط بسيط: تطبيقات اليوميات تجبرك على الكتابة، وتطبيقات المهام تجبرك على الكتابة، وتطبيقات القوائم تجبرك على الكتابة — ومن الصعب التفكير بوضوح أثناء الكتابة على الهاتف. أردت شيئًا واحدًا يمكنني التحدث إليه ببساطة، باللغة التي أفكر بها في تلك اللحظة.",
+    "founder_name": "— مبتكر Havenote",
+    "faq_q1": "هل أحتاج إلى إنشاء حساب؟",
+    "faq_a1": "لا. يعمل Havenote فقط باستخدام جهازك — بدون تسجيل، وبدون بريد إلكتروني، وبدون كلمة مرور.",
+    "faq_q2": "ماذا يحدث لصوتي بعد التسجيل؟",
+    "faq_a2": "يتم تحويله إلى نص مباشرة على هاتفك ثم يُحذف فورًا بعد ذلك. لا يصل أي شيء خام إلى خوادمنا أبدًا — فقط النص الذي تختار تحليله.",
+    "faq_q3": "هل يمكنني إلغاء اشتراكي في أي وقت؟",
+    "faq_a3": "نعم، في أي وقت، مباشرة من Google Play. تحتفظ بالنسخة المميزة حتى نهاية الفترة التي دفعت مقابلها بالفعل.",
+    "faq_q4": "هل يعمل Havenote بلغتي؟",
+    "faq_a4": "يدعم 21 لغة، مدمجة منذ اليوم الأول — تحدث باللغة التي تفكر بها.",
+    "faq_q5": "ما الفرق بين المجاني والمميز؟",
+    "faq_a5": "يغطي المجاني الاستخدام اليومي الحقيقي بحدود معقولة — عدد قليل من مذكرات اليوميات والمهام والتذكيرات والأفكار في نفس الوقت. تزيل النسخة المميزة هذه الحدود وتضيف المشاركة والنسخ الاحتياطي والمزيد.",
+    "faq_q6": "هل يعمل بدون اتصال بالإنترنت؟",
+    "faq_a6": "يمكنك دائمًا التسجيل والحفظ — يعتمد Havenote على التنسيق التلقائي البسيط عند عدم الاتصال. يحتاج التنظيف الأذكى بالذكاء الاصطناعي والتحليلات إلى اتصال.",
+    "faq_eyebrow": "الأسئلة الشائعة",
+    "faq_title": "أسئلة يطرحها الناس فعلاً",
     "gallery_shots_title": "شاهد بنفسك",
     "gallery_shots_body": "لمحة سريعة عن التطبيق، في الوضعين الفاتح والداكن.",
     "gallery_widgets_title": "عشر أدوات، مباشرة على شاشتك الرئيسية",
@@ -1487,6 +2089,44 @@ const TRANSLATIONS = {
     "footer_privacy": "গোপনীয়তা নীতি",
     "footer_terms": "সেবার শর্তাবলী",
     "footer_rights": "সর্বস্বত্ব সংরক্ষিত।",
+    "pricing_eyebrow": "মূল্য",
+    "pricing_title": "শুরু করতে বিনামূল্যে। প্রস্তুত হলে আপগ্রেড করুন।",
+    "pricing_subtext": "কোনো ক্ষেত্রেই অ্যাকাউন্টের প্রয়োজন নেই — প্রিমিয়াম শুধু সীমা তুলে দেয়।",
+    "pricing_free_name": "বিনামূল্যে",
+    "pricing_free_price": "৳০",
+    "pricing_free_1": "মাসে ৫টি ডায়েরি এন্ট্রি",
+    "pricing_free_2": "৩টি কাজ, ২টি রিমাইন্ডার, ২টি ধারণা, ১টি তালিকা একসাথে",
+    "pricing_free_3": "ভয়েস ক্যাপচার, তালিকা তৈরি ও টেক্সট পরিষ্কার — সবসময় সীমাহীন",
+    "pricing_free_4": "২টি হোম স্ক্রিন উইজেট",
+    "pricing_badge": "সবচেয়ে জনপ্রিয়",
+    "pricing_premium_name": "প্রিমিয়াম",
+    "pricing_premium_period": "/মাস",
+    "pricing_premium_yearly_note": "অথবা $59.99/বছর — ২৯% সাশ্রয়",
+    "pricing_premium_1": "সীমাহীন ডায়েরি এন্ট্রি, কাজ, তালিকা, রিমাইন্ডার এবং ধারণা",
+    "pricing_premium_2": "সীমাহীন AI বিশ্লেষণ ও সাপ্তাহিক-মাসিক সারাংশ",
+    "pricing_premium_3": "ডায়েরি ও তালিকা তৈরি ও শেয়ার করুন",
+    "pricing_premium_4": "সম্পূর্ণ ব্যাকআপ, পুনরুদ্ধার ও এক্সপোর্ট",
+    "pricing_premium_5": "পিন ও বায়োমেট্রিক লক, সব উইজেট, সম্পূর্ণ স্টিকার লাইব্রেরি",
+    "pricing_cta": "Havenote নিন",
+    "trust_1": "অ্যাকাউন্টের প্রয়োজন নেই",
+    "trust_2": "আপনার কণ্ঠ কখনো ফোন ছেড়ে যায় না",
+    "trust_3": "শুরু থেকেই ২১টি ভাষা যুক্ত",
+    "founder_text": "Havenote শুরু হয়েছিল একটি সাধারণ বিরক্তি থেকে: ডায়েরি অ্যাপ আপনাকে টাইপ করতে বাধ্য করে, কাজের অ্যাপ টাইপ করতে বাধ্য করে, তালিকার অ্যাপ টাইপ করতে বাধ্য করে — আর ফোনে টাইপ করার সময় স্পষ্টভাবে চিন্তা করা কঠিন। আমি এমন একটি জিনিস চেয়েছিলাম যার সাথে আমি সহজে কথা বলতে পারি, যে ভাষায় সেই মুহূর্তে ভাবছি।",
+    "founder_name": "— Havenote-এর নির্মাতা",
+    "faq_q1": "আমার কি অ্যাকাউন্ট তৈরি করতে হবে?",
+    "faq_a1": "না। Havenote শুধু আপনার ডিভাইস দিয়েই কাজ করে — কোনো সাইন-আপ নেই, কোনো ইমেইল নেই, কোনো পাসওয়ার্ড নেই।",
+    "faq_q2": "রেকর্ড করার পর আমার কণ্ঠের কী হয়?",
+    "faq_a2": "এটি সরাসরি আপনার ফোনে টেক্সটে রূপান্তরিত হয় এবং তারপর সাথে সাথে মুছে ফেলা হয়। কাঁচা অডিও কখনো আমাদের সার্ভারে পৌঁছায় না — শুধু আপনি যে টেক্সট বিশ্লেষণ করতে বেছে নেন, সেটাই যায়।",
+    "faq_q3": "আমি কি যেকোনো সময় সাবস্ক্রিপশন বাতিল করতে পারি?",
+    "faq_a3": "হ্যাঁ, যেকোনো সময়, সরাসরি Google Play থেকে। আপনি ইতিমধ্যে যে মেয়াদের জন্য টাকা দিয়েছেন, তার শেষ পর্যন্ত প্রিমিয়াম থাকবে।",
+    "faq_q4": "Havenote কি আমার ভাষায় কাজ করে?",
+    "faq_a4": "এটি শুরু থেকেই ২১টি ভাষা সমর্থন করে — যে ভাষায় ভাবছেন, সেটাতেই বলুন।",
+    "faq_q5": "Free এবং Premium-এর মধ্যে পার্থক্য কী?",
+    "faq_a5": "Free যুক্তিসঙ্গত সীমার মধ্যে বাস্তব দৈনন্দিন ব্যবহার কভার করে — একসাথে কয়েকটি ডায়েরি এন্ট্রি, কাজ, রিমাইন্ডার এবং ধারণা। Premium এই সীমাগুলো তুলে দেয় এবং শেয়ারিং, ব্যাকআপ ও আরও অনেক কিছু যোগ করে।",
+    "faq_q6": "ইন্টারনেট সংযোগ ছাড়া কি এটি কাজ করে?",
+    "faq_a6": "আপনি সবসময় রেকর্ড ও সেভ করতে পারেন — অফলাইনে থাকলে Havenote সহজ স্বয়ংক্রিয় ফরম্যাটিংয়ে চলে যায়। আরও স্মার্ট AI ক্লিনআপ ও ইনসাইটের জন্য সংযোগ প্রয়োজন।",
+    "faq_eyebrow": "সাধারণ প্রশ্ন",
+    "faq_title": "মানুষ সত্যিই যে প্রশ্নগুলো করে",
     "gallery_shots_title": "নিজেই দেখুন",
     "gallery_shots_body": "লাইট এবং ডার্ক উভয় মোডে অ্যাপের একটি দ্রুত পরিদর্শন।",
     "gallery_widgets_title": "দশটি উইজেট, সরাসরি আপনার হোম স্ক্রিনে",
@@ -1533,6 +2173,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Kebijakan Privasi",
     "footer_terms": "Ketentuan Layanan",
     "footer_rights": "Semua hak dilindungi.",
+    "pricing_eyebrow": "Harga",
+    "pricing_title": "Gratis untuk memulai. Upgrade kapan pun kamu siap.",
+    "pricing_subtext": "Tidak perlu akun untuk kedua opsi — premium hanya menghapus batasan.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "Rp0",
+    "pricing_free_1": "5 entri diari per bulan",
+    "pricing_free_2": "3 tugas, 2 pengingat, 2 ide, 1 daftar dalam satu waktu",
+    "pricing_free_3": "Rekam suara, pembuatan daftar, dan pembersihan teks — selalu tanpa batas",
+    "pricing_free_4": "2 widget layar utama",
+    "pricing_badge": "Paling populer",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/bulan",
+    "pricing_premium_yearly_note": "atau Rp959.000/tahun — hemat 29%",
+    "pricing_premium_1": "Entri diari, tugas, daftar, pengingat, dan ide tanpa batas",
+    "pricing_premium_2": "Analisis AI tanpa batas serta ringkasan mingguan dan bulanan",
+    "pricing_premium_3": "Buat dan bagikan diari serta daftar",
+    "pricing_premium_4": "Cadangkan, pulihkan, dan ekspor penuh",
+    "pricing_premium_5": "Kunci PIN & biometrik, semua widget, perpustakaan stiker lengkap",
+    "pricing_cta": "Dapatkan Havenote",
+    "trust_1": "Tidak perlu akun",
+    "trust_2": "Suaramu tidak pernah meninggalkan ponselmu",
+    "trust_3": "21 bahasa, ada sejak awal",
+    "founder_text": "Havenote lahir dari rasa frustrasi sederhana: aplikasi diari membuatmu mengetik, aplikasi tugas membuatmu mengetik, aplikasi daftar membuatmu mengetik — dan sulit berpikir jernih sambil mengetik di ponsel. Aku ingin satu hal yang bisa langsung kuajak bicara, dalam bahasa apa pun yang sedang kupikirkan saat itu.",
+    "founder_name": "— Pencipta Havenote",
+    "faq_q1": "Apakah saya perlu membuat akun?",
+    "faq_a1": "Tidak. Havenote hanya berjalan dengan perangkatmu — tanpa pendaftaran, tanpa email, tanpa kata sandi.",
+    "faq_q2": "Apa yang terjadi pada suaraku setelah merekam?",
+    "faq_a2": "Langsung ditranskripsi di ponselmu lalu segera dihapus. Rekaman mentah tidak pernah sampai ke server kami — hanya teks yang kamu pilih untuk dianalisis yang terkirim.",
+    "faq_q3": "Bisakah saya membatalkan langganan kapan saja?",
+    "faq_a3": "Ya, kapan saja, langsung dari Google Play. Kamu tetap punya Premium sampai akhir periode yang sudah dibayar.",
+    "faq_q4": "Apakah Havenote berfungsi dalam bahasaku?",
+    "faq_a4": "Mendukung 21 bahasa, ada sejak hari pertama — bicaralah dalam bahasa apa pun yang sedang kamu pikirkan.",
+    "faq_q5": "Apa bedanya Free dan Premium?",
+    "faq_a5": "Free mencakup penggunaan harian nyata dengan batas yang wajar — beberapa entri diari, tugas, pengingat, dan ide sekaligus. Premium menghapus batas itu dan menambahkan berbagi, cadangan, dan lainnya.",
+    "faq_q6": "Apakah berfungsi tanpa koneksi internet?",
+    "faq_a6": "Kamu selalu bisa merekam dan menyimpan — Havenote beralih ke pemformatan otomatis sederhana saat offline. Pembersihan AI yang lebih pintar dan wawasan memerlukan koneksi.",
+    "faq_eyebrow": "FAQ",
+    "faq_title": "Pertanyaan yang benar-benar orang tanyakan",
     "gallery_shots_title": "Lihat sendiri",
     "gallery_shots_body": "Sekilas tentang aplikasi, dalam mode terang dan gelap.",
     "gallery_widgets_title": "Sepuluh widget, langsung di layar utamamu",
@@ -1579,6 +2257,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Datenschutzerklärung",
     "footer_terms": "Nutzungsbedingungen",
     "footer_rights": "Alle Rechte vorbehalten.",
+    "pricing_eyebrow": "Preise",
+    "pricing_title": "Kostenlos starten. Upgrade, wenn du bereit bist.",
+    "pricing_subtext": "In beiden Fällen kein Konto nötig — Premium entfernt nur die Grenzen.",
+    "pricing_free_name": "Kostenlos",
+    "pricing_free_price": "0 €",
+    "pricing_free_1": "5 Tagebucheinträge pro Monat",
+    "pricing_free_2": "3 Aufgaben, 2 Erinnerungen, 2 Ideen, 1 Liste gleichzeitig",
+    "pricing_free_3": "Sprachaufnahme, Listenerstellung und Textbereinigung — immer unbegrenzt",
+    "pricing_free_4": "2 Homescreen-Widgets",
+    "pricing_badge": "Am beliebtesten",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/Monat",
+    "pricing_premium_yearly_note": "oder 59,99 €/Jahr — 29 % sparen",
+    "pricing_premium_1": "Unbegrenzte Tagebucheinträge, Aufgaben, Listen, Erinnerungen und Ideen",
+    "pricing_premium_2": "Unbegrenzte KI-Analysen sowie wöchentliche und monatliche Zusammenfassungen",
+    "pricing_premium_3": "Erstelle und teile Tagebücher und Listen",
+    "pricing_premium_4": "Vollständiges Backup, Wiederherstellen und Exportieren",
+    "pricing_premium_5": "PIN- & biometrische Sperre, alle Widgets, vollständige Sticker-Bibliothek",
+    "pricing_cta": "Havenote holen",
+    "trust_1": "Kein Konto nötig",
+    "trust_2": "Deine Stimme verlässt nie dein Telefon",
+    "trust_3": "21 Sprachen, von Anfang an eingebaut",
+    "founder_text": "Havenote entstand aus einer einfachen Frustration: Tagebuch-Apps verlangen Tippen, Aufgaben-Apps verlangen Tippen, Listen-Apps verlangen Tippen — und klar zu denken, während man auf dem Handy tippt, ist schwer. Ich wollte eine einzige Sache, mit der ich einfach reden kann, in welcher Sprache ich gerade auch denke.",
+    "founder_name": "— Der Macher von Havenote",
+    "faq_q1": "Muss ich ein Konto erstellen?",
+    "faq_a1": "Nein. Havenote funktioniert nur mit deinem Gerät — keine Anmeldung, keine E-Mail, kein Passwort.",
+    "faq_q2": "Was passiert mit meiner Stimme nach der Aufnahme?",
+    "faq_a2": "Sie wird direkt auf deinem Telefon transkribiert und danach sofort gelöscht. Nichts Rohes erreicht je unsere Server — nur der Text, den du zur Analyse auswählst.",
+    "faq_q3": "Kann ich mein Abo jederzeit kündigen?",
+    "faq_a3": "Ja, jederzeit, direkt über Google Play. Du behältst Premium bis zum Ende des bereits bezahlten Zeitraums.",
+    "faq_q4": "Funktioniert Havenote in meiner Sprache?",
+    "faq_a4": "Es unterstützt 21 Sprachen, von Anfang an eingebaut — sprich in der, in der du gerade denkst.",
+    "faq_q5": "Was ist der Unterschied zwischen Free und Premium?",
+    "faq_a5": "Free deckt echten Alltagsgebrauch mit sinnvollen Grenzen ab — ein paar Tagebucheinträge, Aufgaben, Erinnerungen und Ideen gleichzeitig. Premium entfernt diese Grenzen und bringt Teilen, Backup und mehr.",
+    "faq_q6": "Funktioniert es ohne Internetverbindung?",
+    "faq_a6": "Du kannst immer aufnehmen und speichern — Havenote nutzt offline eine einfache automatische Formatierung. Die smartere KI-Bereinigung und Insights brauchen eine Verbindung.",
+    "faq_eyebrow": "Häufige Fragen",
+    "faq_title": "Fragen, die wirklich gestellt werden",
     "gallery_shots_title": "Überzeug dich selbst",
     "gallery_shots_body": "Ein kurzer Blick auf die App, im hellen und dunklen Modus.",
     "gallery_widgets_title": "Zehn Widgets, direkt auf deinem Startbildschirm",
@@ -1625,6 +2341,44 @@ const TRANSLATIONS = {
     "footer_privacy": "プライバシーポリシー",
     "footer_terms": "利用規約",
     "footer_rights": "全著作権所有。",
+    "pricing_eyebrow": "料金",
+    "pricing_title": "無料で始めて、準備ができたらアップグレード。",
+    "pricing_subtext": "どちらの場合もアカウントは不要 — プレミアムは上限を外すだけです。",
+    "pricing_free_name": "無料",
+    "pricing_free_price": "¥0",
+    "pricing_free_1": "月5件の日記エントリー",
+    "pricing_free_2": "タスク3件、リマインダー2件、アイデア2件、リスト1件（同時）",
+    "pricing_free_3": "音声入力、リスト作成、テキスト整理 — 常に無制限",
+    "pricing_free_4": "ホーム画面ウィジェット2個",
+    "pricing_badge": "一番人気",
+    "pricing_premium_name": "プレミアム",
+    "pricing_premium_period": "/月",
+    "pricing_premium_yearly_note": "または年払い ¥8,900 — 29%お得",
+    "pricing_premium_1": "日記のエントリー、タスク、リスト、リマインダー、アイデアが無制限",
+    "pricing_premium_2": "AI分析が無制限、週次・月次のまとめ付き",
+    "pricing_premium_3": "日記やリストを作成・共有できる",
+    "pricing_premium_4": "完全なバックアップ・復元・エクスポート",
+    "pricing_premium_5": "パスコード・生体認証ロック、すべてのウィジェット、ステッカーの全ライブラリ",
+    "pricing_cta": "Havenoteを入手",
+    "trust_1": "アカウント不要",
+    "trust_2": "あなたの声はスマホから外に出ません",
+    "trust_3": "最初から21言語に対応",
+    "founder_text": "Havenoteは、ある単純な不満から生まれました。日記アプリも、タスクアプリも、リストアプリも、結局は入力を求められる — でもスマホで文字を打ちながらクリアに考えるのは難しい。ただ話しかけるだけで済むもの、そのとき考えている言語のままで使えるものが欲しかったんです。",
+    "founder_name": "— Havenoteの開発者",
+    "faq_q1": "アカウントは必要ですか？",
+    "faq_a1": "いいえ。Havenoteは端末だけで動作します — 登録もメールもパスワードも不要です。",
+    "faq_q2": "録音した後、声はどうなりますか？",
+    "faq_a2": "スマホ上でその場でテキスト化され、直後に削除されます。生データがサーバーに届くことは一切ありません — 分析を選んだテキストだけが送られます。",
+    "faq_q3": "サブスクはいつでも解約できますか？",
+    "faq_a3": "はい、いつでもGoogle Playから直接解約できます。すでに支払った期間の終わりまでプレミアムが使えます。",
+    "faq_q4": "Havenoteは自分の言語で使えますか？",
+    "faq_a4": "最初から21言語に対応しています — 今考えている言語でそのまま話しかけてください。",
+    "faq_q5": "FreeとPremiumの違いは何ですか？",
+    "faq_a5": "Freeは妥当な上限付きで実際の日常使用をカバーします — 日記のエントリー、タスク、リマインダー、アイデアが一定数まで。Premiumはその上限をなくし、共有やバックアップなどが加わります。",
+    "faq_q6": "インターネット接続なしでも使えますか？",
+    "faq_a6": "録音と保存はいつでもできます — オフライン時はHavenoteがシンプルな自動整形にフォールバックします。より賢いAI整理やインサイトには接続が必要です。",
+    "faq_eyebrow": "よくある質問",
+    "faq_title": "実際によく聞かれる質問",
     "gallery_shots_title": "実際に見てみる",
     "gallery_shots_body": "ライト・ダーク両モードでのアプリの様子。",
     "gallery_widgets_title": "10個のウィジェットが、ホーム画面に直接",
@@ -1671,6 +2425,44 @@ const TRANSLATIONS = {
     "footer_privacy": "개인정보 처리방침",
     "footer_terms": "서비스 약관",
     "footer_rights": "모든 권리 보유.",
+    "pricing_eyebrow": "요금제",
+    "pricing_title": "무료로 시작하고, 준비되면 업그레이드하세요.",
+    "pricing_subtext": "어느 쪽이든 계정이 필요 없어요 — 프리미엄은 한도만 없앨 뿐이에요.",
+    "pricing_free_name": "무료",
+    "pricing_free_price": "₩0",
+    "pricing_free_1": "월 5개 다이어리 기록",
+    "pricing_free_2": "할 일 3개, 알림 2개, 아이디어 2개, 목록 1개 동시 보유",
+    "pricing_free_3": "음성 캡처, 목록 만들기, 텍스트 정리 — 언제나 무제한",
+    "pricing_free_4": "홈 화면 위젯 2개",
+    "pricing_badge": "가장 인기",
+    "pricing_premium_name": "프리미엄",
+    "pricing_premium_period": "/월",
+    "pricing_premium_yearly_note": "또는 연 ₩79,000 — 29% 절약",
+    "pricing_premium_1": "무제한 다이어리 기록, 할 일, 목록, 알림, 아이디어",
+    "pricing_premium_2": "무제한 AI 분석과 주간·월간 요약",
+    "pricing_premium_3": "다이어리와 목록을 만들고 공유하기",
+    "pricing_premium_4": "전체 백업, 복원, 내보내기",
+    "pricing_premium_5": "PIN 및 생체 인증 잠금, 모든 위젯, 전체 스티커 라이브러리",
+    "pricing_cta": "Havenote 받기",
+    "trust_1": "계정 필요 없음",
+    "trust_2": "당신의 목소리는 휴대폰을 벗어나지 않아요",
+    "trust_3": "처음부터 21개 언어 내장",
+    "founder_text": "Havenote는 단순한 불편함에서 시작됐어요. 다이어리 앱도, 할 일 앱도, 목록 앱도 결국 타이핑을 요구하죠 — 그런데 휴대폰으로 타이핑하면서 명료하게 생각하기는 어려워요. 그냥 말을 걸 수 있는 무언가가 필요했어요, 그 순간 생각하고 있는 언어 그대로요.",
+    "founder_name": "— Havenote 제작자",
+    "faq_q1": "계정을 만들어야 하나요?",
+    "faq_a1": "아니요. Havenote는 기기만 있으면 작동해요 — 가입도, 이메일도, 비밀번호도 필요 없어요.",
+    "faq_q2": "녹음 후 제 목소리는 어떻게 되나요?",
+    "faq_a2": "휴대폰에서 바로 텍스트로 변환되고 곧바로 삭제돼요. 원본 음성은 절대 서버에 도달하지 않아요 — 분석을 선택한 텍스트만 전송돼요.",
+    "faq_q3": "구독은 언제든 취소할 수 있나요?",
+    "faq_a3": "네, 언제든지 Google Play에서 바로 취소할 수 있어요. 이미 결제한 기간이 끝날 때까지 프리미엄이 유지돼요.",
+    "faq_q4": "Havenote가 제 언어로 작동하나요?",
+    "faq_a4": "처음부터 21개 언어를 지원해요 — 지금 생각하고 있는 언어로 말하면 돼요.",
+    "faq_q5": "무료와 프리미엄의 차이는 무엇인가요?",
+    "faq_a5": "무료는 합리적인 한도로 실제 일상 사용을 지원해요 — 다이어리 기록, 할 일, 알림, 아이디어를 동시에 몇 개씩. 프리미엄은 그 한도를 없애고 공유, 백업 등을 추가해요.",
+    "faq_q6": "인터넷 연결 없이도 작동하나요?",
+    "faq_a6": "언제든 녹음하고 저장할 수 있어요 — 오프라인일 때는 Havenote가 간단한 자동 정리로 전환돼요. 더 똑똑한 AI 정리와 인사이트에는 연결이 필요해요.",
+    "faq_eyebrow": "자주 묻는 질문",
+    "faq_title": "실제로 사람들이 묻는 질문",
     "gallery_shots_title": "직접 확인해보세요",
     "gallery_shots_body": "라이트 모드와 다크 모드 모두에서 앱을 살짝 둘러보세요.",
     "gallery_widgets_title": "열 개의 위젯이, 바로 홈 화면에",
@@ -1717,6 +2509,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Informativa sulla privacy",
     "footer_terms": "Termini di servizio",
     "footer_rights": "Tutti i diritti riservati.",
+    "pricing_eyebrow": "Prezzi",
+    "pricing_title": "Gratis per iniziare. Passa a Premium quando vuoi.",
+    "pricing_subtext": "Non serve un account in nessuno dei due casi — Premium rimuove solo i limiti.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "0 €",
+    "pricing_free_1": "5 voci di diario al mese",
+    "pricing_free_2": "3 attività, 2 promemoria, 2 idee, 1 lista alla volta",
+    "pricing_free_3": "Acquisizione vocale, creazione di liste e pulizia del testo — sempre illimitati",
+    "pricing_free_4": "2 widget della schermata Home",
+    "pricing_badge": "Il più popolare",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/mese",
+    "pricing_premium_yearly_note": "oppure 59,99 €/anno — risparmia il 29%",
+    "pricing_premium_1": "Voci di diario, attività, liste, promemoria e idee illimitati",
+    "pricing_premium_2": "Analisi IA illimitate e riepiloghi settimanali e mensili",
+    "pricing_premium_3": "Crea e condividi diari e liste",
+    "pricing_premium_4": "Backup, ripristino ed esportazione completi",
+    "pricing_premium_5": "Blocco con PIN e biometria, tutti i widget, libreria completa di adesivi",
+    "pricing_cta": "Ottieni Havenote",
+    "trust_1": "Nessun account richiesto",
+    "trust_2": "La tua voce non lascia mai il telefono",
+    "trust_3": "21 lingue, integrate fin dall'inizio",
+    "founder_text": "Havenote è nato da una frustrazione semplice: le app di diario ti fanno digitare, quelle di attività ti fanno digitare, quelle di liste ti fanno digitare — ed è difficile pensare con chiarezza mentre digiti sul telefono. Volevo una cosa sola a cui poter semplicemente parlare, nella lingua in cui stavo pensando in quel momento.",
+    "founder_name": "— Il creatore di Havenote",
+    "faq_q1": "Devo creare un account?",
+    "faq_a1": "No. Havenote funziona solo con il tuo dispositivo — niente registrazione, niente email, niente password.",
+    "faq_q2": "Cosa succede alla mia voce dopo la registrazione?",
+    "faq_a2": "Viene trascritta direttamente sul telefono e cancellata subito dopo. Nessun dato grezzo raggiunge mai i nostri server — solo il testo che scegli di far analizzare.",
+    "faq_q3": "Posso disdire l'abbonamento in qualsiasi momento?",
+    "faq_a3": "Sì, in qualsiasi momento, direttamente da Google Play. Mantieni Premium fino alla fine del periodo già pagato.",
+    "faq_q4": "Havenote funziona nella mia lingua?",
+    "faq_a4": "Supporta 21 lingue, integrate fin dal primo giorno — parla in quella a cui stai pensando.",
+    "faq_q5": "Qual è la differenza tra Free e Premium?",
+    "faq_a5": "Free copre l'uso quotidiano reale con limiti ragionevoli — alcune voci di diario, attività, promemoria e idee alla volta. Premium rimuove quei limiti e aggiunge condivisione, backup e altro.",
+    "faq_q6": "Funziona senza connessione internet?",
+    "faq_a6": "Puoi sempre registrare e salvare — offline Havenote passa a una formattazione automatica semplice. La pulizia IA più intelligente e gli approfondimenti richiedono una connessione.",
+    "faq_eyebrow": "Domande frequenti",
+    "faq_title": "Le domande che le persone fanno davvero",
     "gallery_shots_title": "Vedi con i tuoi occhi",
     "gallery_shots_body": "Uno sguardo veloce all'app, in modalità chiara e scura.",
     "gallery_widgets_title": "Dieci widget, direttamente sulla tua schermata home",
@@ -1763,6 +2593,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Privacybeleid",
     "footer_terms": "Servicevoorwaarden",
     "footer_rights": "Alle rechten voorbehouden.",
+    "pricing_eyebrow": "Prijzen",
+    "pricing_title": "Gratis om te beginnen. Upgrade wanneer je klaar bent.",
+    "pricing_subtext": "In beide gevallen geen account nodig — premium verwijdert alleen de limieten.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "€0",
+    "pricing_free_1": "5 dagboeknotities per maand",
+    "pricing_free_2": "3 taken, 2 herinneringen, 2 ideeën, 1 lijst tegelijk",
+    "pricing_free_3": "Spraakopname, lijsten maken en tekst opschonen — altijd onbeperkt",
+    "pricing_free_4": "2 widgets voor het startscherm",
+    "pricing_badge": "Meest populair",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/maand",
+    "pricing_premium_yearly_note": "of €59,99/jaar — bespaar 29%",
+    "pricing_premium_1": "Onbeperkte dagboeknotities, taken, lijsten, herinneringen en ideeën",
+    "pricing_premium_2": "Onbeperkte AI-analyses en wekelijkse en maandelijkse samenvattingen",
+    "pricing_premium_3": "Maak en deel dagboeken en lijsten",
+    "pricing_premium_4": "Volledige back-up, herstel en export",
+    "pricing_premium_5": "Pincode- en biometrische vergrendeling, alle widgets, volledige stickerbibliotheek",
+    "pricing_cta": "Havenote downloaden",
+    "trust_1": "Geen account nodig",
+    "trust_2": "Je stem verlaat nooit je telefoon",
+    "trust_3": "21 talen, vanaf dag één ingebouwd",
+    "founder_text": "Havenote ontstond uit een simpele frustratie: dagboek-apps laten je typen, taken-apps laten je typen, lijsten-apps laten je typen — en het is lastig helder te denken terwijl je op je telefoon typt. Ik wilde één ding waar ik gewoon tegen kon praten, in welke taal ik ook op dat moment dacht.",
+    "founder_name": "— De maker van Havenote",
+    "faq_q1": "Moet ik een account aanmaken?",
+    "faq_a1": "Nee. Havenote werkt alleen met je apparaat — geen registratie, geen e-mail, geen wachtwoord.",
+    "faq_q2": "Wat gebeurt er met mijn stem na het opnemen?",
+    "faq_a2": "Deze wordt direct op je telefoon getranscribeerd en meteen daarna verwijderd. Niets ruws bereikt ooit onze servers — alleen de tekst die je kiest te laten analyseren.",
+    "faq_q3": "Kan ik mijn abonnement altijd opzeggen?",
+    "faq_a3": "Ja, op elk moment, rechtstreeks via Google Play. Je behoudt Premium tot het einde van de al betaalde periode.",
+    "faq_q4": "Werkt Havenote in mijn taal?",
+    "faq_a4": "Het ondersteunt 21 talen, vanaf dag één ingebouwd — spreek in de taal waarin je op dat moment denkt.",
+    "faq_q5": "Wat is het verschil tussen Free en Premium?",
+    "faq_a5": "Free dekt echt dagelijks gebruik met redelijke limieten — een paar dagboeknotities, taken, herinneringen en ideeën tegelijk. Premium haalt die limieten weg en voegt delen, back-up en meer toe.",
+    "faq_q6": "Werkt het zonder internetverbinding?",
+    "faq_a6": "Je kunt altijd opnemen en opslaan — offline valt Havenote terug op eenvoudige automatische opmaak. De slimmere AI-opschoning en inzichten hebben een verbinding nodig.",
+    "faq_eyebrow": "Veelgestelde vragen",
+    "faq_title": "Vragen die mensen echt stellen",
     "gallery_shots_title": "Zie het zelf",
     "gallery_shots_body": "Een korte blik op de app, in licht en donker.",
     "gallery_widgets_title": "Tien widgets, direct op je startscherm",
@@ -1809,6 +2677,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Polityka prywatności",
     "footer_terms": "Warunki korzystania z usługi",
     "footer_rights": "Wszelkie prawa zastrzeżone.",
+    "pricing_eyebrow": "Cennik",
+    "pricing_title": "Zacznij za darmo. Uaktualnij, kiedy będziesz gotowy.",
+    "pricing_subtext": "W obu przypadkach konto nie jest potrzebne — premium tylko usuwa limity.",
+    "pricing_free_name": "Za darmo",
+    "pricing_free_price": "0 zł",
+    "pricing_free_1": "5 wpisów w dzienniku miesięcznie",
+    "pricing_free_2": "3 zadania, 2 przypomnienia, 2 pomysły, 1 lista jednocześnie",
+    "pricing_free_3": "Nagrywanie głosowe, tworzenie list i porządkowanie tekstu — zawsze bez limitu",
+    "pricing_free_4": "2 widżety ekranu głównego",
+    "pricing_badge": "Najpopularniejszy",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/miesiąc",
+    "pricing_premium_yearly_note": "lub 249 zł/rok — oszczędź 29%",
+    "pricing_premium_1": "Nieograniczone wpisy w dzienniku, zadania, listy, przypomnienia i pomysły",
+    "pricing_premium_2": "Nieograniczone analizy AI oraz cotygodniowe i comiesięczne podsumowania",
+    "pricing_premium_3": "Twórz i udostępniaj dzienniki oraz listy",
+    "pricing_premium_4": "Pełna kopia zapasowa, przywracanie i eksport",
+    "pricing_premium_5": "Blokada PIN i biometryczna, wszystkie widżety, pełna biblioteka naklejek",
+    "pricing_cta": "Pobierz Havenote",
+    "trust_1": "Konto nie jest potrzebne",
+    "trust_2": "Twój głos nigdy nie opuszcza telefonu",
+    "trust_3": "21 języków wbudowanych od początku",
+    "founder_text": "Havenote powstał z prostej frustracji: aplikacje do dziennika każą pisać, aplikacje do zadań każą pisać, aplikacje do list każą pisać — a trudno jasno myśleć, pisząc na telefonie. Chciałem jednej rzeczy, do której mógłbym po prostu mówić, w dowolnym języku, w którym akurat myślę.",
+    "founder_name": "— Twórca Havenote",
+    "faq_q1": "Czy muszę założyć konto?",
+    "faq_a1": "Nie. Havenote działa wyłącznie z Twoim urządzeniem — bez rejestracji, bez e-maila, bez hasła.",
+    "faq_q2": "Co dzieje się z moim głosem po nagraniu?",
+    "faq_a2": "Jest transkrybowany od razu na Twoim telefonie i natychmiast potem usuwany. Żadne surowe nagranie nigdy nie trafia na nasze serwery — trafia tylko tekst, który zdecydujesz się przeanalizować.",
+    "faq_q3": "Czy mogę anulować subskrypcję w dowolnym momencie?",
+    "faq_a3": "Tak, w dowolnym momencie, bezpośrednio w Google Play. Zachowujesz Premium do końca już opłaconego okresu.",
+    "faq_q4": "Czy Havenote działa w moim języku?",
+    "faq_a4": "Obsługuje 21 języków, wbudowanych od pierwszego dnia — mów w tym, w którym akurat myślisz.",
+    "faq_q5": "Jaka jest różnica między Free a Premium?",
+    "faq_a5": "Free pokrywa realne codzienne użytkowanie z rozsądnymi limitami — kilka wpisów w dzienniku, zadań, przypomnień i pomysłów jednocześnie. Premium usuwa te limity i dodaje udostępnianie, kopię zapasową i więcej.",
+    "faq_q6": "Czy działa bez połączenia z internetem?",
+    "faq_a6": "Zawsze możesz nagrać i zapisać — offline Havenote przechodzi na proste automatyczne formatowanie. Mądrzejsze porządkowanie AI i podsumowania wymagają połączenia.",
+    "faq_eyebrow": "FAQ",
+    "faq_title": "Pytania, które ludzie naprawdę zadają",
     "gallery_shots_title": "Zobacz sam",
     "gallery_shots_body": "Krótkie spojrzenie na aplikację, w trybie jasnym i ciemnym.",
     "gallery_widgets_title": "Dziesięć widżetów prosto na Twoim ekranie głównym",
@@ -1855,6 +2761,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Integritetspolicy",
     "footer_terms": "Användarvillkor",
     "footer_rights": "Alla rättigheter förbehållna.",
+    "pricing_eyebrow": "Priser",
+    "pricing_title": "Gratis att börja. Uppgradera när du är redo.",
+    "pricing_subtext": "Inget konto behövs i något av fallen — premium tar bara bort gränserna.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "0 kr",
+    "pricing_free_1": "5 dagboksanteckningar per månad",
+    "pricing_free_2": "3 uppgifter, 2 påminnelser, 2 idéer, 1 lista åt gången",
+    "pricing_free_3": "Röstinspelning, listskapande och textstädning — alltid obegränsat",
+    "pricing_free_4": "2 widgetar för hemskärmen",
+    "pricing_badge": "Mest populär",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/månad",
+    "pricing_premium_yearly_note": "eller 599 kr/år — spara 29 %",
+    "pricing_premium_1": "Obegränsade dagboksanteckningar, uppgifter, listor, påminnelser och idéer",
+    "pricing_premium_2": "Obegränsad AI-analys samt vecko- och månadsvisa sammanfattningar",
+    "pricing_premium_3": "Skapa och dela dagböcker och listor",
+    "pricing_premium_4": "Fullständig säkerhetskopiering, återställning och export",
+    "pricing_premium_5": "PIN- och biometrisk låsning, alla widgetar, fullständigt klistermärkesbibliotek",
+    "pricing_cta": "Skaffa Havenote",
+    "trust_1": "Inget konto krävs",
+    "trust_2": "Din röst lämnar aldrig din telefon",
+    "trust_3": "21 språk, inbyggda från dag ett",
+    "founder_text": "Havenote föddes ur en enkel frustration: dagboksappar får dig att skriva, uppgiftsappar får dig att skriva, listappar får dig att skriva — och det är svårt att tänka klart medan man skriver på telefonen. Jag ville ha en enda sak jag bara kunde prata med, på vilket språk jag än råkade tänka på just då.",
+    "founder_name": "— Havenotes skapare",
+    "faq_q1": "Behöver jag skapa ett konto?",
+    "faq_a1": "Nej. Havenote fungerar bara med din enhet — ingen registrering, ingen e-post, inget lösenord.",
+    "faq_q2": "Vad händer med min röst efter inspelningen?",
+    "faq_a2": "Den transkriberas direkt på din telefon och raderas omedelbart efteråt. Inget rått material når någonsin våra servrar — bara texten du väljer att analysera gör det.",
+    "faq_q3": "Kan jag avsluta min prenumeration när som helst?",
+    "faq_a3": "Ja, när som helst, direkt via Google Play. Du behåller Premium till slutet av perioden du redan betalat för.",
+    "faq_q4": "Fungerar Havenote på mitt språk?",
+    "faq_a4": "Det stöder 21 språk, inbyggda från dag ett — prata på det språk du för tillfället tänker på.",
+    "faq_q5": "Vad är skillnaden mellan Free och Premium?",
+    "faq_a5": "Free täcker verklig daglig användning med rimliga gränser — några dagboksanteckningar, uppgifter, påminnelser och idéer åt gången. Premium tar bort de gränserna och lägger till delning, säkerhetskopiering och mer.",
+    "faq_q6": "Fungerar det utan internetanslutning?",
+    "faq_a6": "Du kan alltid spela in och spara — offline faller Havenote tillbaka på enkel automatisk formatering. Den smartare AI-städningen och insikterna kräver anslutning.",
+    "faq_eyebrow": "Vanliga frågor",
+    "faq_title": "Frågor folk faktiskt ställer",
     "gallery_shots_title": "Se själv",
     "gallery_shots_body": "En snabb titt på appen, i både ljust och mörkt läge.",
     "gallery_widgets_title": "Tio widgetar, direkt på din hemskärm",
@@ -1901,6 +2845,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Gizlilik Politikası",
     "footer_terms": "Hizmet Şartları",
     "footer_rights": "Tüm hakları saklıdır.",
+    "pricing_eyebrow": "Fiyatlandırma",
+    "pricing_title": "Ücretsiz başla. Hazır olduğunda yükselt.",
+    "pricing_subtext": "Her iki durumda da hesaba gerek yok — premium sadece sınırları kaldırır.",
+    "pricing_free_name": "Ücretsiz",
+    "pricing_free_price": "0 ₺",
+    "pricing_free_1": "Ayda 5 günlük kaydı",
+    "pricing_free_2": "3 görev, 2 hatırlatıcı, 2 fikir, aynı anda 1 liste",
+    "pricing_free_3": "Sesli kayıt, liste oluşturma ve metin düzenleme — her zaman sınırsız",
+    "pricing_free_4": "2 ana ekran widget'ı",
+    "pricing_badge": "En popüler",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/ay",
+    "pricing_premium_yearly_note": "veya yılda 2.199 ₺ — %29 tasarruf",
+    "pricing_premium_1": "Sınırsız günlük kaydı, görev, liste, hatırlatıcı ve fikir",
+    "pricing_premium_2": "Sınırsız yapay zeka analizi ile haftalık ve aylık özetler",
+    "pricing_premium_3": "Günlük ve liste oluştur, paylaş",
+    "pricing_premium_4": "Tam yedekleme, geri yükleme ve dışa aktarma",
+    "pricing_premium_5": "PIN ve biyometrik kilit, tüm widget'lar, tam çıkartma kütüphanesi",
+    "pricing_cta": "Havenote'u edin",
+    "trust_1": "Hesap gerekmez",
+    "trust_2": "Sesin telefonundan asla çıkmaz",
+    "trust_3": "Baştan itibaren 21 dil",
+    "founder_text": "Havenote basit bir sıkıntıdan doğdu: günlük uygulamaları yazmanı ister, görev uygulamaları yazmanı ister, liste uygulamaları yazmanı ister — telefonda yazarken net düşünmek zordur. Sadece konuşabileceğim tek bir şey istiyordum, o an hangi dilde düşünüyorsam o dilde.",
+    "founder_name": "— Havenote'un yaratıcısı",
+    "faq_q1": "Hesap oluşturmam gerekiyor mu?",
+    "faq_a1": "Hayır. Havenote sadece cihazınla çalışır — kayıt yok, e-posta yok, şifre yok.",
+    "faq_q2": "Kaydettikten sonra sesime ne olur?",
+    "faq_a2": "Doğrudan telefonunda metne dönüştürülür ve hemen ardından silinir. Ham veri asla sunucularımıza ulaşmaz — sadece analiz edilmesini seçtiğin metin gider.",
+    "faq_q3": "Aboneliğimi istediğim zaman iptal edebilir miyim?",
+    "faq_a3": "Evet, istediğin zaman, doğrudan Google Play üzerinden. Zaten ödediğin dönemin sonuna kadar Premium'u korursun.",
+    "faq_q4": "Havenote benim dilimde çalışır mı?",
+    "faq_a4": "İlk günden itibaren 21 dili destekler — o an hangi dilde düşünüyorsan o dilde konuş.",
+    "faq_q5": "Free ile Premium arasındaki fark nedir?",
+    "faq_a5": "Free, makul sınırlarla gerçek günlük kullanımı karşılar — aynı anda birkaç günlük kaydı, görev, hatırlatıcı ve fikir. Premium bu sınırları kaldırır, paylaşım, yedekleme ve daha fazlasını ekler.",
+    "faq_q6": "İnternet bağlantısı olmadan çalışır mı?",
+    "faq_a6": "Her zaman kayıt yapıp kaydedebilirsin — çevrimdışıyken Havenote basit otomatik biçimlendirmeye geçer. Daha akıllı yapay zeka temizliği ve öngörüler bağlantı gerektirir.",
+    "faq_eyebrow": "SSS",
+    "faq_title": "İnsanların gerçekten sorduğu sorular",
     "gallery_shots_title": "Kendin gör",
     "gallery_shots_body": "Açık ve koyu modda uygulamaya hızlı bir bakış.",
     "gallery_widgets_title": "On widget, doğrudan ana ekranında",
@@ -1947,6 +2929,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Personvernerklæring",
     "footer_terms": "Bruksvilkår",
     "footer_rights": "Med enerett.",
+    "pricing_eyebrow": "Priser",
+    "pricing_title": "Gratis å starte. Oppgrader når du er klar.",
+    "pricing_subtext": "Ingen konto trengs uansett — premium fjerner bare grensene.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "0 kr",
+    "pricing_free_1": "5 dagboknotater i måneden",
+    "pricing_free_2": "3 oppgaver, 2 påminnelser, 2 idéer, 1 liste om gangen",
+    "pricing_free_3": "Taleopptak, listeoppretting og tekstopprydding — alltid ubegrenset",
+    "pricing_free_4": "2 widgets for hjemskjermen",
+    "pricing_badge": "Mest populær",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/måned",
+    "pricing_premium_yearly_note": "eller 599 kr/år — spar 29 %",
+    "pricing_premium_1": "Ubegrensede dagboknotater, oppgaver, lister, påminnelser og idéer",
+    "pricing_premium_2": "Ubegrenset AI-analyse samt ukentlige og månedlige sammendrag",
+    "pricing_premium_3": "Lag og del dagbøker og lister",
+    "pricing_premium_4": "Full sikkerhetskopiering, gjenoppretting og eksport",
+    "pricing_premium_5": "PIN- og biometrisk lås, alle widgets, fullt klistremerkebibliotek",
+    "pricing_cta": "Skaff Havenote",
+    "trust_1": "Ingen konto nødvendig",
+    "trust_2": "Stemmen din forlater aldri telefonen din",
+    "trust_3": "21 språk, innebygd fra dag én",
+    "founder_text": "Havenote startet med en enkel frustrasjon: dagbokapper får deg til å skrive, oppgaveapper får deg til å skrive, listeapper får deg til å skrive — og det er vanskelig å tenke klart mens du skriver på telefonen. Jeg ville ha én ting jeg bare kunne snakke med, på hvilket språk jeg enn tenkte i akkurat da.",
+    "founder_name": "— Skaperen av Havenote",
+    "faq_q1": "Må jeg opprette en konto?",
+    "faq_a1": "Nei. Havenote fungerer bare med enheten din — ingen registrering, ingen e-post, ingen passord.",
+    "faq_q2": "Hva skjer med stemmen min etter innspilling?",
+    "faq_a2": "Den transkriberes direkte på telefonen din og slettes umiddelbart etterpå. Ingenting rått når noensinne serverne våre — bare teksten du velger å få analysert gjør det.",
+    "faq_q3": "Kan jeg si opp abonnementet når som helst?",
+    "faq_a3": "Ja, når som helst, direkte fra Google Play. Du beholder Premium ut perioden du allerede har betalt for.",
+    "faq_q4": "Fungerer Havenote på mitt språk?",
+    "faq_a4": "Det støtter 21 språk, innebygd fra dag én — snakk på det språket du tenker på akkurat da.",
+    "faq_q5": "Hva er forskjellen mellom Free og Premium?",
+    "faq_a5": "Free dekker reell daglig bruk med fornuftige grenser — noen dagboknotater, oppgaver, påminnelser og idéer om gangen. Premium fjerner disse grensene og legger til deling, sikkerhetskopiering og mer.",
+    "faq_q6": "Fungerer det uten internettforbindelse?",
+    "faq_a6": "Du kan alltid ta opp og lagre — offline faller Havenote tilbake på enkel automatisk formatering. Den smartere AI-oppryddingen og innsiktene krever tilkobling.",
+    "faq_eyebrow": "Ofte stilte spørsmål",
+    "faq_title": "Spørsmål folk faktisk stiller",
     "gallery_shots_title": "Se selv",
     "gallery_shots_body": "Et raskt blikk på appen, i både lyst og mørkt modus.",
     "gallery_widgets_title": "Ti widgeter, rett på hjemskjermen din",
@@ -1993,6 +3013,44 @@ const TRANSLATIONS = {
     "footer_privacy": "Privatlivspolitik",
     "footer_terms": "Servicevilkår",
     "footer_rights": "Alle rettigheder forbeholdes.",
+    "pricing_eyebrow": "Priser",
+    "pricing_title": "Gratis at starte. Opgrader, når du er klar.",
+    "pricing_subtext": "Der kræves ikke en konto i nogen af tilfældene — premium fjerner bare grænserne.",
+    "pricing_free_name": "Gratis",
+    "pricing_free_price": "0 kr",
+    "pricing_free_1": "5 dagbogsnotater om måneden",
+    "pricing_free_2": "3 opgaver, 2 påmindelser, 2 idéer, 1 liste ad gangen",
+    "pricing_free_3": "Taleoptagelse, listeoprettelse og tekstoprydning — altid ubegrænset",
+    "pricing_free_4": "2 widgets til startskærmen",
+    "pricing_badge": "Mest populære",
+    "pricing_premium_name": "Premium",
+    "pricing_premium_period": "/måned",
+    "pricing_premium_yearly_note": "eller 599 kr/år — spar 29%",
+    "pricing_premium_1": "Ubegrænsede dagbogsnotater, opgaver, lister, påmindelser og idéer",
+    "pricing_premium_2": "Ubegrænset AI-analyse samt ugentlige og månedlige resuméer",
+    "pricing_premium_3": "Opret og del dagbøger og lister",
+    "pricing_premium_4": "Fuld backup, gendannelse og eksport",
+    "pricing_premium_5": "Pinkode- og biometrisk lås, alle widgets, fuldt klistermærkebibliotek",
+    "pricing_cta": "Få Havenote",
+    "trust_1": "Ingen konto nødvendig",
+    "trust_2": "Din stemme forlader aldrig din telefon",
+    "trust_3": "21 sprog, indbygget fra starten",
+    "founder_text": "Havenote opstod af en simpel frustration: dagbogsapps får dig til at skrive, opgaveapps får dig til at skrive, listeapps får dig til at skrive — og det er svært at tænke klart, mens du skriver på telefonen. Jeg ville have én ting, jeg bare kunne tale til, på hvilket sprog jeg nu tænkte i lige da.",
+    "founder_name": "— Skaberen af Havenote",
+    "faq_q1": "Skal jeg oprette en konto?",
+    "faq_a1": "Nej. Havenote fungerer kun med din enhed — ingen tilmelding, ingen e-mail, ingen adgangskode.",
+    "faq_q2": "Hvad sker der med min stemme, efter jeg optager?",
+    "faq_a2": "Den transskriberes direkte på din telefon og slettes straks bagefter. Intet råt materiale når nogensinde vores servere — kun den tekst, du vælger at få analyseret.",
+    "faq_q3": "Kan jeg opsige mit abonnement når som helst?",
+    "faq_a3": "Ja, når som helst, direkte fra Google Play. Du beholder Premium indtil slutningen af den periode, du allerede har betalt for.",
+    "faq_q4": "Fungerer Havenote på mit sprog?",
+    "faq_a4": "Det understøtter 21 sprog, indbygget fra dag ét — tal på det sprog, du lige tænker på.",
+    "faq_q5": "Hvad er forskellen på Free og Premium?",
+    "faq_a5": "Free dækker reel daglig brug med fornuftige grænser — nogle dagbogsnotater, opgaver, påmindelser og idéer ad gangen. Premium fjerner disse grænser og tilføjer deling, backup og mere.",
+    "faq_q6": "Fungerer det uden internetforbindelse?",
+    "faq_a6": "Du kan altid optage og gemme — offline falder Havenote tilbage på simpel automatisk formatering. Den smartere AI-oprydning og indsigter kræver forbindelse.",
+    "faq_eyebrow": "Ofte stillede spørgsmål",
+    "faq_title": "Spørgsmål folk rent faktisk stiller",
     "gallery_shots_title": "Se selv",
     "gallery_shots_body": "Et hurtigt kig på appen, i både lyst og mørkt tema.",
     "gallery_widgets_title": "Ti widgets, direkte på din startskærm",
@@ -2134,9 +3192,16 @@ document.addEventListener("keydown", (e) => {
 // to the backdrop's own onclick.
 document.getElementById("lightboxImg").addEventListener("click", (e) => e.stopPropagation());
 
+// ---------- FAQ accordion ----------
+document.querySelectorAll(".faq-question").forEach(btn => {
+  btn.addEventListener("click", () => {
+    btn.closest(".faq-item").classList.toggle("open");
+  });
+});
+
 // ---------- Google Play links ----------
 function wirePlayLinks() {
-  ["playLinkNav", "playLinkHero", "playLinkFinal"].forEach(id => {
+  ["playLinkNav", "playLinkHero", "playLinkPricing", "playLinkFinal"].forEach(id => {
     document.getElementById(id).setAttribute("href", GOOGLE_PLAY_URL);
   });
 }
