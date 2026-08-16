@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terms of Service — Havenote</title>
+<title>Terms of Service | Havenote</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +15,10 @@
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #14161A; --surface: #1F2029; --ink: #F2F3F1; --ink-soft: #9CA6A0; --border: #2C2E36; --accent-light: #223C33; }
+    .logo-light { display: none; }
+    .logo-dark { display: inline-block; }
   }
+  .logo-dark { display: none; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.7; }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
@@ -33,10 +36,6 @@
   ul { padding-left: 20px; }
   li { margin-bottom: 8px; }
   strong { color: var(--ink); }
-  .callout {
-    background: var(--accent-light); border-radius: 16px; padding: 18px 22px;
-    margin: 32px 0; font-size: 14.5px; color: var(--ink);
-  }
 </style>
 </head>
 <body>
@@ -44,7 +43,8 @@
 <header>
   <div class="header-inner">
     <a class="brand" href="index.html">
-      <img src="assets/logo-light.png" alt="Havenote" style="height:22px;">
+      <img src="assets/logo-light.png" alt="Havenote" class="logo-light" style="height:22px;">
+      <img src="assets/logo-dark.png" alt="Havenote" class="logo-dark" style="height:22px;">
     </a>
     <a class="back" href="index.html">← Back to Havenote</a>
   </div>
@@ -58,10 +58,10 @@
   <p>By downloading or using Havenote, you agree to these terms. If you don't agree, please don't use the app.</p>
 
   <h2>What Havenote is</h2>
-  <p>Havenote is a voice-capture app for journaling, tasks, lists, reminders, and ideas. Some features (weekly/monthly AI recaps, entry analysis, idea expansion, list parsing, transcript correction) rely on a connection to our backend service and a third-party AI provider — these require an internet connection and are subject to a monthly usage limit on the free tier.</p>
+  <p>Havenote is a voice-capture app for journaling, tasks, lists, reminders, and ideas. Some features (weekly/monthly AI recaps, entry analysis, idea expansion, list parsing, transcript correction) rely on a connection to our backend service and a third-party AI provider. These require an internet connection and are subject to a monthly usage limit on the free tier.</p>
 
   <h2>No account required</h2>
-  <p>Havenote does not use accounts. Your installation is identified only by an anonymous device ID. Because there's no account, there's no username or password to keep secure on our end — but this also means data tied to your device ID (like premium status or a shared journal) cannot be recovered if you lose access to that specific device without a backup you made yourself.</p>
+  <p>Havenote does not use accounts. Your installation is identified only by an anonymous device ID. Because there's no account, there's no username or password to keep secure on our end. But this also means data tied to your device ID (like premium status or a shared journal) cannot be recovered if you lose access to that specific device without a backup you made yourself.</p>
 
   <h2>Subscriptions (Havenote Premium)</h2>
   <ul>
@@ -72,16 +72,16 @@
   </ul>
 
   <h2>Your content</h2>
-  <p>You own what you create in Havenote — your journal entries, tasks, lists, reminders, and ideas. We don't claim any ownership over your content. You're responsible for keeping your own backups; Havenote stores your data locally on your device by default.</p>
+  <p>You own what you create in Havenote: your journal entries, tasks, lists, reminders, and ideas. We don't claim any ownership over your content. You're responsible for keeping your own backups; Havenote stores your data locally on your device by default.</p>
 
   <h2>Shared spaces</h2>
-  <p>If you create a shared journal or shared list, you're choosing to make that content visible to whoever you share the access code with. Be thoughtful about who you share a code with — anyone who has it can join that shared space.</p>
+  <p>If you create a shared journal or shared list, you're choosing to make that content visible to whoever you share the access code with. Be thoughtful about who you share a code with: anyone who has it can join that shared space.</p>
 
   <h2>Acceptable use</h2>
   <p>Don't use Havenote to store or share unlawful content, to harass others, or to attempt to disrupt or reverse-engineer the service. We reserve the right to suspend backend access (AI features, sharing, premium verification) tied to a device ID that we reasonably believe is being used to abuse the service.</p>
 
   <h2>No warranty</h2>
-  <p>Havenote is provided "as is." We work to keep it reliable, but we don't guarantee it will always be available, error-free, or fit for any particular purpose — especially the AI-generated content, which can be inaccurate.</p>
+  <p>Havenote is provided "as is." We work to keep it reliable, but we don't guarantee it will always be available, error-free, or fit for any particular purpose, especially the AI-generated content, which can be inaccurate.</p>
 
   <h2>Limitation of liability</h2>
   <p>To the extent permitted by law, Havenote and its developers aren't liable for indirect, incidental, or consequential damages arising from your use of the app.</p>
@@ -91,7 +91,6 @@
 
   <h2>Contact</h2>
   <p>Questions about these terms: frontcodes@gmail.com</p>
-
 </div>
 
 </body>

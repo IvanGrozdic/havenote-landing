@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy — Havenote</title>
+<title>Privacy Policy | Havenote</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +15,10 @@
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #14161A; --surface: #1F2029; --ink: #F2F3F1; --ink-soft: #9CA6A0; --border: #2C2E36; --accent-light: #223C33; }
+    .logo-light { display: none; }
+    .logo-dark { display: inline-block; }
   }
+  .logo-dark { display: none; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.7; }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 100px; }
@@ -44,7 +47,8 @@
 <header>
   <div class="header-inner">
     <a class="brand" href="index.html">
-      <img src="assets/logo-light.png" alt="Havenote" style="height:22px;">
+      <img src="assets/logo-light.png" alt="Havenote" class="logo-light" style="height:22px;">
+      <img src="assets/logo-dark.png" alt="Havenote" class="logo-dark" style="height:22px;">
     </a>
     <a class="back" href="index.html">← Back to Havenote</a>
   </div>
@@ -55,7 +59,7 @@
   <p class="updated">Last updated: August 14, 2026</p>
 
   <div class="callout">
-    <strong>The short version:</strong> Havenote doesn't have accounts. Your voice recordings are transcribed directly on your own phone and deleted immediately after — they never reach our servers. Only the text you explicitly choose to send for AI analysis, or content you choose to share with another person, ever leaves your device.
+    <strong>The short version:</strong> Havenote doesn't have accounts. Your voice recordings are transcribed directly on your own phone and deleted immediately after. They never reach our servers. Only the text you explicitly choose to send for AI analysis, or content you choose to share with another person, ever leaves your device.
   </div>
 
   <h2>Who we are</h2>
@@ -70,19 +74,19 @@
   <h2>What does reach our servers</h2>
   <ul>
     <li><strong>AI analysis requests:</strong> if you use a feature that calls our AI (entry analysis, weekly/monthly recaps, idea expansion, list parsing from voice, transcript correction), the relevant text is sent to our backend, which forwards it to our AI provider (Anthropic) to generate a response. This text is not stored permanently on our servers beyond what's needed to process the request.</li>
-    <li><strong>Shared journals and shared lists:</strong> if you choose to share a journal or list with another person, the entries/items in that shared space (including any photos or voice recordings attached to them) are stored on our servers so they can sync between both participants' devices. This only happens for content inside a space you deliberately created and shared — nothing in your private journal, tasks, lists, reminders, or ideas is ever sent anywhere unless you take this explicit action.</li>
+    <li><strong>Shared journals and shared lists:</strong> if you choose to share a journal or list with another person, the entries/items in that shared space (including any photos or voice recordings attached to them) are stored on our servers so they can sync between both participants' devices. This only happens for content inside a space you deliberately created and shared. Nothing in your private journal, tasks, lists, reminders, or ideas is ever sent anywhere unless you take this explicit action.</li>
     <li><strong>Purchase verification:</strong> if you subscribe to Havenote Premium, your purchase token is verified against Google Play's servers to activate premium features tied to your anonymous device ID.</li>
   </ul>
 
   <h2>Data you keep entirely on your device</h2>
-  <p>Your journal entries, tasks, lists, reminders, ideas, important dates, photos, and voice recordings are stored locally on your phone by default. You control backup and export yourself — Havenote does not automatically back this data up to any server.</p>
+  <p>Your journal entries, tasks, lists, reminders, ideas, important dates, photos, and voice recordings are stored locally on your phone by default. You control backup and export yourself. Havenote does not automatically back this data up to any server.</p>
 
   <h2>Third-party services</h2>
   <p>Havenote's backend uses Anthropic's Claude API to generate AI analysis and recaps, and Google Play's billing and developer notification services to handle subscriptions. These providers process only the specific data described above, for the specific purpose of fulfilling your request.</p>
 
   <h2>Your choices</h2>
   <ul>
-    <li>Every AI-analysis feature is opt-in — nothing is analyzed automatically or in the background.</li>
+    <li>Every AI-analysis feature is opt-in. Nothing is analyzed automatically or in the background.</li>
     <li>Location and weather tagging on entries is off by default and only activated per-entry, by you.</li>
     <li>You can mark any journal entry as private, delete individual entries or your whole local database, and export your data at any time.</li>
   </ul>
@@ -95,7 +99,6 @@
 
   <h2>Contact</h2>
   <p>Questions about this policy: frontcodes@gmail.com</p>
-
 </div>
 
 </body>
