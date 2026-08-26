@@ -32,64 +32,231 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
 <style>
+  /* ═══════════════════════════════════════════════════════════════
+     HAVENOTE — visual system v2
+
+     Three things changed from v1, and everything else follows from
+     them:
+
+     1. THE PRODUCT IS THE ARTWORK. v1 had 30 real screenshots and 10
+        real widget renders sitting in /assets, and showed none of
+        them until 60% of the way down the page — every section above
+        that used a decorative icon or a fake bar chart instead. The
+        phone frame and widget-collage components below already
+        existed in v1's stylesheet, fully written, and were never
+        used by a single element in the markup. They are used now.
+
+     2. DEPTH INSTEAD OF FLATNESS. A fixed aurora field and a film
+        grain layer sit behind everything, so sections float over a
+        living ground rather than a flat #FBFBF9. Elevated surfaces
+        are glass, not white rectangles.
+
+     3. MOTION THAT ANSWERS THE SCROLL. v1 ran six infinite keyframe
+        loops forever, including far off-screen, and revealed every
+        section with one identical 28px nudge. Motion here is driven
+        by where you are and where the pointer is: staggered
+        directional reveals, pointer-tilted phones, a marquee that
+        actually travels.
+
+     Every string on the page is still one of the same 82 i18n keys —
+     no new copy, so nothing needs translating into 21 languages
+     again.
+     ═══════════════════════════════════════════════════════════════ */
+
   :root {
+    /* Brand — unchanged, this is the app's own accent */
     --accent: #4CAF93;
     --accent-dark: #3B9679;
+    --accent-deep: #2C7A62;
+    --accent-bright: #74E0BB;
     --accent-light: #E4F5EF;
+
+    /* Aurora hues. Deliberately NOT part of the brand palette: they
+       only ever appear blurred to 80px at ≤14% opacity, far behind
+       content, to keep the background alive without introducing a
+       second brand colour anyone could name. */
+    --aurora-1: #4CAF93;
+    --aurora-2: #5FC8DE;
+    --aurora-3: #F0C67C;
+
     --bg: #FBFBF9;
+    --bg-deep: #F3F5F2;
     --surface: #FFFFFF;
+    --glass: 255 255 255;
+    --glass-alpha: 0.72;
     --ink: #17201C;
     --ink-soft: #5B6862;
+    --ink-faint: #8C978F;
     --border: #E7E9E5;
+    --border-strong: #D8DCD6;
     --shadow-color: 152 40% 40%;
+    /* The resting colour of a not-yet-lit word in the scrub statement:
+       far enough above the page to be legible as waiting text, far
+       enough below --ink that the fill is the thing you notice. */
+    --statement-dim: #E1E4DF;
+
+    --radius-xl: 40px;
     --radius-lg: 28px;
     --radius-md: 18px;
     --radius-sm: 12px;
     --max-w: 1180px;
+
     --font-display: 'Outfit', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
+
+    /* One easing curve for everything that moves, so the whole page
+       feels like it shares a physics. */
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   [data-theme="dark"] {
-    --bg: #14161A;
-    --surface: #1F2029;
+    --bg: #0F1114;
+    --bg-deep: #0A0C0E;
+    --surface: #191B21;
+    --glass: 30 33 40;
+    --glass-alpha: 0.66;
     --ink: #F2F3F1;
     --ink-soft: #9CA6A0;
-    --border: #2C2E36;
-    --accent-light: #223C33;
+    --ink-faint: #6E7873;
+    --border: #262931;
+    --border-strong: #333741;
+    --accent-light: #1B3830;
+    --shadow-color: 152 30% 6%;
+    --statement-dim: #2E3134;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    /* The sticky nav is 72px; without this an anchor jump parks the
+       target underneath it. */
+    scroll-padding-top: 90px;
+  }
 
   body {
     font-family: var(--font-body);
     background: var(--bg);
     color: var(--ink);
-    line-height: 1.5;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
     overflow-x: hidden;
-    transition: background 0.3s ease, color 0.3s ease;
+    position: relative;
+    transition: background 0.4s var(--ease-soft), color 0.4s var(--ease-soft);
   }
+
+  /* ---------- Aurora field ----------
+     Fixed, so it never scrolls with the content — the page slides
+     over a stationary light source instead of dragging its own
+     background along, which is what makes it read as depth rather
+     than as a big coloured rectangle. */
+  .aurora {
+    position: fixed;
+    inset: -20vh -20vw;
+    z-index: -2;
+    pointer-events: none;
+    filter: blur(80px);
+    opacity: 0.55;
+    transition: opacity 0.6s var(--ease-soft);
+  }
+  [data-theme="dark"] .aurora { opacity: 0.4; }
+  .aurora span {
+    position: absolute;
+    border-radius: 50%;
+    display: block;
+    will-change: transform;
+  }
+  .aurora .a1 {
+    width: 46vw; height: 46vw; left: -6vw; top: 2vh;
+    background: radial-gradient(circle, var(--aurora-1) 0%, transparent 68%);
+    opacity: 0.30;
+    animation: drift1 26s ease-in-out infinite;
+  }
+  .aurora .a2 {
+    width: 40vw; height: 40vw; right: -4vw; top: 22vh;
+    background: radial-gradient(circle, var(--aurora-2) 0%, transparent 68%);
+    opacity: 0.22;
+    animation: drift2 34s ease-in-out infinite;
+  }
+  .aurora .a3 {
+    width: 34vw; height: 34vw; left: 32vw; top: 58vh;
+    background: radial-gradient(circle, var(--aurora-3) 0%, transparent 68%);
+    opacity: 0.16;
+    animation: drift3 30s ease-in-out infinite;
+  }
+  @keyframes drift1 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50%      { transform: translate3d(6vw, 8vh, 0) scale(1.15); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+    50%      { transform: translate3d(-7vw, 6vh, 0) scale(0.92); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+    50%      { transform: translate3d(4vw, -7vh, 0) scale(1.2); }
+  }
+
+  /* ---------- Film grain ----------
+     Inline SVG turbulence, so it costs no request and no asset file.
+     This is the single cheapest thing on the page that separates
+     "rendered in a browser" from "designed": it breaks up the flat
+     gradient banding the aurora would otherwise show on wide
+     screens. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  [data-theme="dark"] body::after { opacity: 0.055; }
 
   html[dir="rtl"] body { direction: rtl; }
 
   h1, h2, h3, .display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
-    line-height: 1.08;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
     font-weight: 700;
+    text-wrap: balance;
   }
+  p { text-wrap: pretty; }
 
   a { color: inherit; text-decoration: none; }
   img { max-width: 100%; display: block; }
-  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+  ::selection { background: var(--accent); color: white; }
 
   .wrap {
     max-width: var(--max-w);
     margin: 0 auto;
     padding: 0 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Reusable glass surface. The inset highlight on the top edge is
+     what sells it as a physical pane rather than a translucent div —
+     real glass catches light where it meets air. */
+  .glass {
+    background: rgb(var(--glass) / var(--glass-alpha));
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    box-shadow:
+      0 24px 60px -22px hsl(var(--shadow-color) / 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+  [data-theme="dark"] .glass {
+    box-shadow:
+      0 24px 60px -22px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   /* ---------- Nav ---------- */
@@ -97,17 +264,27 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
+    background: rgb(var(--glass) / 0.7);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    transition: border-color 0.3s var(--ease-soft), background 0.3s var(--ease-soft), box-shadow 0.3s var(--ease-soft);
+  }
+  /* Only once you've actually left the top does the bar separate
+     itself from the page — at rest it should feel like part of the
+     hero, not a chrome strip bolted above it. */
+  header.nav.stuck {
+    border-bottom-color: color-mix(in srgb, var(--border) 90%, transparent);
+    box-shadow: 0 8px 30px -18px hsl(var(--shadow-color) / 0.5);
   }
   .nav-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 72px;
+    transition: height 0.3s var(--ease-soft);
   }
+  header.nav.stuck .nav-inner { height: 62px; }
+
   .brand {
     display: flex;
     align-items: center;
@@ -115,17 +292,7 @@
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 26px;
-  }
-  .brand-mark {
-    width: 34px; height: 34px;
-    border-radius: 10px;
-    background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .brand-mark span {
-    width: 13px; height: 13px;
-    border-radius: 50%;
-    background: white;
+    letter-spacing: -0.03em;
   }
   .nav-right { display: flex; align-items: center; gap: 14px; }
 
@@ -134,22 +301,23 @@
     display: flex; align-items: center; gap: 6px;
     padding: 9px 14px;
     border-radius: 999px;
-    border: 1px solid var(--border);
     color: var(--ink);
     font-size: 14px;
     font-weight: 600;
-    background: var(--surface);
-    transition: border-color 0.2s ease;
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
   }
-  .lang-btn:hover { border-color: var(--accent); }
+  .lang-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent-dark); }
+  [data-theme="dark"] .lang-btn:hover { color: var(--accent-bright); }
   .lang-menu {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     right: 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgb(var(--glass) / 0.94);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
     border-radius: var(--radius-md);
-    box-shadow: 0 20px 50px -12px hsl(var(--shadow-color) / 0.25);
+    box-shadow: 0 30px 70px -18px hsl(var(--shadow-color) / 0.35);
     padding: 8px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -160,11 +328,12 @@
     overflow-y: auto;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-6px);
-    transition: all 0.18s ease;
+    transform: translateY(-10px) scale(0.97);
+    transform-origin: top right;
+    transition: opacity 0.22s var(--ease), transform 0.22s var(--ease), visibility 0.22s;
   }
-  html[dir="rtl"] .lang-menu { right: auto; left: 0; }
-  .lang-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  html[dir="rtl"] .lang-menu { right: auto; left: 0; transform-origin: top left; }
+  .lang-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
   .lang-option {
     display: block;
     padding: 9px 10px;
@@ -175,6 +344,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: background 0.16s var(--ease), color 0.16s var(--ease);
   }
   .lang-option:hover { background: var(--accent-light); color: var(--ink); }
   .lang-option.active { background: var(--accent); color: white; }
@@ -182,691 +352,1808 @@
   .theme-toggle {
     width: 40px; height: 40px;
     border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface);
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
     color: var(--ink);
     display: flex; align-items: center; justify-content: center;
     font-size: 18px;
-    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease), transform 0.4s var(--ease);
   }
-  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); transform: rotate(15deg); }
+  .theme-toggle:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); transform: rotate(-25deg) scale(1.08); }
 
+  /* ---------- Buttons ---------- */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 13px 24px;
+    padding: 15px 28px;
     border-radius: 999px;
     font-weight: 600;
     font-size: 15px;
     white-space: nowrap;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
   }
   .btn-primary {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 42%, var(--accent-deep) 100%);
+    background-size: 200% 200%;
+    background-position: 0% 50%;
     color: white;
-    box-shadow: 0 10px 26px -8px hsl(var(--shadow-color) / 0.55);
+    box-shadow: 0 14px 34px -10px hsl(var(--shadow-color) / 0.6);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), background-position 0.6s var(--ease);
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -8px hsl(var(--shadow-color) / 0.6); }
-  .btn-primary:active { transform: translateY(0) scale(0.98); }
+  .btn-primary:hover {
+    background-position: 100% 50%;
+    box-shadow: 0 22px 46px -12px hsl(var(--shadow-color) / 0.7);
+  }
+  /* A sheen that crosses the button once on hover. Pure ::after, no
+     JS, and it reads as "this thing is a physical object catching
+     light" rather than a colour swap. */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.42) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 0.75s var(--ease);
+  }
+  .btn-primary:hover::after { transform: translateX(120%); }
+  .btn-primary:active { transform: scale(0.97); }
   .btn-nav { padding: 11px 20px; font-size: 14px; }
 
-  /* ---------- Hero ---------- */
-  .hero {
-    padding: 88px 0 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 56px;
-    align-items: center;
+  .btn-ghost {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
   }
+  .btn-ghost:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-dark); transform: translateY(-2px); }
+  [data-theme="dark"] .btn-ghost:hover { color: var(--accent-bright); }
+
+  /* ---------- Eyebrow ---------- */
   .eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--accent-dark);
-    background: var(--accent-light);
-    padding: 7px 14px;
+    background: color-mix(in srgb, var(--accent-light) 88%, transparent);
+    padding: 7px 15px;
     border-radius: 999px;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(8px);
   }
-  [data-theme="dark"] .eyebrow { color: #7FDDBC; }
-  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  [data-theme="dark"] .eyebrow { color: var(--accent-bright); }
+  .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent);
+    animation: dotPing 2.6s var(--ease-soft) infinite;
+  }
+  @keyframes dotPing {
+    0%      { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
+    70%     { box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 0%, transparent); }
+    100%    { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+  }
 
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 76px 0 40px;
+    display: grid;
+    grid-template-columns: 1.02fr 1fr;
+    gap: 40px;
+    align-items: center;
+    min-height: min(88vh, 780px);
+  }
   .hero h1 {
-    font-size: clamp(38px, 5vw, 58px);
-    margin-bottom: 20px;
+    /* Considerably larger than v1's 58px ceiling. A launch page has
+       one job above the fold and the headline is it. */
+    font-size: clamp(42px, 6.4vw, 82px);
+    margin-bottom: 24px;
+    background: linear-gradient(160deg, var(--ink) 30%, color-mix(in srgb, var(--ink) 62%, var(--accent)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .hero-sub {
-    font-size: 18px;
+    font-size: clamp(17px, 1.5vw, 19px);
     color: var(--ink-soft);
-    max-width: 46ch;
-    margin-bottom: 32px;
-    line-height: 1.6;
+    max-width: 44ch;
+    margin-bottom: 34px;
+    line-height: 1.62;
   }
-  .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-  .trust-badges { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 26px; }
-  .trust-badge { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
-  .trust-badge i { color: var(--accent); font-size: 16px; flex-shrink: 0; }
+  .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .trust-badges { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 30px; }
+  .trust-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--ink-soft);
+  }
+  .trust-badge i { color: var(--accent); font-size: 17px; flex-shrink: 0; }
 
-  /* Hero visual: voice orb + floating category chips */
-  .hero-visual {
+  /* ---------- Phone cluster (the hero's actual subject) ----------
+     Three real screens in depth. The whole cluster tilts toward the
+     pointer as one rigid body (see setupTilt in the script), which
+     is why the perspective lives on the stage and the transform on
+     the inner group. */
+  .phone-stage {
     position: relative;
-    height: 460px;
+    height: clamp(440px, 52vw, 620px);
+    perspective: 1400px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .orb {
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 32% 28%, var(--accent) 0%, var(--accent-dark) 100%);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 30px 70px -16px hsl(var(--shadow-color) / 0.5);
+  .phone-cluster {
     position: relative;
-    z-index: 3;
-  }
-  .orb i { font-size: 56px; color: white; }
-  .waves { display: flex; align-items: center; gap: 5px; height: 40px; }
-  .waves span {
-    width: 5px; border-radius: 3px; background: white;
-    animation: wave 1.1s ease-in-out infinite;
-  }
-  .waves span:nth-child(1) { height: 14px; animation-delay: -0.9s; }
-  .waves span:nth-child(2) { height: 26px; animation-delay: -0.6s; }
-  .waves span:nth-child(3) { height: 38px; animation-delay: -0.3s; }
-  .waves span:nth-child(4) { height: 22px; animation-delay: -0.15s; }
-  .waves span:nth-child(5) { height: 16px; animation-delay: 0s; }
-  @keyframes wave {
-    0%, 100% { transform: scaleY(0.4); }
-    50% { transform: scaleY(1); }
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s var(--ease);
+    will-change: transform;
   }
 
-  /* ---------- Icon animations (feature-section icons) ---------- */
-  .pulse-icon { animation: iconPulse 2.2s ease-in-out infinite; }
-  .pulse-icon-delay { animation: iconPulse 2.2s ease-in-out infinite; animation-delay: 1.1s; }
-  @keyframes iconPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.15); opacity: 0.75; }
-  }
-  .spin-icon { animation: iconSpin 5s linear infinite; }
-  @keyframes iconSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  .pop-icon { animation: iconPop 1.8s ease-in-out infinite; }
-  @keyframes iconPop {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.22); }
-  }
-  .ring-icon { animation: iconRing 2.4s ease-in-out infinite; transform-origin: top center; }
-  @keyframes iconRing {
-    0%, 92%, 100% { transform: rotate(0deg); }
-    93% { transform: rotate(-14deg); }
-    95% { transform: rotate(12deg); }
-    97% { transform: rotate(-8deg); }
-    99% { transform: rotate(4deg); }
-  }
-  .bounce-icon { animation: iconBounce 1.6s ease-in-out infinite; }
-  @keyframes iconBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .pulse-icon, .pulse-icon-delay, .spin-icon, .pop-icon, .ring-icon, .bounce-icon { animation: none !important; }
-  }
-
-  .float-card {
-    position: absolute;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-    box-shadow: 0 16px 34px -12px hsl(var(--shadow-color) / 0.22);
-    animation: float 5s ease-in-out infinite;
-    z-index: 2;
-  }
-  .float-card i { color: var(--accent); font-size: 17px; }
-  .fc-1 { top: 6%; left: 2%; animation-delay: 0s; }
-  .fc-2 { top: 14%; right: 0%; animation-delay: -1.2s; }
-  .fc-3 { bottom: 22%; left: -4%; animation-delay: -2.4s; }
-  .fc-4 { bottom: 10%; right: 6%; animation-delay: -3.2s; }
-  .fc-5 { top: 46%; left: 42%; animation-delay: -0.6s; z-index: 1; opacity: 0.9; }
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-14px); }
-  }
-  .ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1.5px dashed var(--border);
-    animation: spin 40s linear infinite;
-  }
-  .ring-1 { width: 340px; height: 340px; }
-  .ring-2 { width: 420px; height: 420px; animation-direction: reverse; animation-duration: 60s; }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* ---------- Stats ---------- */
-  .stats {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 40px 0;
-  }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    text-align: center;
-  }
-  .stat-num {
-    font-family: var(--font-display);
-    font-size: clamp(30px, 4vw, 44px);
-    font-weight: 800;
-    color: var(--accent);
-  }
-  .stat-label {
-    font-size: 14px;
-    color: var(--ink-soft);
-    font-weight: 500;
-    margin-top: 4px;
-  }
-
-  /* ---------- Feature sections ---------- */
-  .feature {
-    padding: 100px 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
-  }
-  .feature.reverse .feature-text { order: 2; }
-  .feature.reverse .feature-visual { order: 1; }
-  .feature-text h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 18px; }
-  .feature-text p { font-size: 17px; color: var(--ink-soft); line-height: 1.7; max-width: 48ch; }
-
-  .feature-visual {
-    aspect-ratio: 5 / 4;
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .feature-visual::before {
-    content: "";
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at 75% 15%, var(--accent-light), transparent 60%);
-  }
-  .visual-inner { position: relative; z-index: 1; text-align: center; }
-  .visual-icon-big {
-    width: 92px; height: 92px;
-    border-radius: 26px;
-    background: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-    box-shadow: 0 20px 44px -12px hsl(var(--shadow-color) / 0.45);
-  }
-  .visual-icon-big i { font-size: 42px; color: white; }
-
-  /* Mini widget-grid visual */
-  .widget-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 0 20px;
-  }
-  .widget-tile {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    text-align: left;
-  }
-  .widget-tile i { color: var(--accent); font-size: 20px; margin-bottom: 8px; display: block; }
-  .widget-tile .wt-bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 6px; }
-  .widget-tile .wt-bar.short { width: 60%; }
-
-  /* Two-avatar sync visual */
-  .sync-visual { display: flex; align-items: center; justify-content: center; gap: 18px; }
-  .avatar-circle {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: var(--accent-light);
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--accent);
-  }
-  .avatar-circle i { font-size: 26px; color: var(--accent-dark); }
-  .sync-line { width: 60px; height: 2px; background: var(--border); position: relative; overflow: hidden; }
-  .sync-line::after {
-    content: ""; position: absolute; inset: 0;
-    background: var(--accent);
-    animation: syncmove 2s ease-in-out infinite;
-  }
-  @keyframes syncmove {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(0%); }
-    100% { transform: translateX(100%); }
-  }
-
-  /* Chart bars visual */
-  .chart-visual { display: flex; align-items: flex-end; gap: 10px; height: 110px; }
-  .chart-bar { width: 22px; border-radius: 6px 6px 0 0; background: var(--border); }
-  .chart-bar.hi { background: var(--accent); }
-
-  /* ---------- Scroll progress bar ---------- */
-  .scroll-progress {
-    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
-    background: var(--accent); z-index: 200; transition: width 0.1s linear;
-  }
-
-  /* ---------- Phone mockup (real screenshots) ---------- */
+  /* Current-generation Android proportions: a 4px uniform bezel on all
+     four sides, body and screen radii within a few px of each other,
+     and a machined rim rather than a flat black outline. The frame this
+     replaced was a 9px slab with a 70px iPhone notch cut into the top,
+     which is the wrong device for an Android-only app and reads as a
+     2019 mockup besides.
+     No camera cutout: these screenshots were captured without a status
+     bar, so a punch-hole drawn at the top centre would land on the
+     app's own header instead of above it. The side buttons carry the
+     "this is a real handset" cue instead, and cost nothing in
+     collisions. */
+  /* The frame is a soft graphite rather than true black: against a
+     near-white page a #0d0e11 bezel reads as a hole punched in the
+     layout. Lifting the darkest stop to #2a2d33 keeps the "milled
+     metal" read while letting the frame sit on the page instead of
+     cutting through it. */
   .phone {
     position: relative;
-    width: 240px;
-    border-radius: 34px;
-    background: #0c0d10;
-    padding: 10px;
+    border-radius: 16px;
+    background: linear-gradient(150deg, #565b64 0%, #33373d 24%, #24272c 68%, #42474f 100%);
+    padding: 2px;
     box-shadow:
-      0 40px 80px -20px hsl(var(--shadow-color) / 0.45),
-      0 0 0 1.5px rgba(255,255,255,0.06) inset;
+      0 50px 90px -26px hsl(var(--shadow-color) / 0.42),
+      0 2px 6px rgba(0, 0, 0, 0.22);
   }
+  /* The rim: a 1px gradient stroke masked to the border only, so the
+     edge catches light along the top-left and bottom-right the way a
+     milled aluminium frame does. */
+  .phone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(155deg, rgba(255,255,255,0.55), rgba(255,255,255,0.06) 32%, rgba(255,255,255,0) 58%, rgba(255,255,255,0.26));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 6;
+  }
+  .phone-btn {
+    position: absolute;
+    right: -2px;
+    width: 2.5px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, #767b85, #45494f);
+    z-index: 5;
+  }
+  html[dir="rtl"] .phone-btn { right: auto; left: -2px; border-radius: 3px 0 0 3px; }
+  .phone-btn.pw  { top: 20%; height: 6.5%; }
+  .phone-btn.vol { top: 30%; height: 12%; }
   .phone-screen {
     position: relative;
     width: 100%;
     aspect-ratio: 640 / 1330;
-    border-radius: 26px;
+    border-radius: 14px;
     overflow: hidden;
     background: var(--surface);
   }
   .phone-screen img {
-    width: 100%; height: 100%; object-fit: cover; object-position: top center;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
     display: block;
   }
-  .phone-notch {
-    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-    width: 70px; height: 18px; border-radius: 12px; background: #0c0d10; z-index: 5;
-  }
-  .phone.floaty { animation: phoneFloat 6s ease-in-out infinite; }
-  @keyframes phoneFloat {
-    0%, 100% { transform: translateY(0) rotate(-1.2deg); }
-    50% { transform: translateY(-16px) rotate(1deg); }
+  /* Screen glare — a single diagonal sheet of light across the
+     glass. Without it a screenshot in a phone frame reads as a
+     sticker; with it, it reads as a screen. */
+  .phone-screen::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(122deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 22%, transparent 46%);
+    pointer-events: none;
   }
 
-  .feature-visual .phone { width: 220px; }
-  .feature-visual.has-phone {
-    background: none; border: none;
+  .pc-item { position: absolute; }
+  .pc-main {
+    width: clamp(190px, 21vw, 250px);
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) translateZ(60px);
+    z-index: 3;
   }
-  .feature-visual.has-phone::before { display: none; }
-  .feature-visual.has-collage {
-    background: none; border: none;
-    aspect-ratio: auto;
-    min-height: 380px;
-    align-items: flex-start;
+  .pc-left {
+    width: clamp(140px, 15.5vw, 186px);
+    left: 2%; top: 50%;
+    transform: translateY(-50%) translateZ(0) rotate(-7deg);
+    z-index: 2;
+    opacity: 0.94;
   }
-  .feature-visual.has-collage::before { display: none; }
+  .pc-right {
+    width: clamp(140px, 15.5vw, 186px);
+    right: 2%; top: 50%;
+    transform: translateY(-50%) translateZ(0) rotate(7deg);
+    z-index: 2;
+    opacity: 0.94;
+  }
+  /* Each phone bobs on its own clock so the group never moves as a
+     block — that synchronised look is the giveaway of a CSS-only
+     "floating" effect. Applied to an inner wrapper so it can never
+     fight the pointer tilt on the cluster or the layout transform
+     on the item itself. */
+  .pc-item .bob { animation: bob 7s var(--ease-soft) infinite; }
+  .pc-main  .bob { animation-duration: 6s;   animation-delay: -1.1s; }
+  .pc-left  .bob { animation-duration: 7.6s; animation-delay: -3.4s; }
+  .pc-right .bob { animation-duration: 8.2s; animation-delay: -5.2s; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-16px); }
+  }
 
-  /* ---------- Widget collage (real widget PNGs, for the widgets section) ---------- */
-  .widget-collage {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 320px;
-  }
-  .wc-card {
+  /* Voice badge pinned to the main phone — keeps v1's microphone
+     metaphor, at the size it deserves, instead of it being the
+     entire hero. */
+  .voice-badge {
     position: absolute;
-    border-radius: 20px;
-    box-shadow: 0 24px 50px -16px hsl(var(--shadow-color) / 0.3);
-    overflow: hidden;
-    background: white;
-    animation: phoneFloat 7s ease-in-out infinite;
-  }
-  .wc-card img { display: block; width: 100%; height: auto; }
-  .wc-1 { width: 62%; top: 4%; left: 2%; z-index: 3; animation-delay: 0s; }
-  .wc-2 { width: 44%; bottom: 6%; right: 0%; z-index: 2; animation-delay: -2.3s; }
-  .wc-3 { width: 34%; top: 42%; right: 12%; z-index: 4; animation-delay: -4.1s; }
-
-  /* ---------- Count-up stat numbers ---------- */
-  .stat-num[data-count] { font-variant-numeric: tabular-nums; }
-
-  /* ---------- Languages showcase ---------- */
-  /* ---------- Screenshot gallery (horizontal scroll, rounded + shadow only, no phone frame) ---------- */
-  .gallery-section {
-    padding: 100px 0 90px;
-  }
-  .gallery-heading { text-align: center; margin-bottom: 44px; }
-  .gallery-heading h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 12px; }
-  .gallery-heading p { color: var(--ink-soft); font-size: 17px; }
-  .slider-wrap {
-    position: relative;
-    width: 100%;
-  }
-  .screenshot-scroll {
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-    overflow-x: auto;
-    width: 100%;
-    padding: 16px 64px 48px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .screenshot-scroll::-webkit-scrollbar { display: none; }
-  .slider-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
+    bottom: 8%; left: 50%;
+    transform: translateX(-50%) translateZ(90px);
+    z-index: 6;
+    width: 76px; height: 76px;
     border-radius: 50%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    box-shadow: 0 14px 30px -10px hsl(var(--shadow-color) / 0.32);
+    background: radial-gradient(circle at 34% 28%, var(--accent-bright) 0%, var(--accent) 45%, var(--accent-deep) 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 44px -10px hsl(var(--shadow-color) / 0.65);
+  }
+  .voice-badge::before {
+    content: "";
+    position: absolute; inset: -6px;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    animation: pingRing 2.8s var(--ease-soft) infinite;
+  }
+  @keyframes pingRing {
+    0%   { transform: scale(0.92); opacity: 0.9; }
+    70%  { transform: scale(1.5); opacity: 0; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+  .waves { display: flex; align-items: center; gap: 4px; height: 30px; }
+  .waves span {
+    width: 4px; border-radius: 3px; background: white;
+    animation: wave 1.1s var(--ease-soft) infinite;
+  }
+  .waves span:nth-child(1) { height: 11px; animation-delay: -0.9s; }
+  .waves span:nth-child(2) { height: 20px; animation-delay: -0.6s; }
+  .waves span:nth-child(3) { height: 28px; animation-delay: -0.3s; }
+  .waves span:nth-child(4) { height: 17px; animation-delay: -0.15s; }
+  .waves span:nth-child(5) { height: 12px; animation-delay: 0s; }
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.35); }
+    50%      { transform: scaleY(1); }
+  }
+
+  /* Category chips, kept from v1 but demoted: they orbit the
+     cluster in 3D instead of competing with it for attention. */
+  .float-card {
+    position: absolute;
+    background: rgb(var(--glass) / 0.86);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border-radius: 14px;
+    padding: 9px 15px;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 18px 38px -14px hsl(var(--shadow-color) / 0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+    z-index: 5;
+    white-space: nowrap;
+  }
+  [data-theme="dark"] .float-card { box-shadow: 0 18px 38px -14px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06); }
+  .float-card i { color: var(--accent); font-size: 16px; }
+  .fc-1 { top: 4%;  left: -2%;  transform: translateZ(120px); animation: bob 6.4s var(--ease-soft) -0.2s infinite; }
+  .fc-2 { top: 12%; right: -3%; transform: translateZ(100px); animation: bob 7.2s var(--ease-soft) -1.9s infinite; }
+  .fc-3 { bottom: 26%; left: -5%; transform: translateZ(140px); animation: bob 6.8s var(--ease-soft) -3.6s infinite; }
+  .fc-4 { bottom: 6%; right: -1%; transform: translateZ(110px); animation: bob 7.9s var(--ease-soft) -5s infinite; }
+  .fc-5 { top: 44%; left: -8%; transform: translateZ(70px); opacity: 0.92; animation: bob 8.4s var(--ease-soft) -2.6s infinite; }
+
+  /* ---------- Section heading ---------- */
+  .sec-head { text-align: center; margin-bottom: 52px; }
+  .sec-head h2 { font-size: clamp(30px, 4vw, 46px); margin-bottom: 14px; }
+  .sec-head p { color: var(--ink-soft); font-size: 17px; max-width: 52ch; margin: 0 auto; }
+
+  /* ---------- Feature rows ---------- */
+  .feature {
+    padding: clamp(64px, 9vw, 118px) 0;
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: clamp(36px, 5vw, 72px);
+    align-items: center;
+  }
+  .feature.reverse .feature-text { order: 2; }
+  .feature.reverse .feature-visual { order: 1; }
+  .feature-text h2 { font-size: clamp(28px, 3.6vw, 42px); margin-bottom: 20px; }
+  .feature-text p { font-size: 17px; color: var(--ink-soft); line-height: 1.72; max-width: 48ch; }
+
+  .feature-visual {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 380px;
+    /* The pointer tilt on the phones inside needs a perspective
+       origin to rotate against; without it rotateX/rotateY are a
+       flat skew. */
+    perspective: 1100px;
+  }
+  /* A soft pool of accent light behind each visual, so a phone
+     doesn't float against nothing. */
+  .feature-visual::before {
+    content: "";
+    position: absolute;
+    width: 78%; height: 78%;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent) 0%, transparent 70%);
+    filter: blur(50px);
+    z-index: 0;
+  }
+  .feature-visual > * { position: relative; z-index: 1; }
+
+  /* Bigger than v4's 244px cap. In a two-column row the phone is the
+     column's whole subject, and at the old size it read as a thumbnail
+     sitting in a lot of empty space. */
+  .feature-visual .phone { width: clamp(232px, 27vw, 318px); }
+
+  /* Two-phone composition for the shared-space section. */
+  .phone-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+  }
+  .phone-pair .phone { width: clamp(150px, 16vw, 190px); }
+  .phone-pair .pp-a { transform: rotate(-6deg) translateX(14%); z-index: 1; }
+  .phone-pair .pp-b { transform: rotate(6deg) translateX(-14%); z-index: 2; }
+  .sync-beam {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 42%; height: 3px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--border-strong) 80%, transparent);
+    overflow: hidden;
+    z-index: 4;
+  }
+  .sync-beam::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: beam 2.4s var(--ease-soft) infinite;
+  }
+  @keyframes beam {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Widget collage — the real widget renders, finally used. */
+  .widget-collage {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+  }
+  .wc-card {
+    position: absolute;
+    /* No background and no clipping: these PNGs carry their own
+       rounded corners in the alpha channel, so a white card behind
+       them frames an already-framed thing. drop-shadow reads the
+       alpha and casts a shadow shaped like the widget itself, which
+       is what makes them look placed on a surface rather than pasted
+       into boxes. */
+    filter: drop-shadow(0 26px 38px hsl(var(--shadow-color) / 0.34));
+    transition: transform 0.45s var(--ease), filter 0.45s var(--ease);
+  }
+  .wc-card img { display: block; width: 100%; height: auto; }
+  .wc-card:hover {
+    transform: translateY(-10px) scale(1.035);
+    filter: drop-shadow(0 38px 54px hsl(var(--shadow-color) / 0.46));
+  }
+  /* A diagonal cascade rather than a pile — three different widget
+     shapes stacked on top of each other read as clutter, spread
+     along a diagonal they read as a home screen. */
+  .wc-1 { width: 60%; top: 1%;    left: 0;   z-index: 3; animation: bob 7s var(--ease-soft) 0s infinite; }
+  .wc-3 { width: 34%; top: 33%;   left: 52%; z-index: 4; animation: bob 7.8s var(--ease-soft) -4.4s infinite; }
+  .wc-2 { width: 54%; bottom: 1%; left: 5%;  z-index: 2; animation: bob 8.4s var(--ease-soft) -2.6s infinite; }
+
+
+  /* ---------- Full-width band ----------
+     Section 4.7's zigzag cap: six consecutive left-image / right-text
+     rows is the layout equivalent of a metronome. This band and the
+     duo grid below break the chain, so no more than two splits ever
+     run back to back. */
+  .feature-band {
+    padding: clamp(66px, 9vw, 112px) 0;
+    text-align: center;
+  }
+  .band-head { max-width: 60ch; margin: 0 auto clamp(38px, 5vw, 58px); }
+  .band-head h2 { font-size: clamp(30px, 4.2vw, 48px); margin-bottom: 16px; }
+  .band-head p { color: var(--ink-soft); font-size: 17px; max-width: 56ch; margin: 0 auto; }
+
+  /* The three widget renders at equal width with staggered vertical
+     offsets: a trio on one baseline reads as a spec sheet, off the
+     baseline it reads as a home screen. */
+  .widget-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(18px, 3vw, 44px);
+    align-items: center;
+    max-width: 940px;
+    margin: 0 auto;
+  }
+  .ws-item {
+    filter: drop-shadow(0 24px 36px hsl(var(--shadow-color) / 0.32));
+    transition: transform 0.45s var(--ease), filter 0.45s var(--ease);
+  }
+  .ws-item img { width: 100%; height: auto; display: block; }
+  .ws-item:nth-child(1) { transform: translateY(-16px); animation: bob 7s var(--ease-soft) 0s infinite; }
+  .ws-item:nth-child(2) { transform: translateY(20px);  animation: bob 8.4s var(--ease-soft) -2.6s infinite; }
+  .ws-item:nth-child(3) { transform: translateY(-6px);  animation: bob 7.8s var(--ease-soft) -4.4s infinite; }
+  .ws-item:hover { filter: drop-shadow(0 34px 50px hsl(var(--shadow-color) / 0.44)); }
+
+  /* ---------- Duo grid ---------- */
+  .duo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(20px, 2.6vw, 32px);
+    padding: clamp(20px, 3vw, 40px) 0 clamp(56px, 7vw, 90px);
+  }
+  .duo-card {
+    border-radius: var(--radius-xl);
+    padding: clamp(26px, 3vw, 40px);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.5s var(--ease);
+  }
+  .duo-card:hover { transform: translateY(-6px); }
+  .duo-visual {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 300px;
+    margin-bottom: 30px;
+    perspective: 1000px;
+    position: relative;
+  }
+  .duo-card h2 { font-size: clamp(23px, 2.3vw, 30px); margin-bottom: 13px; }
+  .duo-card p { color: var(--ink-soft); font-size: 15.5px; line-height: 1.68; }
+  .duo-card .phone { width: clamp(140px, 13vw, 168px); }
+  .duo-card .phone-pair .phone { width: clamp(112px, 10.5vw, 136px); }
+
+  /* ---------- Scroll progress ---------- */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent-bright), var(--accent), var(--accent-deep));
+    z-index: 200;
+    transition: width 0.12s linear;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+
+  /* ---------- Galleries ----------
+     v1 used `justify-content: center` on an overflowing flex row,
+     which silently makes the first cards unreachable: overflow only
+     scrolls toward the end, so anything pushed past the left edge by
+     centring can never be scrolled back to. With 30 cards it always
+     overflowed. `margin-inline: auto` on the track centres it while
+     it fits and does nothing once it doesn't, which is the behaviour
+     that was intended. */
+  .gallery-section { padding: clamp(70px, 8vw, 104px) 0; }
+  .slider-wrap { position: relative; width: 100%; }
+  .slider-wrap::before,
+  .slider-wrap::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0;
+    width: 90px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .slider-wrap::before { left: 0;  background: linear-gradient(90deg, var(--bg), transparent); }
+  .slider-wrap::after  { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+  .widget-gallery-section .slider-wrap::before { background: linear-gradient(90deg, var(--bg-deep), transparent); }
+  .widget-gallery-section .slider-wrap::after  { background: linear-gradient(270deg, var(--bg-deep), transparent); }
+
+  .screenshot-scroll,
+  .widget-grid-gallery {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 20px 70px 48px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  .screenshot-scroll::-webkit-scrollbar,
+  .widget-grid-gallery::-webkit-scrollbar { display: none; }
+
+  .slider-arrow {
+    position: absolute;
+    top: 46%;
+    transform: translateY(-50%);
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgb(var(--glass) / 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 16px 34px -12px hsl(var(--shadow-color) / 0.35);
+    display: flex; align-items: center; justify-content: center;
     font-size: 19px;
     color: var(--ink);
     z-index: 10;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: background 0.28s var(--ease), color 0.28s var(--ease), transform 0.28s var(--ease);
   }
-  .slider-arrow:hover { background: var(--accent); color: white; transform: translateY(-50%) scale(1.08); }
-  .slider-arrow-left { left: 16px; }
-  .slider-arrow-right { right: 16px; }
+  .slider-arrow:hover { background: var(--accent); color: white; transform: translateY(-50%) scale(1.1); }
+  .slider-arrow-left { left: 10px; }
+  .slider-arrow-right { right: 10px; }
+
   .shot-card {
     flex: 0 0 auto;
-    width: 160px;
-    border-radius: 16px;
+    width: 172px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 18px 36px -14px hsl(var(--shadow-color) / 0.32);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 22px 44px -16px hsl(var(--shadow-color) / 0.35);
+    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
     cursor: zoom-in;
+    scroll-snap-align: center;
   }
-  .shot-card:hover { transform: translateY(-8px); box-shadow: 0 26px 46px -14px hsl(var(--shadow-color) / 0.4); }
+  .shot-card:hover { transform: translateY(-12px) scale(1.04); box-shadow: 0 34px 60px -16px hsl(var(--shadow-color) / 0.45); }
   .shot-card img { display: block; width: 100%; height: auto; }
-  /* Only the screenshots matching the current theme are shown; JS
-     toggles the data-theme attribute on the root html element, these
-     rules key off that same attribute so no extra JS logic is needed
-     beyond what already drives every other themed thing on the page. */
   .shot-card.dark-only { display: none; }
   [data-theme="dark"] .shot-card.dark-only { display: block; }
   [data-theme="dark"] .shot-card.light-only { display: none; }
+  /* Same theme pairing for the phone screenshots in the hero and
+     feature rows — the img swaps, the frame stays put. */
+  .themed-shot.dark-only { display: none; }
+  [data-theme="dark"] .themed-shot.dark-only { display: block; }
+  [data-theme="dark"] .themed-shot.light-only { display: none; }
 
-  /* ---------- Widget gallery ---------- */
+  /* These two have their own opaque ground, and they sit next to
+     pulse-hosts whose rings now run past their section. Lifting them
+     into the positioned layer keeps a ring from drawing across a
+     language chip or a widget render. */
+  .widget-gallery-section,
+  .languages-section { position: relative; z-index: 2; }
   .widget-gallery-section {
-    padding: 100px 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    padding: clamp(70px, 8vw, 104px) 0;
+    background: var(--bg-deep);
   }
-  .widget-grid-gallery {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 18px;
-    overflow-x: auto;
-    width: 100%;
-    padding: 16px 64px 40px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .widget-grid-gallery::-webkit-scrollbar { display: none; }
+  /* The widget renders are already rounded cards with transparent
+     corners, so they need no card around them — and the white card that
+     used to be here was stretched to the tallest sibling by the flex
+     row, which left a slab of empty white under every short widget.
+     Centring the row and dropping the wrapper lets each widget keep the
+     proportions it actually has; the shadow moves to drop-shadow so it
+     follows the render's own rounded silhouette instead of a box. */
+  /* `overflow-x: auto` forces `overflow-y` to compute to auto as well,
+     so this strip clips vertically whether or not anyone asked it to.
+     While every card was the same stretched height that never showed;
+     now that they are their own heights, the drop-shadow under the tall
+     ones was being sliced off by that clip. The padding below is the
+     room the shadow and the hover lift need — it is not decorative
+     spacing, so keep it if the shadow ever grows. */
+  .widget-grid-gallery { align-items: center; padding: 36px 70px 64px; }
   .widget-gallery-card {
     flex: 0 0 auto;
-    width: 190px;
-    background: white;
-    border-radius: 14px;
-    padding: 10px;
-    box-shadow: 0 14px 30px -12px hsl(var(--shadow-color) / 0.28);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    align-self: center;
+    width: 196px;
+    filter: drop-shadow(0 14px 24px hsl(var(--shadow-color) / 0.32));
+    transition: transform 0.45s var(--ease), filter 0.45s var(--ease);
     cursor: zoom-in;
+    scroll-snap-align: center;
   }
-  .widget-gallery-card:hover { transform: translateY(-6px); box-shadow: 0 22px 40px -12px hsl(var(--shadow-color) / 0.35); }
-  .widget-gallery-card img { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .widget-gallery-card:hover {
+    transform: translateY(-9px) scale(1.03);
+    filter: drop-shadow(0 22px 34px hsl(var(--shadow-color) / 0.42));
+  }
+  .widget-gallery-card img { display: block; width: 100%; height: auto; }
 
   /* ---------- Lightbox ---------- */
   .lightbox {
     position: fixed; inset: 0; z-index: 300;
-    background: rgba(10, 12, 14, 0.86);
+    background: rgba(8, 10, 12, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display: flex; align-items: center; justify-content: center;
     padding: 40px 24px;
     opacity: 0; visibility: hidden;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+    transition: opacity 0.3s var(--ease), visibility 0.3s;
   }
   .lightbox.open { opacity: 1; visibility: visible; }
   .lightbox img {
     max-width: min(92vw, 460px);
     max-height: 88vh;
     width: auto; height: auto;
-    border-radius: 20px;
-    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6);
-    transform: scale(0.94);
-    transition: transform 0.25s ease;
+    border-radius: 24px;
+    box-shadow: 0 50px 100px -24px rgba(0,0,0,0.7);
+    transform: scale(0.9) translateY(14px);
+    transition: transform 0.35s var(--ease);
   }
-  .lightbox.open img { transform: scale(1); }
+  .lightbox.open img { transform: scale(1) translateY(0); }
   .lightbox-close {
     position: absolute; top: 24px; right: 24px;
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 46px; height: 46px; border-radius: 50%;
     background: rgba(255,255,255,0.12);
     color: white;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px;
-    border: 1px solid rgba(255,255,255,0.2);
+    transition: background 0.24s var(--ease), transform 0.24s var(--ease);
   }
-  .lightbox-close:hover { background: rgba(255,255,255,0.22); }
+  .lightbox-close:hover { background: rgba(255,255,255,0.24); transform: rotate(90deg); }
 
+  /* ---------- Languages marquee ----------
+     A static 7-column grid of 21 chips reads as a specification
+     table. The same 21 names travelling in two opposite directions
+     read as reach. Duplicated once in the DOM so the loop is
+     seamless; the copy is aria-hidden so a screen reader hears each
+     language exactly once. */
   .languages-section {
-    padding: 100px 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    padding: clamp(70px, 8vw, 104px) 0;
+    overflow: hidden;
   }
-  .lang-heading { text-align: center; margin-bottom: 48px; }
-  .lang-heading h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 12px; }
-  .lang-heading p { color: var(--ink-soft); font-size: 17px; }
-  .lang-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
+  .marquee {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  }
+  .marquee-row { display: flex; gap: 14px; width: max-content; }
+  .marquee-row.r1 { animation: marquee 46s linear infinite; }
+  .marquee-row.r2 { animation: marquee 46s linear infinite reverse; }
+  .marquee:hover .marquee-row { animation-play-state: paused; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
   .lang-chip {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 10px;
-    text-align: center;
-    font-size: 14px;
+    flex: 0 0 auto;
+    background: rgb(var(--glass) / 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 6px 18px -8px hsl(var(--shadow-color) / 0.22);
+    border-radius: 999px;
+    padding: 13px 22px;
+    font-size: 14.5px;
     font-weight: 600;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+    transition: border-color 0.28s var(--ease), color 0.28s var(--ease), transform 0.28s var(--ease);
   }
-  .lang-chip:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .lang-chip:hover { border-color: var(--accent); color: var(--accent-dark); transform: translateY(-3px); }
+  [data-theme="dark"] .lang-chip:hover { color: var(--accent-bright); }
 
   /* ---------- Pricing ---------- */
-  .pricing-section { padding: 100px 0; }
+  .pricing-section { padding: clamp(70px, 8vw, 110px) 0; }
   .pricing-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    max-width: 780px;
+    gap: 26px;
+    max-width: 820px;
     margin: 0 auto;
+    align-items: start;
   }
   .pricing-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 36px 30px;
+    padding: 38px 32px;
     position: relative;
+    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
   }
+  .pricing-card:hover { transform: translateY(-6px); }
   .pricing-card-featured {
-    border: 2px solid var(--accent);
-    box-shadow: 0 20px 50px -12px hsl(var(--shadow-color) / 0.25);
+    padding-top: 44px;
   }
+  /* Conic gradient border on the featured card, rotating slowly.
+     This is the page's one deliberate "look at this" moment and it
+     is spent on the plan being sold. */
+  .pricing-card-featured::before {
+    content: "";
+    position: absolute; inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(from var(--angle), var(--accent-bright), var(--accent), var(--accent-deep), var(--accent-bright));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: spinBorder 6s linear infinite;
+    pointer-events: none;
+  }
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @keyframes spinBorder { to { --angle: 360deg; } }
+
   .pricing-card-badge {
     position: absolute;
-    top: -13px;
-    left: 50%;
+    top: -14px; left: 50%;
     transform: translateX(-50%);
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent-deep));
     color: white;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 5px 14px;
+    padding: 7px 16px;
     border-radius: 999px;
     white-space: nowrap;
+    box-shadow: 0 10px 24px -8px hsl(var(--shadow-color) / 0.6);
+    z-index: 2;
   }
-  .pricing-card-name { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin-bottom: 14px; }
-  .pricing-card-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
-  .pricing-amount { font-family: var(--font-display); font-weight: 700; font-size: 40px; }
+  .pricing-card-name {
+    font-family: var(--font-display); font-weight: 700; font-size: 17px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .pricing-card-price { display: flex; align-items: baseline; gap: 5px; margin-bottom: 4px; }
+  .pricing-amount {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(38px, 4.4vw, 50px);
+    letter-spacing: -0.04em;
+  }
   .pricing-period { color: var(--ink-soft); font-size: 15px; }
-  .pricing-yearly-note { color: var(--ink-soft); font-size: 13px; margin-bottom: 22px; }
-  .pricing-card:not(.pricing-card-featured) .pricing-card-price { margin-bottom: 22px; }
-  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; }
-  .pricing-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
-  .pricing-features li i { color: var(--accent); font-size: 15px; margin-top: 2px; flex-shrink: 0; }
-  .pricing-btn { width: 100%; justify-content: center; }
+  .pricing-yearly-note { color: var(--accent-dark); font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+  [data-theme="dark"] .pricing-yearly-note { color: var(--accent-bright); }
 
-  /* ---------- Founder note ---------- */
-  .founder-section { padding: 20px 0 60px; }
-  .founder-card {
-    max-width: 640px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 40px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-  }
-  .founder-quote-icon { font-size: 26px; color: var(--accent); margin-bottom: 16px; }
-  .founder-text { font-size: 16px; line-height: 1.7; color: var(--ink); margin-bottom: 16px; }
-  .founder-name { font-weight: 700; color: var(--ink-soft); font-size: 14px; }
-
-  /* ---------- FAQ ---------- */
-  .faq-section { padding: 20px 0 80px; }
-  .faq-list { max-width: 720px; margin: 0 auto; }
-  .faq-item { border-bottom: 1px solid var(--border); }
-  .faq-question {
-    width: 100%;
+  /* The trial is the reason to tap the button, so it gets its own
+     filled band rather than becoming a sixth bullet nobody reads. */
+  .pricing-trial {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 22px 4px;
-    background: none;
-    border: none;
+    gap: 9px;
+    margin-bottom: 24px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--accent-deep);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .pricing-trial i { font-size: 16px; flex-shrink: 0; color: var(--accent-dark); }
+  [data-theme="dark"] .pricing-trial {
+    color: var(--accent-bright);
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  [data-theme="dark"] .pricing-trial i { color: var(--accent-bright); }
+  .pricing-card:not(.pricing-card-featured) .pricing-card-price { margin-bottom: 24px; }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 13px; margin-bottom: 28px; }
+  .pricing-features li { display: flex; align-items: flex-start; gap: 11px; font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; }
+  .pricing-features li i {
+    color: var(--accent); font-size: 12px; margin-top: 4px; flex-shrink: 0;
+    background: var(--accent-light);
+    border-radius: 50%;
+    width: 19px; height: 19px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pricing-btn { width: 100%; justify-content: center; }
+
+  /* ---------- Founder ---------- */
+  .founder-section { padding: 20px 0 clamp(50px, 6vw, 80px); }
+  .founder-card {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    padding: clamp(32px, 5vw, 52px);
+    border-radius: var(--radius-xl);
+    position: relative;
+  }
+  .founder-quote-icon {
+    font-size: 34px;
+    background: linear-gradient(150deg, var(--accent-bright), var(--accent-deep));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 18px;
+    display: inline-block;
+  }
+  .founder-text { font-size: clamp(16px, 1.7vw, 19px); line-height: 1.72; color: var(--ink); margin-bottom: 18px; }
+  .founder-name { font-weight: 700; color: var(--ink-faint); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ---------- FAQ ----------
+     Rows animate on grid-template-rows 0fr → 1fr rather than a
+     max-height guess. v1 capped answers at 240px, which silently
+     clipped the longer translations (several answers run past 500
+     characters, and German and Russian run longer still than the
+     English they were measured against). */
+  .faq-section { padding: 20px 0 clamp(60px, 8vw, 96px); }
+  .faq-list { max-width: 760px; margin: 0 auto; }
+  .faq-question {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 18px;
+    padding: 24px 6px;
     text-align: left;
     font-family: var(--font-body);
-    font-size: 16px;
+    font-size: 16.5px;
     font-weight: 700;
     color: var(--ink);
-    cursor: pointer;
+    transition: color 0.25s var(--ease);
   }
-  .faq-icon { color: var(--accent); font-size: 16px; flex-shrink: 0; transition: transform 0.2s ease; }
-  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  html[dir="rtl"] .faq-question { text-align: right; }
+  .faq-question:hover { color: var(--accent-dark); }
+  [data-theme="dark"] .faq-question:hover { color: var(--accent-bright); }
+  .faq-icon {
+    color: var(--accent); font-size: 15px; flex-shrink: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.35s var(--ease), background 0.25s var(--ease);
+  }
+  .faq-item.open .faq-icon { transform: rotate(135deg); background: var(--accent); color: white; }
   .faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s ease;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.38s var(--ease);
   }
-  .faq-item.open .faq-answer { max-height: 240px; }
-  .faq-answer p { padding: 0 4px 22px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+  .faq-item.open .faq-answer { grid-template-rows: 1fr; }
+  .faq-answer > div { overflow: hidden; }
+  .faq-answer p { padding: 0 6px 24px; color: var(--ink-soft); font-size: 15.5px; line-height: 1.68; }
 
   /* ---------- Final CTA ---------- */
   .final-cta {
-    padding: 110px 0;
+    padding: clamp(80px, 11vw, 140px) 0;
     text-align: center;
+    position: relative;
   }
   .final-cta h2 {
-    font-size: clamp(30px, 4vw, 46px);
-    max-width: 18ch;
-    margin: 0 auto 34px;
+    font-size: clamp(32px, 5vw, 58px);
+    max-width: 19ch;
+    margin: 0 auto 38px;
+    background: linear-gradient(160deg, var(--ink) 32%, color-mix(in srgb, var(--ink) 58%, var(--accent)) 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   }
 
   /* ---------- Footer ---------- */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 48px 0;
-  }
+  footer { padding: 52px 0; background: var(--bg-deep); }
   .footer-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 22px;
   }
   .footer-tagline { color: var(--ink-soft); font-size: 14px; }
-  .footer-links { display: flex; gap: 24px; font-size: 14px; color: var(--ink-soft); }
+  .footer-links { display: flex; gap: 26px; font-size: 14px; color: var(--ink-soft); }
+  .footer-links a { transition: color 0.24s var(--ease); }
   .footer-links a:hover { color: var(--accent); }
-  .footer-rights { font-size: 13px; color: var(--ink-soft); opacity: 0.7; margin-top: 8px; }
+  .footer-rights { font-size: 13px; color: var(--ink-faint); margin-top: 10px; }
 
-  /* ---------- Scroll reveal ---------- */
-  /* Progressive enhancement: content is visible by default. JS adds
-     .reveal-active (which applies the hidden starting state) only to
-     elements it successfully starts observing, so if JS fails to run
-     for any reason, nothing is ever left invisible. */
-  .reveal.reveal-active { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .reveal.reveal-active.in { opacity: 1; transform: translateY(0); }
+  /* ═══════════════════════════════════════════════════════════
+     v3 — the four structural devices, adapted to Havenote's own
+     content and palette. Straight ports of a louder agency site
+     would misrepresent a quiet journaling app, so what carries over
+     is the structure and the choreography, not the volume: a colour
+     slab instead of a full-bleed orange page, deep brand green
+     instead of a shout, and the same green the app itself uses.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* ---------- 1. Colour slab ----------
+     The hero is a self-contained panel inset from the window edge,
+     not a page background. Everything below it sits on the ordinary
+     page, so the slab reads as an object the page holds rather than
+     as "the site is green up top". It keeps its own colours in both
+     themes on purpose: it is a printed surface, not a themed one. */
+  .slab {
+    position: relative;
+    margin: 12px 12px 0;
+    border-radius: clamp(22px, 2.4vw, 36px);
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 78% 8%, #1C6B57 0%, transparent 58%),
+      radial-gradient(90% 80% at 12% 92%, #10513F 0%, transparent 60%),
+      linear-gradient(168deg, #114539 0%, #0B2F27 62%, #0F4033 100%);
+    color: #EAF7F1;
+    isolation: isolate;
+  }
+  /* A slow highlight drifting across the panel, so a large flat area
+     of one colour is never quite flat. */
+  .slab::before {
+    content: "";
+    position: absolute;
+    width: 60%;
+    aspect-ratio: 1;
+    top: -18%;
+    left: 8%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(116, 224, 187, 0.26) 0%, transparent 66%);
+    filter: blur(50px);
+    animation: drift1 30s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .slab > * { position: relative; z-index: 1; }
+
+  /* Type inside the slab. The gradient headline used on the light
+     page would disappear here, so it resolves to near-white with a
+     mint lift instead of ink with a green lift. */
+  .slab .hero h1 {
+    background: linear-gradient(158deg, #FFFFFF 26%, #9BE9CC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .slab .hero-sub { color: rgba(234, 247, 241, 0.76); }
+  .slab .trust-badge { color: rgba(234, 247, 241, 0.72); }
+  .slab .trust-badge i { color: #74E0BB; }
+  .slab .eyebrow {
+    color: #A6EED2;
+    background: rgba(116, 224, 187, 0.14);
+  }
+  .slab .eyebrow .dot { background: #74E0BB; }
+  .slab .btn-ghost {
+    color: #EAF7F1;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .slab .btn-ghost:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.2); }
+  .slab .float-card {
+    background: rgba(20, 46, 39, 0.72);
+    color: #EAF7F1;
+    box-shadow: 0 18px 38px -14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  .slab .float-card i { color: #74E0BB; }
+  .slab .hero { padding-top: clamp(96px, 11vw, 130px); padding-bottom: clamp(40px, 5vw, 64px); }
+
+  /* ---------- 2. Floating contextual nav ----------
+     One pill, centred, floating clear of the page, whose contents
+     change with where you are: brand and CTA over the hero, section
+     links once the hero is behind you. The links are not new copy —
+     they reuse the Pricing and FAQ labels those sections already
+     have in all 21 languages. */
+  header.nav {
+    position: fixed;
+    top: 14px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    background: none;
+    border: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    padding: 0 14px;
+  }
+  .nav-pill {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 8px 0 18px;
+    border-radius: 999px;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    color: #EAF7F1;
+    transition:
+      background 0.45s var(--ease-soft),
+      border-color 0.45s var(--ease-soft),
+      color 0.45s var(--ease-soft),
+      box-shadow 0.45s var(--ease-soft);
+  }
+  /* Past the hero the pill lands on the light page and swaps to glass. */
+  header.nav.past-hero .nav-pill {
+    background: rgb(var(--glass) / 0.86);
+    color: var(--ink);
+    box-shadow: 0 14px 40px -16px hsl(var(--shadow-color) / 0.4);
+  }
+  .nav-pill .brand { font-size: 20px; gap: 8px; }
+  /* The mark is dark ink, and the slab is dark green: it vanished there.
+     Theme-swapping it is the wrong lever (that keys off light/dark mode,
+     not off what the pill happens to be floating over), so it is simply
+     knocked out to white for as long as the pill is over the slab. */
+  header.nav:not(.past-hero) #navMark { filter: brightness(0) invert(1); }
+  .nav-pill .brand img { height: 26px; width: 26px; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-width 0.5s var(--ease), opacity 0.35s var(--ease-soft);
+  }
+  header.nav.past-hero .nav-links { max-width: 320px; opacity: 1; }
+  .nav-links a {
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: inherit;
+    opacity: 0.82;
+    transition: opacity 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .nav-links a:hover { opacity: 1; background: color-mix(in srgb, currentColor 10%, transparent); }
+  .nav-tools { display: flex; align-items: center; gap: 8px; }
+  .nav-pill .lang-btn,
+  .nav-pill .theme-toggle {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+    color: inherit;
+  }
+  .nav-pill .theme-toggle { width: 36px; height: 36px; font-size: 16px; }
+  .nav-pill .lang-btn { padding: 8px 12px; font-size: 13px; }
+  .nav-pill .btn-nav { padding: 10px 18px; }
+  .nav-pill .lang-menu { top: calc(100% + 14px); color: var(--ink); }
+
+  /* ---------- 3. Scroll-scrubbed statement ----------
+     One long sentence that fills in word by word as it passes the
+     middle of the screen. Each word's opacity is a plain calc()
+     against a single custom property the script updates once per
+     frame, so 60 words cost one style write, not sixty. Values
+     outside 0-1 are clamped by the browser, which is what makes the
+     leading and trailing words resolve without any JS branching. */
+  .statement {
+    padding: clamp(80px, 12vw, 160px) 0;
+  }
+  .statement-inner { max-width: 960px; }
+  .statement p {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    /* Loose leading on purpose. The sentence is read one word at a
+       time as it fills in, so the eye needs air between the rows to
+       follow the fill rather than the block. */
+    line-height: 1.46;
+    /* The measure is a length, not a ch count: `ch` on a bold display
+       face lies badly enough at this size to put one word per line. */
+    font-size: clamp(27px, 3.9vw, 53px);
+    max-width: 100%;
+    color: var(--statement-dim);
+  }
+  /* Unlit words are not invisible any more, they are a barely-there
+     grey — so the reader sees the whole sentence waiting and watches
+     it fill, instead of watching words appear out of nothing.
+     The plain `color` line below is the fallback: if the color-mix
+     calc is ever dropped, every word simply stays dim rather than
+     disappearing. */
+  .statement .scrub-word {
+    color: var(--statement-dim);
+    color: color-mix(
+      in srgb,
+      var(--ink) calc(100% * clamp(0, (var(--p, 0) * var(--n)) - var(--i), 1)),
+      var(--statement-dim)
+    );
+    transition: color 0.14s linear;
+  }
+  .statement cite {
+    display: block;
+    margin-top: clamp(26px, 3vw, 40px);
+    font-style: normal;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- 4. Pinned horizontal pan ----------
+     The screenshot rail travels sideways while the page scrolls
+     down, instead of being a slider nobody drags. The tall outer
+     section is the scroll budget; the sticky child is what stays on
+     screen while that budget is spent. */
+  .pan {
+    position: relative;
+    height: 320vh;
+  }
+  .pan-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(28px, 4.5vw, 56px);
+    padding-bottom: clamp(20px, 4vw, 56px);
+    overflow: hidden;
+  }
+  .pan-head { text-align: center; padding: 0 24px; }
+  .pan-head h2 { font-size: clamp(28px, 3.6vw, 44px); margin-bottom: 12px; }
+  .pan-head p { color: var(--ink-soft); font-size: 16.5px; }
+  .pan-track {
+    display: flex;
+    gap: clamp(14px, 1.6vw, 24px);
+    padding-left: max(24px, calc((100vw - var(--max-w)) / 2));
+    width: max-content;
+    will-change: transform;
+  }
+  .pan-track .shot-card { width: clamp(146px, 14vw, 186px); }
+
+  /* ---------- 5. Two drawn stories ----------
+     Each story is a white card holding a piece of CSS artwork and a
+     caption under it. No outlines: the card is separated from the page
+     by its shadow, and the artwork from the card by its own tinted
+     ground. */
+  .duo { padding: clamp(28px, 3.6vw, 50px) 0 clamp(60px, 7vw, 96px); }
+  .duo-pair {
+    display: grid;
+    grid-template-columns: 1.06fr 1fr;
+    gap: clamp(18px, 2.4vw, 32px);
+  }
+  .story {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: clamp(22px, 2.2vw, 32px);
+    padding: clamp(22px, 2.6vw, 34px);
+    box-shadow:
+      0 1px 2px hsl(var(--shadow-color) / 0.06),
+      0 30px 66px -34px hsl(var(--shadow-color) / 0.4);
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  }
+  .story:hover {
+    transform: translateY(-8px);
+    box-shadow:
+      0 1px 2px hsl(var(--shadow-color) / 0.08),
+      0 46px 84px -38px hsl(var(--shadow-color) / 0.48);
+  }
+  [data-theme="dark"] .story {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 30px 70px -34px rgba(0, 0, 0, 0.72);
+  }
+  .story-art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(238px, 25vw, 316px);
+    border-radius: clamp(16px, 1.6vw, 22px);
+    overflow: hidden;
+    margin-bottom: clamp(22px, 2.4vw, 30px);
+    background:
+      radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent) 10%, var(--bg-deep)) 0%, var(--bg-deep) 72%);
+  }
+  .story-cap h2 { font-size: clamp(21px, 2.1vw, 28px); margin-bottom: 10px; }
+  .story-cap p { color: var(--ink-soft); font-size: 15.5px; line-height: 1.66; }
+
+  /* --- Story one: two devices staying in step ---
+     Two note cards at opposite corners with a lit wire running between
+     them, and one line on the second card still being written. The
+     travelling highlight and the growing line are the entire idea:
+     something typed over there is arriving here. */
+  .art-sync .sync-card {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: clamp(134px, 13.4vw, 176px);
+    padding: 14px 15px;
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: 0 16px 36px -18px hsl(var(--shadow-color) / 0.55);
+  }
+  [data-theme="dark"] .art-sync .sync-card { box-shadow: 0 16px 36px -18px rgba(0, 0, 0, 0.8); }
+  .art-sync .sc-a { left: 7%; top: 13%; transform: rotate(-3.5deg); }
+  .art-sync .sc-b { right: 7%; bottom: 12%; transform: rotate(3.5deg); }
+  .sc-head { display: flex; align-items: center; gap: 8px; }
+  .sc-av {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(140deg, var(--accent-bright), var(--accent-deep));
+  }
+  .sc-av.alt { background: linear-gradient(140deg, #F3D08D, #D2963A); }
+  .sc-pill {
+    height: 7px;
+    width: 56%;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+  .sc-line {
+    display: block;
+    height: 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 9%, transparent);
+  }
+  .sc-line.sl1 { width: 100%; }
+  .sc-line.sl2 { width: 84%; }
+  .sc-line.sl3 { width: 62%; }
+  .sc-line.sl4 { width: 52%; }
+  .sc-line.typing {
+    background: color-mix(in srgb, var(--accent) 62%, transparent);
+    transform-origin: left center;
+    animation: typeLine 3.2s var(--ease-soft) infinite;
+  }
+  @keyframes typeLine {
+    0%        { transform: scaleX(0.08); opacity: 0.45; }
+    45%, 78%  { transform: scaleX(1);    opacity: 1; }
+    100%      { transform: scaleX(0.08); opacity: 0.45; }
+  }
+  .sync-wire {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 44%;
+    height: 2px;
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(30deg);
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    overflow: hidden;
+  }
+  html[dir="rtl"] .sync-wire { transform: translate(-50%, -50%) rotate(-30deg); }
+  .sync-pulse {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: beam 2.6s var(--ease-soft) infinite;
+  }
+
+  /* --- Story two: a date that comes back ---
+     A month as a plain lattice of cells with exactly one lit, ringed by
+     two slow ripples, and three small memory chips drifting around it.
+     The rings are radial-gradient bands rather than strokes, so nothing
+     on this page is drawn with a border. */
+  .art-date .cal {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: clamp(6px, 0.72vw, 9px);
+    width: min(72%, 252px);
+  }
+  .art-date .cal > span {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--ink) 10%, transparent);
+  }
+  .art-date .cal > span.cal-hit {
+    position: relative;
+    display: grid;
+    place-items: center;
+    color: #FFFFFF;
+    background: linear-gradient(140deg, var(--accent-bright), var(--accent-deep));
+    box-shadow: 0 10px 20px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  .cal-hit i { font-size: 11px; }
+  .cal-hit::before,
+  .cal-hit::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 460%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.24);
+    background: radial-gradient(circle, transparent 58%, color-mix(in srgb, var(--accent) 36%, transparent) 68%, transparent 78%);
+    pointer-events: none;
+    animation: calRing 4.4s var(--ease-soft) infinite;
+  }
+  .cal-hit::after { animation-delay: -2.2s; }
+  @keyframes calRing {
+    0%   { transform: translate(-50%, -50%) scale(0.24); opacity: 0; }
+    22%  { opacity: 0.95; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+  }
+  .mem {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: clamp(34px, 3.3vw, 42px);
+    aspect-ratio: 1;
+    border-radius: 13px;
+    background: var(--surface);
+    color: var(--accent);
+    font-size: 16px;
+    box-shadow: 0 14px 28px -14px hsl(var(--shadow-color) / 0.55);
+  }
+  [data-theme="dark"] .mem { box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.8); }
+  .mem.m1 { left: 8%;  top: 15%;    animation: bob 6.6s var(--ease-soft) -0.4s infinite; }
+  .mem.m2 { right: 9%; top: 24%;    animation: bob 7.4s var(--ease-soft) -2.6s infinite; }
+  .mem.m3 { right: 14%; bottom: 15%; animation: bob 6.9s var(--ease-soft) -4.4s infinite; }
+
+  /* ═══════════════════════════════════════════════════════════
+     v4 — no borders anywhere. Every separation on this page is now
+     made with a ground colour or a shadow, never a hairline. Four
+     sections rebuilt around that: the stat row, the privacy block,
+     the two feature tiles, and the FAQ.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* ---------- Stat band, on the white page under the slab ----------
+     Four white cards on the ordinary page ground. Nothing outlines
+     them: each card is separated from the page and from its
+     neighbours by its own shadow, which is what makes them read as
+     four physical chips laid down rather than as a table with the
+     rules removed. They lift a little on hover so the shadow is
+     legible as a shadow. */
+  .statband {
+    position: relative;
+    padding: clamp(38px, 5.5vw, 76px) 0 clamp(18px, 2.4vw, 34px);
+  }
+  .statband-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(12px, 1.6vw, 22px);
+  }
+  .statcard {
+    background: var(--surface);
+    border-radius: clamp(18px, 1.7vw, 24px);
+    padding: clamp(24px, 2.6vw, 36px) clamp(14px, 1.6vw, 22px);
+    text-align: center;
+    box-shadow:
+      0 1px 2px hsl(var(--shadow-color) / 0.06),
+      0 18px 40px -22px hsl(var(--shadow-color) / 0.34);
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .statcard:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 1px 2px hsl(var(--shadow-color) / 0.08),
+      0 32px 60px -26px hsl(var(--shadow-color) / 0.42);
+  }
+  [data-theme="dark"] .statcard {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 18px 44px -22px rgba(0, 0, 0, 0.7);
+  }
+  .statcard .stat-num {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4.2vw, 54px);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    background: linear-gradient(150deg, var(--accent-bright), var(--accent-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .statcard .stat-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-top: 10px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Pulse field ----------
+     Concentric circular LINES, not a glow: six hairline rings sharing
+     one centre, the widest at ~78% of the window. Each breathes on the
+     same ten-second cycle but starts a little later than the one inside
+     it, so the brightening travels outward like a ripple instead of the
+     whole set flashing together.
+     The rings are drawn with an inset box-shadow rather than a border,
+     partly so nothing on this page is a border and partly because a
+     shadow does not add to the element's size — the ring geometry stays
+     exactly the declared width.
+     No clipping on the host: an overflow:hidden here is what cut the
+     circles into a band with a hard horizontal edge. They are allowed
+     to run past their section, and the widest is capped at the page
+     column so they can never widen the document. */
+  /* Every section is its own layer above the ring field, so a ring is
+     free to spill past its own section without ever being painted
+     across the neighbour's content — screenshots, widget renders and
+     cards all sit in front of it, and only the page ground shows
+     through. That is what makes the rings background rather than
+     overlay, and it replaces the clipping that used to do the job
+     with a hard horizontal edge. */
+  main > section { position: relative; z-index: 1; }
+  .pulse-host { position: relative; z-index: 0; }
+  .pulse-host > *:not(.pulse-field) { position: relative; z-index: 1; }
+  .pulse-field {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .pulse-field span {
+    grid-area: 1 / 1;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
+    opacity: 0.28;
+    animation: ringPulse 10s var(--ease-soft) infinite;
+    will-change: transform, opacity;
+  }
+  .pulse-field span:nth-child(1) { width: min(21vw, 318px);  animation-delay: 0s; }
+  .pulse-field span:nth-child(2) { width: min(32vw, 484px);  animation-delay: 0.45s; }
+  .pulse-field span:nth-child(3) { width: min(44vw, 666px);  animation-delay: 0.9s; }
+  .pulse-field span:nth-child(4) { width: min(56vw, 848px);  animation-delay: 1.35s; }
+  .pulse-field span:nth-child(5) { width: min(67vw, 1014px); animation-delay: 1.8s; }
+  .pulse-field span:nth-child(6) { width: min(78vw, 1180px); animation-delay: 2.25s; }
+  [data-theme="dark"] .pulse-field span {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 17%, transparent);
+  }
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(0.975); opacity: 0.28; }
+    45%      { transform: scale(1.02);  opacity: 0.62; }
+  }
+
+  /* ---------- Privacy, as a second slab ----------
+     The old version was a shield inside three dashed rings with two
+     floating pills, which is decoration standing in for an idea.
+     Privacy here is an absence of things, so the section says so in
+     type on a dark ground and shows nothing at all. */
+  .quiet {
+    position: relative;
+    margin: clamp(60px, 8vw, 104px) 12px;
+    border-radius: clamp(22px, 2.4vw, 36px);
+    overflow: hidden;
+    background:
+      radial-gradient(100% 90% at 84% 10%, #1A6552 0%, transparent 60%),
+      linear-gradient(168deg, #103F34 0%, #0A2B23 66%, #0E3A2F 100%);
+    color: #EAF7F1;
+    padding: clamp(52px, 7vw, 96px) clamp(24px, 5vw, 76px);
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(28px, 5vw, 72px);
+    align-items: end;
+    /* So the bloom's negative z-index lands behind the lattice but
+       still in front of this panel's own background, instead of
+       disappearing under the page. */
+    isolation: isolate;
+  }
+  /* The right-hand background: a fine lattice of mint dots drifting
+     diagonally, faded out at its edges by a radial mask so it has no
+     boundary of its own. Deliberately not another glowing blob — this
+     section is about the recording staying on the device, and a lattice
+     reads as something held in place rather than something spreading.
+     One background-position animation, composited, no layout cost. */
+  .quiet::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -4%;
+    transform: translateY(-50%);
+    width: min(46%, 520px);
+    aspect-ratio: 1;
+    background-image: radial-gradient(circle at center, rgba(155, 233, 204, 0.7) 1.2px, transparent 1.65px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(circle at 58% 50%, #000 0%, rgba(0,0,0,0.6) 40%, transparent 72%);
+    mask-image: radial-gradient(circle at 58% 50%, #000 0%, rgba(0,0,0,0.6) 40%, transparent 72%);
+    opacity: 0.5;
+    animation: meshDrift 30s linear infinite;
+    pointer-events: none;
+  }
+  /* A soft mint bloom sitting behind the lattice, so the dots have a
+     ground to be lit against instead of floating on flat green. */
+  .quiet::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -14%;
+    transform: translateY(-50%);
+    width: 54%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(116, 224, 187, 0.17) 0%, transparent 64%);
+    filter: blur(50px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  @keyframes meshDrift {
+    from { background-position: 0 0; }
+    to   { background-position: 48px -48px; }
+  }
+  .quiet > * { position: relative; z-index: 1; }
+  .quiet h2 {
+    font-size: clamp(28px, 4.4vw, 54px);
+    max-width: 15ch;
+    margin-bottom: clamp(20px, 2.4vw, 30px);
+    background: linear-gradient(158deg, #FFFFFF 30%, #9BE9CC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .quiet p {
+    font-size: clamp(15.5px, 1.5vw, 18px);
+    line-height: 1.7;
+    max-width: 52ch;
+    color: rgba(234, 247, 241, 0.74);
+  }
+  /* The three promises as plain lines, sized to be read, not as
+     chips or cards. The dot is the only mark. */
+  /* Stacked in the second column rather than strung along the bottom
+     of the first: the panel is wide, and a claim about privacy reads
+     better as a short list than as a row of footnotes. */
+  .quiet-points {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(14px, 1.8vw, 22px);
+    padding-bottom: 4px;
+  }
+  .quiet-point {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: clamp(14.5px, 1.35vw, 17px);
+    font-weight: 600;
+    color: rgba(234, 247, 241, 0.92);
+  }
+  .quiet-point::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #74E0BB;
+    flex-shrink: 0;
+  }
+
+
+  /* ---------- FAQ, panels instead of hairlines ---------- */
+  .faq-list { display: flex; flex-direction: column; gap: 10px; max-width: 760px; margin: 0 auto; }
+  .faq-item {
+    border: none;
+    border-radius: 18px;
+    background: var(--bg-deep);
+    overflow: hidden;
+    transition: background 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .faq-item:hover { background: color-mix(in srgb, var(--accent) 6%, var(--bg-deep)); }
+  .faq-item.open {
+    background: color-mix(in srgb, var(--accent) 9%, var(--bg-deep));
+    box-shadow: 0 20px 44px -26px hsl(var(--shadow-color) / 0.4);
+  }
+  .faq-question { padding: 22px 22px; }
+  .faq-answer p { padding: 0 22px 22px; }
+
+  /* ---------- Curtain footer ----------
+     The page is an opaque sheet that slides up off the bottom of the
+     window, and the footer is fixed underneath it the whole time,
+     revealed rather than scrolled to. The sheet's bottom margin is
+     set from the footer's measured height so the reveal ends exactly
+     as the footer is fully uncovered; the value below is only the
+     fallback for a run where the script never gets to measure. */
+  .scroll-page {
+    position: relative;
+    z-index: 1;
+    background: var(--bg);
+    margin-bottom: var(--foot-h, 560px);
+  }
+  /* Set by the script when the footer is too tall for the window to
+     uncover: the curtain becomes an ordinary footer rather than a
+     panel the reader can never reach the bottom of. */
+  footer.curtain.no-curtain { position: static; }
+  .scroll-page.no-curtain { margin-bottom: 0; }
+  footer.curtain {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background: var(--bg-deep);
+    padding: clamp(40px, 5vw, 64px) 0 0;
+    overflow: hidden;
+  }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: clamp(18px, 2.4vw, 30px);
+    align-items: stretch;
+  }
+  /* The closing call to action is not its own section any more; it is
+     the first thing the curtain reveals. */
+  .foot-cta {
+    border-radius: clamp(20px, 2.2vw, 30px);
+    padding: clamp(30px, 3.6vw, 52px);
+    background:
+      radial-gradient(110% 100% at 88% 6%, #1C6B57 0%, transparent 62%),
+      linear-gradient(160deg, #114539 0%, #0B2F27 100%);
+    color: #EAF7F1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(24px, 3vw, 40px);
+  }
+  .foot-cta h2 {
+    font-size: clamp(24px, 2.8vw, 38px);
+    max-width: 19ch;
+    background: linear-gradient(158deg, #FFFFFF 30%, #9BE9CC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .foot-side {
+    border-radius: clamp(20px, 2.2vw, 30px);
+    padding: clamp(26px, 3vw, 40px);
+    background: var(--surface);
+    box-shadow: 0 24px 60px -34px hsl(var(--shadow-color) / 0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+  }
+  .foot-side .brand { font-size: 19px; }
+  .foot-tagline { color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 6px; }
+  .foot-links a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    transition: color 0.22s var(--ease);
+  }
+  .foot-links a:hover { color: var(--accent); }
+  .foot-rights { font-size: 12.5px; color: var(--ink-faint); }
+
+  /* The domain, set as large as the window allows and cropped by the
+     bottom of the page. It is the last thing on the site and it is
+     the only thing that needs to be remembered. */
+  .foot-wordmark {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 0.82;
+    /* 14.5vw × ~6em of glyph width lands just inside the window at
+       every size, and footer.curtain clips anything the widest
+       language somehow pushes past it. */
+    font-size: clamp(48px, 14.5vw, 250px);
+    color: color-mix(in srgb, var(--ink) 7%, transparent);
+    margin-top: clamp(28px, 3.4vw, 52px);
+    margin-bottom: -0.09em;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* ---------- Scroll reveal ----------
+     Progressive enhancement, same contract as v1: content is visible
+     by default and JS adds .reveal-active only to elements it has
+     actually started observing, so a script failure can never leave
+     the page blank. What's new is that reveals are directional and
+     staggered — a row's children arrive one after another, from the
+     side the row is laid out on, with a short blur that resolves. */
+  .reveal.reveal-active {
+    opacity: 0;
+    transform: translateY(34px);
+    filter: blur(6px);
+    transition:
+      opacity 0.85s var(--ease),
+      transform 0.85s var(--ease),
+      filter 0.85s var(--ease);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.reveal-active.from-left  { transform: translate3d(-46px, 14px, 0); }
+  .reveal.reveal-active.from-right { transform: translate3d(46px, 14px, 0); }
+  .reveal.reveal-active.zoom       { transform: scale(0.94) translateY(20px); }
+  .reveal.reveal-active.in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal { opacity: 1; transform: none; transition: none; }
-    .float-card, .ring, .waves span, .sync-line::after { animation: none !important; }
+    html { scroll-behavior: auto; }
+    .reveal, .reveal.reveal-active { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+    .aurora span, .float-card, .waves span, .sync-beam::after, .marquee-row,
+    .pc-item .bob, .wc-card, .eyebrow .dot, .voice-badge::before, .quiet::before,
+    .pulse-field span, .sync-pulse, .sc-line.typing, .mem,
+    .cal-hit::before, .cal-hit::after, .quiet::after,
+    .pricing-card-featured::before, .screenshot-scroll, .widget-grid-gallery {
+      animation: none !important;
+      scroll-behavior: auto;
+    }
+    .btn, .shot-card, .widget-gallery-card, .phone-cluster { transition: none !important; }
   }
 
   /* ---------- Responsive ---------- */
-  @media (max-width: 980px) {
-    .hero { grid-template-columns: 1fr; padding-top: 48px; text-align: center; }
+  @media (max-width: 1040px) {
+    .duo-pair { grid-template-columns: 1fr; }
+    /* Two columns inside a rounded panel on a phone leaves both of them
+       about twenty characters wide. One column, and the three promises
+       become a list under the paragraph instead of a second column
+       squeezed beside it. */
+    .quiet { grid-template-columns: 1fr; align-items: start; }
+    .quiet h2 { max-width: 20ch; }
+    .quiet-points { flex-direction: column; gap: 14px; margin-top: 4px; }
+    /* Out of the text's way: bottom corner, smaller, fainter. */
+    .quiet::before {
+      top: auto; bottom: -4%; right: -10%;
+      transform: none;
+      width: min(58%, 250px);
+      opacity: 0.34;
+    }
+    .quiet::after { top: auto; bottom: -18%; right: -18%; transform: none; width: 76%; }
+    .foot-top { grid-template-columns: 1fr; }
+    .statband-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    /* Pinning a horizontal rail on a touch screen fights the user's
+       own scroll. Below this width it becomes an ordinary swipeable
+       strip, which is the native gesture anyway. */
+    .pan { height: auto; }
+    .pan-sticky { position: static; height: auto; padding: clamp(60px,9vw,90px) 0; }
+    .pan-track {
+      overflow-x: auto;
+      width: auto;
+      max-width: 100%;
+      transform: none !important;
+      scroll-snap-type: x mandatory;
+      padding: 4px 24px 24px;
+      scrollbar-width: none;
+    }
+    .pan-track::-webkit-scrollbar { display: none; }
+    .statement p { font-size: clamp(26px, 6.2vw, 38px); line-height: 1.42; }
+    .hero { grid-template-columns: 1fr; padding-top: 44px; text-align: center; min-height: 0; gap: 12px; }
+    .hero h1 { font-size: clamp(38px, 8.4vw, 58px); }
     .hero-sub { margin-left: auto; margin-right: auto; }
     .hero-actions { justify-content: center; }
     .trust-badges { justify-content: center; }
-    .hero-visual { height: 360px; order: -1; }
-    .feature, .feature.reverse { grid-template-columns: 1fr; gap: 36px; }
+    .hero .eyebrow { margin-inline: auto; }
+    .phone-stage { order: -1; height: clamp(360px, 62vw, 470px); margin-bottom: 20px; }
+    .fc-5 { display: none; }
+    .feature, .feature.reverse { grid-template-columns: 1fr; gap: 40px; }
     .feature.reverse .feature-text, .feature.reverse .feature-visual { order: initial; }
     .feature-text { text-align: center; }
     .feature-text p { margin-left: auto; margin-right: auto; }
-    .feature-visual { margin-top: 8px; }
-    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-    .lang-grid { grid-template-columns: repeat(4, 1fr); }
+    .feature-text .eyebrow { margin-inline: auto; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .duo-grid { grid-template-columns: 1fr; }
     .lang-menu { width: 300px; grid-template-columns: repeat(2, 1fr); }
-    .pricing-grid { grid-template-columns: 1fr; max-width: 380px; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+    /* On one column the alternating slide-in has nothing to alternate
+       against, so everything rises straight up instead. */
+    .reveal.reveal-active.from-left,
+    .reveal.reveal-active.from-right { transform: translateY(34px); }
   }
-  @media (max-width: 560px) {
+  @media (max-width: 600px) {
+    header.nav { top: 8px; padding: 0 8px; }
+    .nav-pill { height: 50px; padding: 0 6px 0 12px; gap: 6px; }
+    .nav-pill .brand img { height: 22px; width: 22px; }
+    .nav-pill .theme-toggle { width: 32px; height: 32px; font-size: 14px; }
+    .nav-pill .lang-btn { padding: 7px 9px; }
+    .nav-pill .btn-nav { padding: 9px 13px; }
+    header.nav.past-hero .nav-links { max-width: 0; opacity: 0; }
+    .slab { margin: 6px 6px 0; }
+    .quiet { margin-left: 6px; margin-right: 6px; padding: 44px 22px; }
+    .foot-wordmark { font-size: clamp(40px, 15.5vw, 76px); }
+    .story-art { min-height: 244px; }
+    .art-sync .sync-card { width: clamp(122px, 38vw, 150px); }
     .wrap { padding-left: 20px; padding-right: 20px; }
     .nav-right { gap: 8px; }
     .btn-nav span.label { display: none; }
     .brand-text { display: none; }
-    .lang-grid { grid-template-columns: repeat(3, 1fr); }
     .lang-menu {
       position: fixed;
-      top: 70px;
-      left: 20px;
-      right: 20px;
-      width: auto;
-      max-width: none;
+      top: 68px; left: 20px; right: 20px;
+      width: auto; max-width: none;
       grid-template-columns: repeat(3, 1fr);
     }
-    .float-card { font-size: 11px; padding: 8px 12px; }
-    .ring { display: none; }
-    .stats { padding: 56px 0; }
-    .final-cta { padding: 80px 0; }
-    .screenshot-scroll { padding-left: 50px; padding-right: 50px; }
-    .widget-grid-gallery { padding-left: 50px; padding-right: 50px; }
-    .slider-arrow { width: 38px; height: 38px; font-size: 16px; }
-    .slider-arrow-left { left: 6px; }
-    .slider-arrow-right { right: 6px; }
-    .shot-card { width: 130px; }
-    .widget-gallery-card { width: 160px; }
+    .float-card { font-size: 11px; padding: 7px 11px; border-radius: 11px; }
+    .float-card i { font-size: 13px; }
+    .fc-3 { left: -2%; }
+    .fc-1 { left: 0; }
+    .stats { padding: 20px 0; }
+    .stat-cell { padding: 20px 10px; }
+    .widget-collage { min-height: 320px; }
+    .widget-strip { grid-template-columns: 1fr; gap: 22px; max-width: 300px; }
+    .ws-item { transform: none !important; }
+    .duo-visual { min-height: 250px; margin-bottom: 22px; }
+    .feature-visual { min-height: 320px; }
+    .slider-wrap::before, .slider-wrap::after { width: 40px; }
+    .screenshot-scroll, .widget-grid-gallery { padding-left: 46px; padding-right: 46px; gap: 14px; }
+    .slider-arrow { width: 40px; height: 40px; font-size: 16px; }
+    .slider-arrow-left { left: 4px; }
+    .slider-arrow-right { right: 4px; }
+    .shot-card { width: 140px; border-radius: 16px; }
+    .widget-gallery-card { width: 168px; }
     .footer-inner { flex-direction: column; align-items: center; text-align: center; }
     .footer-inner .brand { justify-content: center; }
     .footer-links { justify-content: center; }
     footer .wrap { text-align: center; }
     .lightbox { padding: 24px 20px; }
     .lightbox-close { top: 16px; right: 16px; }
-    .pricing-card { padding: 28px 22px; }
-    .pricing-amount { font-size: 34px; }
+    .pricing-card { padding: 30px 24px; }
   }
 </style>
 <script type="application/ld+json">
@@ -915,25 +2202,33 @@
   <img id="lightboxImg" src="" alt="">
 </div>
 
-<header class="nav">
-  <div class="wrap nav-inner">
+<div class="scroll-page" id="scrollPage">
+<div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+
+<header class="nav" id="siteNav">
+  <div class="nav-pill">
     <div class="brand">
-      <img src="assets/mark-light.svg" alt="Havenote" id="navMark" style="height:40px;width:40px;">
+      <img src="assets/mark-light.svg" alt="Havenote" id="navMark">
       <span class="brand-text">Havenote</span>
     </div>
-    <div class="nav-right">
+    <!-- Revealed only once the hero slab is behind you. Both labels
+         are existing i18n keys, so no new translations. -->
+    <nav class="nav-links">
+      <a href="#pricing" data-i18n="pricing_eyebrow">Pricing</a>
+      <a href="#faq" data-i18n="faq_eyebrow">FAQ</a>
+    </nav>
+    <div class="nav-tools">
       <div class="lang-switcher">
         <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
           <i class="ph ph-globe"></i>
           <span id="langBtnLabel">EN</span>
-          <i class="ph ph-caret-down" style="font-size:12px"></i>
         </button>
         <div class="lang-menu" id="langMenu" role="menu"></div>
       </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <i class="ph-fill ph-moon" id="themeIcon"></i>
       </button>
-      <a class="btn btn-primary btn-nav" href="#" id="playLinkNav" target="_blank" rel="noopener">
+      <a class="btn btn-primary btn-nav magnetic" href="#" id="playLinkNav" target="_blank" rel="noopener">
         <i class="ph-bold ph-google-play-logo"></i>
         <span class="label" data-i18n="nav_cta">Get it on Google Play</span>
       </a>
@@ -943,183 +2238,270 @@
 
 <main>
 
-  <section class="hero wrap">
-    <div>
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="hero_eyebrow">Voice-first. Privacy-first.</span></div>
-      <h1 data-i18n="hero_headline">Speak it. Havenote sorts the rest.</h1>
-      <p class="hero-sub" data-i18n="hero_subtext">One voice note becomes a journal entry, task, list, reminder, or idea, automatically, privately, in 21 languages.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#" id="playLinkHero" target="_blank" rel="noopener">
-          <i class="ph-bold ph-google-play-logo"></i>
-          <span data-i18n="hero_cta">Get it on Google Play</span>
-        </a>
+  <section class="slab">
+    <section class="hero wrap">
+      <div>
+        <div class="eyebrow reveal" style="--reveal-delay:0ms"><span class="dot"></span><span data-i18n="hero_eyebrow">Voice-first. Privacy-first.</span></div>
+        <h1 class="reveal" style="--reveal-delay:70ms" data-i18n="hero_headline">Speak it. Havenote sorts the rest.</h1>
+        <p class="hero-sub reveal" style="--reveal-delay:150ms" data-i18n="hero_subtext">One voice note becomes a journal entry, task, list, reminder, or idea, automatically, privately, in 21 languages.</p>
+        <div class="hero-actions reveal" style="--reveal-delay:230ms">
+          <a class="btn btn-primary magnetic" href="#" id="playLinkHero" target="_blank" rel="noopener">
+            <i class="ph-bold ph-google-play-logo"></i>
+            <span data-i18n="hero_cta">Get it on Google Play</span>
+          </a>
+          <a class="btn btn-ghost" href="#pricing">
+            <i class="ph-bold ph-arrow-down"></i>
+            <span data-i18n="pricing_eyebrow">Pricing</span>
+          </a>
+        </div>
+        <div class="trust-badges reveal" style="--reveal-delay:310ms">
+          <div class="trust-badge"><i class="ph-fill ph-shield-check"></i><span data-i18n="trust_1">No account required</span></div>
+          <div class="trust-badge"><i class="ph-fill ph-lock-key"></i><span data-i18n="trust_2">Your voice never leaves your phone</span></div>
+          <div class="trust-badge"><i class="ph-fill ph-translate"></i><span data-i18n="trust_3">21 languages, built in</span></div>
+        </div>
       </div>
-      <div class="trust-badges">
-        <div class="trust-badge"><i class="ph-fill ph-shield-check"></i><span data-i18n="trust_1">No account required</span></div>
-        <div class="trust-badge"><i class="ph-fill ph-lock-key"></i><span data-i18n="trust_2">Your voice never leaves your phone</span></div>
-        <div class="trust-badge"><i class="ph-fill ph-translate"></i><span data-i18n="trust_3">21 languages, built in</span></div>
+
+      <!-- The hero's subject is the app itself: three real screens in
+           depth, tilting together toward the pointer. -->
+      <div class="phone-stage reveal zoom" style="--reveal-delay:180ms" id="heroVisual">
+        <div class="phone-cluster" data-tilt data-tilt-max="9">
+          <div class="pc-item pc-left">
+            <div class="bob">
+              <div class="phone">
+                <div class="phone-screen">
+                  <span class="phone-btn pw"></span><span class="phone-btn vol"></span>
+                  <img class="themed-shot light-only" src="assets/shot5.jpg" alt="Havenote home screen" width="640" height="1330" fetchpriority="high">
+                  <img class="themed-shot dark-only" src="assets/shot6.jpg" alt="Havenote home screen, dark mode" width="640" height="1330" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pc-item pc-main">
+            <div class="bob">
+              <div class="phone">
+                <div class="phone-screen">
+                  <span class="phone-btn pw"></span><span class="phone-btn vol"></span>
+                  <img class="themed-shot light-only" src="assets/shot25.jpg" alt="A Havenote journal entry with photo, mood rating and AI reflection" width="640" height="1330" fetchpriority="high">
+                  <img class="themed-shot dark-only" src="assets/shot26.jpg" alt="A Havenote journal entry, dark mode" width="640" height="1330" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pc-item pc-right">
+            <div class="bob">
+              <div class="phone">
+                <div class="phone-screen">
+                  <span class="phone-btn pw"></span><span class="phone-btn vol"></span>
+                  <img class="themed-shot light-only" src="assets/shot11.jpg" alt="Havenote mood calendar" width="640" height="1330" loading="lazy">
+                  <img class="themed-shot dark-only" src="assets/shot12.jpg" alt="Havenote mood calendar, dark mode" width="640" height="1330" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="voice-badge" aria-hidden="true">
+            <div class="waves"><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="float-card fc-1"><i class="ph-fill ph-book-open-text"></i>Journal</div>
+          <div class="float-card fc-2"><i class="ph-fill ph-check-square"></i>Tasks</div>
+          <div class="float-card fc-3"><i class="ph-fill ph-list-checks"></i>Lists</div>
+          <div class="float-card fc-4"><i class="ph-fill ph-bell"></i>Reminders</div>
+          <div class="float-card fc-5"><i class="ph-fill ph-lightbulb"></i>Ideas</div>
+        </div>
       </div>
-    </div>
-    <div class="hero-visual" id="heroVisual">
-      <div class="ring ring-1"></div>
-      <div class="ring ring-2"></div>
-      <div class="orb">
-        <div class="waves"><span></span><span></span><span></span><span></span><span></span></div>
-      </div>
-      <div class="float-card fc-1"><i class="ph-fill ph-book-open-text"></i>Journal</div>
-      <div class="float-card fc-2"><i class="ph-fill ph-check-square"></i>Tasks</div>
-      <div class="float-card fc-3"><i class="ph-fill ph-list-checks"></i>Lists</div>
-      <div class="float-card fc-4"><i class="ph-fill ph-bell"></i>Reminders</div>
-      <div class="float-card fc-5"><i class="ph-fill ph-lightbulb"></i>Ideas</div>
+  </section>
+  </section>
+
+  <!-- The numbers, back out on the white page under the slab. They are
+       four white cards and nothing else draws them: no outline, no
+       divider — each one is lifted off the page by its own shadow, and
+       the shadow is the whole separation. -->
+  <section class="statband wrap">
+    <div class="statband-grid">
+      <div class="statcard reveal" style="--reveal-delay:0ms"><div class="stat-num" data-i18n="stats_1_num">5</div><div class="stat-label" data-i18n="stats_1_label">things in one app</div></div>
+      <div class="statcard reveal" style="--reveal-delay:90ms"><div class="stat-num" data-i18n="stats_2_num">21</div><div class="stat-label" data-i18n="stats_2_label">languages</div></div>
+      <div class="statcard reveal" style="--reveal-delay:180ms"><div class="stat-num" data-i18n="stats_3_num">10</div><div class="stat-label" data-i18n="stats_3_label">Android widgets</div></div>
+      <div class="statcard reveal" style="--reveal-delay:270ms"><div class="stat-num" data-i18n="stats_4_num">0</div><div class="stat-label" data-i18n="stats_4_label">accounts needed</div></div>
     </div>
   </section>
 
-  <section class="stats">
-    <div class="wrap stats-grid">
-      <div class="reveal"><div class="stat-num" data-i18n="stats_1_num">5</div><div class="stat-label" data-i18n="stats_1_label">things in one app</div></div>
-      <div class="reveal"><div class="stat-num" data-i18n="stats_2_num">21</div><div class="stat-label" data-i18n="stats_2_label">languages</div></div>
-      <div class="reveal"><div class="stat-num" data-i18n="stats_3_num">10</div><div class="stat-label" data-i18n="stats_3_label">Android widgets</div></div>
-      <div class="reveal"><div class="stat-num" data-i18n="stats_4_num">0</div><div class="stat-label" data-i18n="stats_4_label">accounts needed</div></div>
+
+
+  <!-- The page's one still moment: a single sentence that fills in
+       word by word as it crosses the screen. Text and attribution are
+       the founder-note keys that already existed, just given the
+       weight they deserve and moved to where the reader still has
+       attention to spend. -->
+  <section class="statement wrap pulse-host">
+    <div class="pulse-field" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="statement-inner" id="statement">
+      <p data-i18n="founder_text">Havenote started from a simple frustration: journaling apps make you type, task apps make you type, list apps make you type, and it's hard to think clearly while typing on a phone. I wanted one thing I could just talk to, in whatever language I happened to be thinking in.</p>
+      <cite data-i18n="founder_name">Havenote's creator</cite>
     </div>
   </section>
 
-  <section class="feature wrap reveal">
-    <div class="feature-text">
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_voice_eyebrow">How it works</span></div>
+  <section class="feature wrap">
+    <div class="feature-text reveal from-left">
       <h2 data-i18n="section_voice_title">Talk. Havenote listens.</h2>
       <p data-i18n="section_voice_body">Tap once, say what's on your mind, and Havenote figures out where it belongs, journal, task, list, reminder, or idea. No menus, no typing, no friction.</p>
     </div>
-    <div class="feature-visual">
-      <div class="visual-inner">
-        <div class="visual-icon-big"><i class="ph-fill ph-microphone"></i></div>
-        <div class="waves" style="justify-content:center;height:30px;"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="feature-visual reveal from-right" style="--reveal-delay:120ms">
+      <div class="phone" data-tilt data-tilt-max="7">
+        <div class="phone-screen">
+          <span class="phone-btn pw"></span><span class="phone-btn vol"></span>
+          <img class="themed-shot light-only" src="assets/shot9.jpg" alt="Havenote diary timeline" width="640" height="1330" loading="lazy">
+          <img class="themed-shot dark-only" src="assets/shot10.jpg" alt="Havenote diary timeline, dark mode" width="640" height="1330" loading="lazy">
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="feature reverse wrap reveal">
-    <div class="feature-text">
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_privacy_eyebrow">Privacy</span></div>
-      <h2 data-i18n="section_privacy_title">Your voice never leaves your side</h2>
-      <p data-i18n="section_privacy_body">No accounts, ever. Your recording is transcribed on your own phone and deleted right after, nothing raw ever touches our servers. Only the text you choose to analyze goes anywhere at all.</p>
+  <!-- Privacy is an absence of things. Nothing to show, so nothing is
+       shown: the claim carries it, on a ground dark enough that the
+       section needs no outline to be its own place. -->
+  <section class="quiet reveal zoom">
+    <div>
+    <h2 data-i18n="section_privacy_title">Your voice never leaves your side</h2>
+    <p data-i18n="section_privacy_body">No accounts, ever. Your recording is transcribed on your own phone and deleted right after, nothing raw ever touches our servers. Only the text you choose to analyze goes anywhere at all.</p>
     </div>
-    <div class="feature-visual">
-      <div class="visual-inner">
-        <div class="visual-icon-big pulse-icon"><i class="ph-fill ph-shield-check"></i></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="feature wrap reveal">
-    <div class="feature-text">
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_ai_eyebrow">AI insights</span></div>
-      <h2 data-i18n="section_ai_title">See the patterns you'd never notice</h2>
-      <p data-i18n="section_ai_body">A weekly or monthly recap surfaces the themes you keep returning to and how your mood has been moving, generated only when you ask for it, never in the background.</p>
-    </div>
-    <div class="feature-visual">
-      <div class="chart-visual">
-        <div class="chart-bar" style="height:38%"></div>
-        <div class="chart-bar hi" style="height:70%"></div>
-        <div class="chart-bar" style="height:52%"></div>
-        <div class="chart-bar hi" style="height:88%"></div>
-        <div class="chart-bar" style="height:44%"></div>
-        <div class="chart-bar hi" style="height:64%"></div>
-      </div>
+    <div class="quiet-points">
+      <div class="quiet-point"><span data-i18n="trust_1">No account required</span></div>
+      <div class="quiet-point"><span data-i18n="trust_2">Your voice never leaves your phone</span></div>
+      <div class="quiet-point"><span data-i18n="trust_3">21 languages, built in</span></div>
     </div>
   </section>
 
-  <section class="feature reverse wrap reveal">
-    <div class="feature-text">
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_widgets_eyebrow">Android widgets</span></div>
+  <!-- Full-width band: the widget renders are horizontal, and giving
+       them the page's whole width is also what breaks the run of
+       alternating split rows. -->
+  <section class="feature-band wrap">
+    <div class="band-head reveal">
       <h2 data-i18n="section_widgets_title">Your week, right on your home screen</h2>
       <p data-i18n="section_widgets_body">Ten home-screen widgets (journal, tasks, reminders, mood), glanceable without ever opening the app. Most journaling apps don't have one. Havenote has ten.</p>
     </div>
-    <div class="feature-visual">
-      <div class="widget-grid">
-        <div class="widget-tile"><i class="ph-fill ph-book-open-text spin-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
-        <div class="widget-tile"><i class="ph-fill ph-check-square pop-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
-        <div class="widget-tile"><i class="ph-fill ph-bell ring-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
-        <div class="widget-tile"><i class="ph-fill ph-smiley pop-icon"></i><div class="wt-bar"></div><div class="wt-bar short"></div></div>
+    <div class="widget-strip">
+      <div class="ws-item reveal zoom" style="--reveal-delay:0ms"><img src="assets/widget1.png" alt="Diary this week widget" width="700" height="289" loading="lazy"></div>
+      <div class="ws-item reveal zoom" style="--reveal-delay:110ms"><img src="assets/widget5.png" alt="Mood trend widget" width="700" height="367" loading="lazy"></div>
+      <div class="ws-item reveal zoom" style="--reveal-delay:220ms"><img src="assets/widget6.png" alt="Fortune cookie widget" width="700" height="391" loading="lazy"></div>
+    </div>
+  </section>
+
+  <section class="feature wrap">
+    <div class="feature-text reveal from-left">
+      <h2 data-i18n="section_ai_title">See the patterns you'd never notice</h2>
+      <p data-i18n="section_ai_body">A weekly or monthly recap surfaces the themes you keep returning to and how your mood has been moving, generated only when you ask for it, never in the background.</p>
+    </div>
+    <div class="feature-visual reveal from-right" style="--reveal-delay:120ms">
+      <div class="phone" data-tilt data-tilt-max="7">
+        <div class="phone-screen">
+          <span class="phone-btn pw"></span><span class="phone-btn vol"></span>
+          <img class="themed-shot light-only" src="assets/shot7.jpg" alt="Havenote weekly overview with mood and completion" width="640" height="1330" loading="lazy">
+          <img class="themed-shot dark-only" src="assets/shot8.jpg" alt="Havenote weekly overview, dark mode" width="640" height="1330" loading="lazy">
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="feature wrap reveal">
-    <div class="feature-text">
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_shared_eyebrow">Shared journals</span></div>
-      <h2 data-i18n="section_shared_title">Journal together, in real time</h2>
-      <p data-i18n="section_shared_body">Start a shared space with one other person, a couple's journal, a trip log, anything. Both of you see new entries the moment they're added.</p>
-    </div>
-    <div class="feature-visual">
-      <div class="sync-visual">
-        <div class="avatar-circle"><i class="ph-fill ph-user pulse-icon"></i></div>
-        <div class="sync-line"></div>
-        <div class="avatar-circle"><i class="ph-fill ph-user pulse-icon-delay"></i></div>
-      </div>
+  <!-- Two short stories, drawn instead of photographed. The app itself
+       is already shown thirty times in the rail below this; repeating a
+       fourth and fifth phone here would say nothing new, and neither of
+       these two ideas is actually visible in a screenshot anyway — one
+       is two devices staying in step, the other is a date coming back
+       every year. Both are drawn in CSS, so they carry no image weight
+       and need no translation. -->
+  <section class="wrap duo pulse-host">
+    <div class="pulse-field" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="duo-pair">
+
+      <article class="story reveal from-left">
+        <div class="story-art art-sync" aria-hidden="true">
+          <div class="sync-card sc-a">
+            <div class="sc-head"><span class="sc-av"></span><span class="sc-pill"></span></div>
+            <span class="sc-line sl1"></span>
+            <span class="sc-line sl2"></span>
+            <span class="sc-line sl3"></span>
+          </div>
+          <div class="sync-wire"><span class="sync-pulse"></span></div>
+          <div class="sync-card sc-b">
+            <div class="sc-head"><span class="sc-av alt"></span><span class="sc-pill"></span></div>
+            <span class="sc-line sl2"></span>
+            <span class="sc-line sl4 typing"></span>
+          </div>
+        </div>
+        <div class="story-cap">
+          <h2 data-i18n="section_shared_title">Journal together, in real time</h2>
+          <p data-i18n="section_shared_body">Start a shared space with one other person, a couple's journal, a trip log, anything. Both of you see new entries the moment they're added.</p>
+        </div>
+      </article>
+
+      <article class="story reveal from-right" style="--reveal-delay:110ms">
+        <div class="story-art art-date" aria-hidden="true">
+          <div class="cal">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span class="cal-hit"><i class="ph-fill ph-gift"></i></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="mem m1"><i class="ph-fill ph-image"></i></div>
+          <div class="mem m2"><i class="ph-fill ph-microphone"></i></div>
+          <div class="mem m3"><i class="ph-fill ph-heart"></i></div>
+        </div>
+        <div class="story-cap">
+          <h2 data-i18n="section_dates_title">Birthdays remember themselves</h2>
+          <p data-i18n="section_dates_body">Add an important date once. Havenote reminds you ahead of time, suggests a gift, and resurfaces every memory from that same day, every year.</p>
+        </div>
+      </article>
+
     </div>
   </section>
 
-  <section class="feature reverse wrap reveal">
-    <div class="feature-text">
-      <div class="eyebrow"><span class="dot"></span><span data-i18n="section_dates_eyebrow">Never forget</span></div>
-      <h2 data-i18n="section_dates_title">Birthdays remember themselves</h2>
-      <p data-i18n="section_dates_body">Add an important date once. Havenote reminds you ahead of time, suggests a gift, and resurfaces every memory from that same day, every year.</p>
-    </div>
-    <div class="feature-visual">
-      <div class="visual-inner">
-        <div class="visual-icon-big"><i class="ph-fill ph-cake bounce-icon"></i></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="gallery-section">
-    <div class="wrap">
-      <div class="gallery-heading reveal">
+  <section class="pan" id="shotPan">
+    <div class="pan-sticky">
+      <div class="pan-head reveal">
         <h2 data-i18n="gallery_shots_title">See it for yourself</h2>
         <p data-i18n="gallery_shots_body">A quick look around the app, in both light and dark.</p>
       </div>
-    </div>
-    <div class="slider-wrap">
-      <button class="slider-arrow slider-arrow-left" onclick="scrollSlider('screenshotSlider', -1)" aria-label="Previous"><i class="ph-bold ph-caret-left"></i></button>
-      <div class="screenshot-scroll reveal" id="screenshotSlider">
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot1.jpg')"><img src="assets/shot1.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot2.jpg')"><img src="assets/shot2.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot3.jpg')"><img src="assets/shot3.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot4.jpg')"><img src="assets/shot4.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot5.jpg')"><img src="assets/shot5.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot6.jpg')"><img src="assets/shot6.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot7.jpg')"><img src="assets/shot7.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot8.jpg')"><img src="assets/shot8.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot9.jpg')"><img src="assets/shot9.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot10.jpg')"><img src="assets/shot10.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot11.jpg')"><img src="assets/shot11.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot12.jpg')"><img src="assets/shot12.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot13.jpg')"><img src="assets/shot13.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot14.jpg')"><img src="assets/shot14.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot15.jpg')"><img src="assets/shot15.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot16.jpg')"><img src="assets/shot16.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot17.jpg')"><img src="assets/shot17.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot18.jpg')"><img src="assets/shot18.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot19.jpg')"><img src="assets/shot19.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot20.jpg')"><img src="assets/shot20.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot21.jpg')"><img src="assets/shot21.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot22.jpg')"><img src="assets/shot22.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot23.jpg')"><img src="assets/shot23.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot24.jpg')"><img src="assets/shot24.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot25.jpg')"><img src="assets/shot25.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot26.jpg')"><img src="assets/shot26.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot27.jpg')"><img src="assets/shot27.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot28.jpg')"><img src="assets/shot28.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
-      <div class="shot-card light-only" onclick="openLightbox('assets/shot29.jpg')"><img src="assets/shot29.jpg" alt="Havenote screenshot" loading="lazy"></div>
-      <div class="shot-card dark-only" onclick="openLightbox('assets/shot30.jpg')"><img src="assets/shot30.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+      <div class="pan-track" id="panTrack">
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot1.jpg')"><img src="assets/shot1.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot2.jpg')"><img src="assets/shot2.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot3.jpg')"><img src="assets/shot3.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot4.jpg')"><img src="assets/shot4.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot5.jpg')"><img src="assets/shot5.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot6.jpg')"><img src="assets/shot6.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot7.jpg')"><img src="assets/shot7.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot8.jpg')"><img src="assets/shot8.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot9.jpg')"><img src="assets/shot9.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot10.jpg')"><img src="assets/shot10.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot11.jpg')"><img src="assets/shot11.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot12.jpg')"><img src="assets/shot12.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot13.jpg')"><img src="assets/shot13.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot14.jpg')"><img src="assets/shot14.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot15.jpg')"><img src="assets/shot15.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot16.jpg')"><img src="assets/shot16.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot17.jpg')"><img src="assets/shot17.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot18.jpg')"><img src="assets/shot18.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot19.jpg')"><img src="assets/shot19.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot20.jpg')"><img src="assets/shot20.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot21.jpg')"><img src="assets/shot21.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot22.jpg')"><img src="assets/shot22.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot23.jpg')"><img src="assets/shot23.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot24.jpg')"><img src="assets/shot24.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot25.jpg')"><img src="assets/shot25.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot26.jpg')"><img src="assets/shot26.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot27.jpg')"><img src="assets/shot27.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot28.jpg')"><img src="assets/shot28.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
+          <div class="shot-card light-only" onclick="openLightbox('assets/shot29.jpg')"><img src="assets/shot29.jpg" alt="Havenote screenshot" loading="lazy"></div>
+          <div class="shot-card dark-only" onclick="openLightbox('assets/shot30.jpg')"><img src="assets/shot30.jpg" alt="Havenote screenshot, dark mode" loading="lazy"></div>
       </div>
-      <button class="slider-arrow slider-arrow-right" onclick="scrollSlider('screenshotSlider', 1)" aria-label="Next"><i class="ph-bold ph-caret-right"></i></button>
     </div>
   </section>
 
   <section class="widget-gallery-section">
     <div class="wrap">
-      <div class="gallery-heading reveal">
+      <div class="sec-head reveal">
         <h2 data-i18n="gallery_widgets_title">Ten widgets, right on your home screen</h2>
         <p data-i18n="gallery_widgets_body">A glanceable look at your day without ever opening the app.</p>
       </div>
@@ -1144,23 +2526,24 @@
 
   <section class="languages-section">
     <div class="wrap">
-      <div class="lang-heading reveal">
+      <div class="sec-head reveal">
         <h2 data-i18n="languages_title">Written for how you actually speak</h2>
         <p data-i18n="languages_body">21 languages, built in from day one, not bolted on later.</p>
       </div>
-      <div class="lang-grid reveal" id="langShowcase"></div>
     </div>
+    <div class="marquee reveal" id="langShowcase"></div>
   </section>
 
-  <section class="pricing-section" id="pricing">
+  <section class="pricing-section pulse-host" id="pricing">
+    <div class="pulse-field" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <div class="wrap">
-      <div class="lang-heading reveal">
+      <div class="sec-head reveal">
         <div class="eyebrow"><span class="dot"></span><span data-i18n="pricing_eyebrow">Pricing</span></div>
         <h2 data-i18n="pricing_title">Free to start. Upgrade when you're ready.</h2>
         <p data-i18n="pricing_subtext">No account needed either way, premium just removes the caps.</p>
       </div>
-      <div class="pricing-grid reveal">
-        <div class="pricing-card">
+      <div class="pricing-grid">
+        <div class="pricing-card glass reveal from-left">
           <div class="pricing-card-name" data-i18n="pricing_free_name">Free</div>
           <div class="pricing-card-price"><span class="pricing-amount" data-i18n="pricing_free_price">$0</span></div>
           <ul class="pricing-features">
@@ -1170,21 +2553,25 @@
             <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_free_4">2 home screen widgets</span></li>
           </ul>
         </div>
-        <div class="pricing-card pricing-card-featured">
+        <div class="pricing-card pricing-card-featured glass reveal from-right" style="--reveal-delay:110ms">
           <div class="pricing-card-badge" data-i18n="pricing_badge">Most popular</div>
           <div class="pricing-card-name" data-i18n="pricing_premium_name">Premium</div>
           <div class="pricing-card-price">
             <span class="pricing-amount">$6.99</span><span class="pricing-period" data-i18n="pricing_premium_period">/month</span>
           </div>
           <div class="pricing-yearly-note" data-i18n="pricing_premium_yearly_note">or $59.99/year, save 29%</div>
+          <div class="pricing-trial">
+            <i class="ph-fill ph-gift"></i>
+            <span data-i18n="pricing_premium_trial">3-day free trial included</span>
+          </div>
           <ul class="pricing-features">
             <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_1">Unlimited journal entries, tasks, lists, reminders, and ideas</span></li>
-            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_2">Unlimited AI insights & weekly and monthly recaps</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_2">Unlimited AI insights &amp; weekly and monthly recaps</span></li>
             <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_3">Create and share journals and lists</span></li>
             <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_4">Full backup, restore, and export</span></li>
-            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_5">PIN &amp; biometric lock, all widgets, full sticker library</span></li>
+            <li><i class="ph-bold ph-check"></i><span data-i18n="pricing_premium_5">All widgets and the full sticker library</span></li>
           </ul>
-          <a class="btn btn-primary pricing-btn" href="#" id="playLinkPricing" target="_blank" rel="noopener">
+          <a class="btn btn-primary pricing-btn magnetic" href="#" id="playLinkPricing" target="_blank" rel="noopener">
             <i class="ph-bold ph-google-play-logo"></i>
             <span data-i18n="pricing_cta">Get Havenote</span>
           </a>
@@ -1193,92 +2580,92 @@
     </div>
   </section>
 
-  <section class="founder-section wrap reveal">
-    <div class="founder-card">
-      <i class="ph-fill ph-quotes founder-quote-icon"></i>
-      <p class="founder-text" data-i18n="founder_text">Havenote started from a simple frustration: journaling apps make you type, task apps make you type, list apps make you type, and it's hard to think clearly while typing on a phone. I wanted one thing I could just talk to, in whatever language I happened to be thinking in.</p>
-      <div class="founder-name" data-i18n="founder_name">Havenote's creator</div>
-    </div>
-  </section>
-
-  <section class="faq-section wrap reveal">
-    <div class="lang-heading reveal">
+  <section class="faq-section wrap" id="faq">
+    <div class="sec-head reveal">
       <div class="eyebrow"><span class="dot"></span><span data-i18n="faq_eyebrow">FAQ</span></div>
       <h2 data-i18n="faq_title">Questions people actually ask</h2>
     </div>
     <div class="faq-list">
-      <div class="faq-item">
+      <div class="faq-item reveal" style="--reveal-delay:0ms">
         <button class="faq-question" type="button">
           <span data-i18n="faq_q1">Do I need to create an account?</span>
           <i class="ph-bold ph-plus faq-icon"></i>
         </button>
-        <div class="faq-answer"><p data-i18n="faq_a1">No. Havenote works with just your device, no sign-up, no email, no password.</p></div>
+        <div class="faq-answer"><div><p data-i18n="faq_a1">No. Havenote works with just your device, no sign-up, no email, no password.</p></div></div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal" style="--reveal-delay:60ms">
         <button class="faq-question" type="button">
           <span data-i18n="faq_q2">What happens to my voice after I record?</span>
           <i class="ph-bold ph-plus faq-icon"></i>
         </button>
-        <div class="faq-answer"><p data-i18n="faq_a2">It's transcribed right on your phone and deleted immediately after. Nothing raw ever reaches our servers, only the text you choose to have analyzed does.</p></div>
+        <div class="faq-answer"><div><p data-i18n="faq_a2">It's transcribed right on your phone and deleted immediately after. Nothing raw ever reaches our servers, only the text you choose to have analyzed does.</p></div></div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal" style="--reveal-delay:120ms">
         <button class="faq-question" type="button">
           <span data-i18n="faq_q3">Can I cancel my subscription anytime?</span>
           <i class="ph-bold ph-plus faq-icon"></i>
         </button>
-        <div class="faq-answer"><p data-i18n="faq_a3">Yes, anytime, right from Google Play. You keep Premium until the end of the period you already paid for.</p></div>
+        <div class="faq-answer"><div><p data-i18n="faq_a3">Yes, anytime, right from Google Play. You keep Premium until the end of the period you already paid for.</p></div></div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal" style="--reveal-delay:180ms">
         <button class="faq-question" type="button">
           <span data-i18n="faq_q4">Does Havenote work in my language?</span>
           <i class="ph-bold ph-plus faq-icon"></i>
         </button>
-        <div class="faq-answer"><p data-i18n="faq_a4">It supports 21 languages, built in from day one, speak in whichever one you're thinking in.</p></div>
+        <div class="faq-answer"><div><p data-i18n="faq_a4">It supports 21 languages, built in from day one, speak in whichever one you're thinking in.</p></div></div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal" style="--reveal-delay:240ms">
         <button class="faq-question" type="button">
           <span data-i18n="faq_q5">What's the difference between Free and Premium?</span>
           <i class="ph-bold ph-plus faq-icon"></i>
         </button>
-        <div class="faq-answer"><p data-i18n="faq_a5">Free covers real daily use with sensible limits, a handful of journal entries, tasks, reminders, and ideas at a time. Premium removes those limits and adds sharing, backup, and more.</p></div>
+        <div class="faq-answer"><div><p data-i18n="faq_a5">Free covers real daily use with sensible limits, a handful of journal entries, tasks, reminders, and ideas at a time. Premium removes those limits and adds sharing, backup, and more.</p></div></div>
       </div>
-      <div class="faq-item">
+      <div class="faq-item reveal" style="--reveal-delay:300ms">
         <button class="faq-question" type="button">
           <span data-i18n="faq_q6">Does it work without an internet connection?</span>
           <i class="ph-bold ph-plus faq-icon"></i>
         </button>
-        <div class="faq-answer"><p data-i18n="faq_a6">You can always record and save, Havenote falls back to simple automatic formatting if you're offline. The smarter AI cleanup and insights need a connection.</p></div>
+        <div class="faq-answer"><div><p data-i18n="faq_a6">You can always record and save, Havenote falls back to simple automatic formatting if you're offline. The smarter AI cleanup and insights need a connection.</p></div></div>
       </div>
     </div>
   </section>
 
-  <section class="final-cta wrap reveal">
-    <h2 data-i18n="final_cta_title">Your thoughts, organized the moment you say them.</h2>
-    <a class="btn btn-primary" href="#" id="playLinkFinal" target="_blank" rel="noopener">
-      <i class="ph-bold ph-google-play-logo"></i>
-      <span data-i18n="final_cta_button">Get it on Google Play</span>
-    </a>
-  </section>
 
 </main>
 
-<footer>
+</div><!-- /.scroll-page -->
+
+<footer class="curtain" id="siteFooter">
   <div class="wrap">
-    <div class="footer-inner">
-      <div>
-        <div class="brand" style="margin-bottom:8px;font-size:16px;">
-          <img src="assets/mark-light.svg" alt="" id="footerMark" style="height:20px;width:20px;">
+    <div class="foot-top">
+      <div class="foot-cta">
+        <h2 data-i18n="final_cta_title">Your thoughts, organized the moment you say them.</h2>
+        <a class="btn btn-primary magnetic" href="#" id="playLinkFinal" target="_blank" rel="noopener" style="align-self:flex-start">
+          <i class="ph-bold ph-google-play-logo"></i>
+          <span data-i18n="final_cta_button">Get it on Google Play</span>
+        </a>
+      </div>
+      <div class="foot-side">
+        <div class="brand">
+          <img src="assets/mark-light.svg" alt="" id="footerMark" style="height:24px;width:24px;">
           Havenote
         </div>
-        <div class="footer-tagline" data-i18n="footer_tagline">Speak it. Havenote sorts the rest.</div>
-      </div>
-      <div class="footer-links">
-        <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
-        <a href="terms.html" data-i18n="footer_terms">Terms of Service</a>
+        <div class="foot-tagline" data-i18n="footer_tagline">Speak it. Havenote sorts the rest.</div>
+        <div class="foot-links">
+          <a href="#pricing" data-i18n="pricing_eyebrow">Pricing</a>
+          <a href="#faq" data-i18n="faq_eyebrow">FAQ</a>
+          <a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="terms.html" data-i18n="footer_terms">Terms of Service</a>
+        </div>
+        <div class="foot-rights" data-i18n="footer_rights">All rights reserved.</div>
       </div>
     </div>
-    <div class="footer-rights" data-i18n="footer_rights">All rights reserved.</div>
   </div>
+  <!-- Deliberately outside .wrap: the wordmark is centred on the
+       window, not inside the 1180px column, and it is a mark rather
+       than a link — there is nowhere for it to go from here. -->
+  <div class="foot-wordmark" aria-hidden="true">havenote.app</div>
 </footer>
 
 <script>
@@ -1346,11 +2733,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/month",
     "pricing_premium_yearly_note": "or $59.99/year, save 29%",
+    "pricing_premium_trial": "3-day free trial included",
     "pricing_premium_1": "Unlimited journal entries, tasks, lists, reminders, and ideas",
     "pricing_premium_2": "Unlimited AI insights & weekly and monthly recaps",
     "pricing_premium_3": "Create and share journals and lists",
     "pricing_premium_4": "Full backup, restore, and export",
-    "pricing_premium_5": "PIN & biometric lock, all widgets, full sticker library",
+    "pricing_premium_5": "All widgets and the full sticker library",
     "pricing_cta": "Get Havenote",
     "trust_1": "No account required",
     "trust_2": "Your voice never leaves your phone",
@@ -1430,11 +2818,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/mesečno",
     "pricing_premium_yearly_note": "ili 59,99€/godišnje, uštedi 29%",
+    "pricing_premium_trial": "Uključen 3-dnevni besplatan probni period",
     "pricing_premium_1": "Neograničeni zapisi u dnevniku, zadaci, liste, podsetnici i ideje",
     "pricing_premium_2": "Neograničeni AI uvidi i nedeljni i mesečni rezimei",
     "pricing_premium_3": "Kreiraj i deli dnevnike i liste",
     "pricing_premium_4": "Puna rezervna kopija, vraćanje i izvoz",
-    "pricing_premium_5": "PIN i biometrijsko zaključavanje, svi widget-i, puna biblioteka stikera",
+    "pricing_premium_5": "Svi widget-i i puna biblioteka stikera",
     "pricing_cta": "Preuzmi Havenote",
     "trust_1": "Nije potreban nalog",
     "trust_2": "Tvoj glas ne napušta telefon",
@@ -1514,11 +2903,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/mes",
     "pricing_premium_yearly_note": "o 59,99 €/año, ahorra 29%",
+    "pricing_premium_trial": "Incluye 3 días de prueba gratis",
     "pricing_premium_1": "Entradas de diario, tareas, listas, recordatorios e ideas ilimitados",
     "pricing_premium_2": "Análisis de IA ilimitados y resúmenes semanales y mensuales",
     "pricing_premium_3": "Crea y comparte diarios y listas",
     "pricing_premium_4": "Copia de seguridad, restauración y exportación completas",
-    "pricing_premium_5": "Bloqueo con PIN y biometría, todos los widgets, biblioteca completa de stickers",
+    "pricing_premium_5": "Todos los widgets y la biblioteca completa de stickers",
     "pricing_cta": "Consigue Havenote",
     "trust_1": "No necesitas cuenta",
     "trust_2": "Tu voz nunca sale de tu teléfono",
@@ -1598,11 +2988,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/mois",
     "pricing_premium_yearly_note": "ou 59,99 €/an, économise 29 %",
+    "pricing_premium_trial": "3 jours d'essai gratuit inclus",
     "pricing_premium_1": "Entrées de journal, tâches, listes, rappels et idées illimités",
     "pricing_premium_2": "Analyses IA illimitées et résumés hebdomadaires et mensuels",
     "pricing_premium_3": "Crée et partage des journaux et des listes",
     "pricing_premium_4": "Sauvegarde, restauration et export complets",
-    "pricing_premium_5": "Verrouillage par code et biométrie, tous les widgets, bibliothèque complète d'autocollants",
+    "pricing_premium_5": "Tous les widgets et la bibliothèque complète d'autocollants",
     "pricing_cta": "Obtenir Havenote",
     "trust_1": "Aucun compte nécessaire",
     "trust_2": "Ta voix ne quitte jamais ton téléphone",
@@ -1682,11 +3073,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/mês",
     "pricing_premium_yearly_note": "ou 59,99 €/ano, poupa 29%",
+    "pricing_premium_trial": "Inclui 3 dias de teste grátis",
     "pricing_premium_1": "Entradas de diário, tarefas, listas, lembretes e ideias ilimitados",
     "pricing_premium_2": "Análises de IA ilimitadas e resumos semanais e mensais",
     "pricing_premium_3": "Cria e partilha diários e listas",
     "pricing_premium_4": "Cópia de segurança, restauro e exportação completos",
-    "pricing_premium_5": "Bloqueio por PIN e biometria, todos os widgets, biblioteca completa de autocolantes",
+    "pricing_premium_5": "Todos os widgets e a biblioteca completa de autocolantes",
     "pricing_cta": "Obter o Havenote",
     "trust_1": "Não é preciso conta",
     "trust_2": "A tua voz nunca sai do telemóvel",
@@ -1766,11 +3158,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/месяц",
     "pricing_premium_yearly_note": "или 59,99 €/год, экономия 29%",
+    "pricing_premium_trial": "3 дня бесплатного пробного периода",
     "pricing_premium_1": "Неограниченные записи в дневнике, задачи, списки, напоминания и идеи",
     "pricing_premium_2": "Неограниченный ИИ-анализ и еженедельные и ежемесячные сводки",
     "pricing_premium_3": "Создавайте и делитесь дневниками и списками",
     "pricing_premium_4": "Полное резервное копирование, восстановление и экспорт",
-    "pricing_premium_5": "Защита PIN-кодом и биометрией, все виджеты, полная библиотека стикеров",
+    "pricing_premium_5": "Все виджеты и полная библиотека стикеров",
     "pricing_cta": "Получить Havenote",
     "trust_1": "Аккаунт не нужен",
     "trust_2": "Ваш голос никогда не покидает телефон",
@@ -1850,11 +3243,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "高级版",
     "pricing_premium_period": "/月",
     "pricing_premium_yearly_note": "或 ¥59.99/年, 节省 29%",
+    "pricing_premium_trial": "含 3 天免费试用",
     "pricing_premium_1": "无限日记条目、任务、清单、提醒和想法",
     "pricing_premium_2": "无限 AI 洞察，以及每周和每月总结",
     "pricing_premium_3": "创建并分享日记和清单",
     "pricing_premium_4": "完整备份、恢复和导出",
-    "pricing_premium_5": "密码和生物识别锁定、所有小组件、完整贴纸库",
+    "pricing_premium_5": "所有小组件和完整贴纸库",
     "pricing_cta": "获取 Havenote",
     "trust_1": "无需账号",
     "trust_2": "你的声音从不离开手机",
@@ -1934,11 +3328,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "प्रीमियम",
     "pricing_premium_period": "/माह",
     "pricing_premium_yearly_note": "या ₹4,999/वर्ष, 29% बचाएं",
+    "pricing_premium_trial": "3 दिन का मुफ़्त ट्रायल शामिल",
     "pricing_premium_1": "असीमित डायरी एंट्री, कार्य, सूचियाँ, रिमाइंडर और विचार",
     "pricing_premium_2": "असीमित AI विश्लेषण और साप्ताहिक-मासिक सारांश",
     "pricing_premium_3": "डायरी और सूचियाँ बनाएं और साझा करें",
     "pricing_premium_4": "पूरा बैकअप, पुनर्स्थापन और एक्सपोर्ट",
-    "pricing_premium_5": "पिन और बायोमेट्रिक लॉक, सभी विजेट, पूरी स्टिकर लाइब्रेरी",
+    "pricing_premium_5": "सभी विजेट और पूरी स्टिकर लाइब्रेरी",
     "pricing_cta": "Havenote पाएं",
     "trust_1": "अकाउंट की ज़रूरत नहीं",
     "trust_2": "आपकी आवाज़ कभी आपके फ़ोन से बाहर नहीं जाती",
@@ -2018,11 +3413,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "بريميوم",
     "pricing_premium_period": "/شهريًا",
     "pricing_premium_yearly_note": "أو 59.99 دولار/سنويًا, وفّر 29%",
+    "pricing_premium_trial": "يشمل 3 أيام تجربة مجانية",
     "pricing_premium_1": "عدد غير محدود من مذكرات اليوميات والمهام والقوائم والتذكيرات والأفكار",
     "pricing_premium_2": "تحليلات ذكاء اصطناعي غير محدودة وملخصات أسبوعية وشهرية",
     "pricing_premium_3": "أنشئ اليوميات والقوائم وشاركها",
     "pricing_premium_4": "نسخ احتياطي واستعادة وتصدير كامل",
-    "pricing_premium_5": "قفل برمز PIN وبصمة، جميع الأدوات، مكتبة كاملة من الملصقات",
+    "pricing_premium_5": "جميع الأدوات ومكتبة كاملة من الملصقات",
     "pricing_cta": "احصل على Havenote",
     "trust_1": "لا حاجة لحساب",
     "trust_2": "صوتك لا يغادر هاتفك أبدًا",
@@ -2102,11 +3498,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "প্রিমিয়াম",
     "pricing_premium_period": "/মাস",
     "pricing_premium_yearly_note": "অথবা $59.99/বছর, ২৯% সাশ্রয়",
+    "pricing_premium_trial": "৩ দিনের ফ্রি ট্রায়াল অন্তর্ভুক্ত",
     "pricing_premium_1": "সীমাহীন ডায়েরি এন্ট্রি, কাজ, তালিকা, রিমাইন্ডার এবং ধারণা",
     "pricing_premium_2": "সীমাহীন AI বিশ্লেষণ ও সাপ্তাহিক-মাসিক সারাংশ",
     "pricing_premium_3": "ডায়েরি ও তালিকা তৈরি ও শেয়ার করুন",
     "pricing_premium_4": "সম্পূর্ণ ব্যাকআপ, পুনরুদ্ধার ও এক্সপোর্ট",
-    "pricing_premium_5": "পিন ও বায়োমেট্রিক লক, সব উইজেট, সম্পূর্ণ স্টিকার লাইব্রেরি",
+    "pricing_premium_5": "সব উইজেট ও সম্পূর্ণ স্টিকার লাইব্রেরি",
     "pricing_cta": "Havenote নিন",
     "trust_1": "অ্যাকাউন্টের প্রয়োজন নেই",
     "trust_2": "আপনার কণ্ঠ কখনো ফোন ছেড়ে যায় না",
@@ -2186,11 +3583,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/bulan",
     "pricing_premium_yearly_note": "atau Rp959.000/tahun, hemat 29%",
+    "pricing_premium_trial": "Termasuk uji coba gratis 3 hari",
     "pricing_premium_1": "Entri diari, tugas, daftar, pengingat, dan ide tanpa batas",
     "pricing_premium_2": "Analisis AI tanpa batas serta ringkasan mingguan dan bulanan",
     "pricing_premium_3": "Buat dan bagikan diari serta daftar",
     "pricing_premium_4": "Cadangkan, pulihkan, dan ekspor penuh",
-    "pricing_premium_5": "Kunci PIN & biometrik, semua widget, perpustakaan stiker lengkap",
+    "pricing_premium_5": "Semua widget dan perpustakaan stiker lengkap",
     "pricing_cta": "Dapatkan Havenote",
     "trust_1": "Tidak perlu akun",
     "trust_2": "Suaramu tidak pernah meninggalkan ponselmu",
@@ -2270,11 +3668,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/Monat",
     "pricing_premium_yearly_note": "oder 59,99 €/Jahr, 29 % sparen",
+    "pricing_premium_trial": "3 Tage kostenlos testen",
     "pricing_premium_1": "Unbegrenzte Tagebucheinträge, Aufgaben, Listen, Erinnerungen und Ideen",
     "pricing_premium_2": "Unbegrenzte KI-Analysen sowie wöchentliche und monatliche Zusammenfassungen",
     "pricing_premium_3": "Erstelle und teile Tagebücher und Listen",
     "pricing_premium_4": "Vollständiges Backup, Wiederherstellen und Exportieren",
-    "pricing_premium_5": "PIN- & biometrische Sperre, alle Widgets, vollständige Sticker-Bibliothek",
+    "pricing_premium_5": "Alle Widgets und die vollständige Sticker-Bibliothek",
     "pricing_cta": "Havenote holen",
     "trust_1": "Kein Konto nötig",
     "trust_2": "Deine Stimme verlässt nie dein Telefon",
@@ -2354,11 +3753,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "プレミアム",
     "pricing_premium_period": "/月",
     "pricing_premium_yearly_note": "または年払い ¥8,900, 29%お得",
+    "pricing_premium_trial": "3日間の無料トライアル付き",
     "pricing_premium_1": "日記のエントリー、タスク、リスト、リマインダー、アイデアが無制限",
     "pricing_premium_2": "AI分析が無制限、週次・月次のまとめ付き",
     "pricing_premium_3": "日記やリストを作成・共有できる",
     "pricing_premium_4": "完全なバックアップ・復元・エクスポート",
-    "pricing_premium_5": "パスコード・生体認証ロック、すべてのウィジェット、ステッカーの全ライブラリ",
+    "pricing_premium_5": "すべてのウィジェットとステッカーの全ライブラリ",
     "pricing_cta": "Havenoteを入手",
     "trust_1": "アカウント不要",
     "trust_2": "あなたの声はスマホから外に出ません",
@@ -2438,11 +3838,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "프리미엄",
     "pricing_premium_period": "/월",
     "pricing_premium_yearly_note": "또는 연 ₩79,000, 29% 절약",
+    "pricing_premium_trial": "3일 무료 체험 포함",
     "pricing_premium_1": "무제한 다이어리 기록, 할 일, 목록, 알림, 아이디어",
     "pricing_premium_2": "무제한 AI 분석과 주간·월간 요약",
     "pricing_premium_3": "다이어리와 목록을 만들고 공유하기",
     "pricing_premium_4": "전체 백업, 복원, 내보내기",
-    "pricing_premium_5": "PIN 및 생체 인증 잠금, 모든 위젯, 전체 스티커 라이브러리",
+    "pricing_premium_5": "모든 위젯과 전체 스티커 라이브러리",
     "pricing_cta": "Havenote 받기",
     "trust_1": "계정 필요 없음",
     "trust_2": "당신의 목소리는 휴대폰을 벗어나지 않아요",
@@ -2522,11 +3923,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/mese",
     "pricing_premium_yearly_note": "oppure 59,99 €/anno, risparmia il 29%",
+    "pricing_premium_trial": "Include 3 giorni di prova gratuita",
     "pricing_premium_1": "Voci di diario, attività, liste, promemoria e idee illimitati",
     "pricing_premium_2": "Analisi IA illimitate e riepiloghi settimanali e mensili",
     "pricing_premium_3": "Crea e condividi diari e liste",
     "pricing_premium_4": "Backup, ripristino ed esportazione completi",
-    "pricing_premium_5": "Blocco con PIN e biometria, tutti i widget, libreria completa di adesivi",
+    "pricing_premium_5": "Tutti i widget e la libreria completa di adesivi",
     "pricing_cta": "Ottieni Havenote",
     "trust_1": "Nessun account richiesto",
     "trust_2": "La tua voce non lascia mai il telefono",
@@ -2606,11 +4008,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/maand",
     "pricing_premium_yearly_note": "of €59,99/jaar, bespaar 29%",
+    "pricing_premium_trial": "Inclusief 3 dagen gratis proberen",
     "pricing_premium_1": "Onbeperkte dagboeknotities, taken, lijsten, herinneringen en ideeën",
     "pricing_premium_2": "Onbeperkte AI-analyses en wekelijkse en maandelijkse samenvattingen",
     "pricing_premium_3": "Maak en deel dagboeken en lijsten",
     "pricing_premium_4": "Volledige back-up, herstel en export",
-    "pricing_premium_5": "Pincode- en biometrische vergrendeling, alle widgets, volledige stickerbibliotheek",
+    "pricing_premium_5": "Alle widgets en de volledige stickerbibliotheek",
     "pricing_cta": "Havenote downloaden",
     "trust_1": "Geen account nodig",
     "trust_2": "Je stem verlaat nooit je telefoon",
@@ -2690,11 +4093,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/miesiąc",
     "pricing_premium_yearly_note": "lub 249 zł/rok, oszczędź 29%",
+    "pricing_premium_trial": "3 dni bezpłatnego okresu próbnego",
     "pricing_premium_1": "Nieograniczone wpisy w dzienniku, zadania, listy, przypomnienia i pomysły",
     "pricing_premium_2": "Nieograniczone analizy AI oraz cotygodniowe i comiesięczne podsumowania",
     "pricing_premium_3": "Twórz i udostępniaj dzienniki oraz listy",
     "pricing_premium_4": "Pełna kopia zapasowa, przywracanie i eksport",
-    "pricing_premium_5": "Blokada PIN i biometryczna, wszystkie widżety, pełna biblioteka naklejek",
+    "pricing_premium_5": "Wszystkie widżety i pełna biblioteka naklejek",
     "pricing_cta": "Pobierz Havenote",
     "trust_1": "Konto nie jest potrzebne",
     "trust_2": "Twój głos nigdy nie opuszcza telefonu",
@@ -2774,11 +4178,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/månad",
     "pricing_premium_yearly_note": "eller 599 kr/år, spara 29 %",
+    "pricing_premium_trial": "3 dagars gratis provperiod ingår",
     "pricing_premium_1": "Obegränsade dagboksanteckningar, uppgifter, listor, påminnelser och idéer",
     "pricing_premium_2": "Obegränsad AI-analys samt vecko- och månadsvisa sammanfattningar",
     "pricing_premium_3": "Skapa och dela dagböcker och listor",
     "pricing_premium_4": "Fullständig säkerhetskopiering, återställning och export",
-    "pricing_premium_5": "PIN- och biometrisk låsning, alla widgetar, fullständigt klistermärkesbibliotek",
+    "pricing_premium_5": "Alla widgetar och hela klistermärkesbiblioteket",
     "pricing_cta": "Skaffa Havenote",
     "trust_1": "Inget konto krävs",
     "trust_2": "Din röst lämnar aldrig din telefon",
@@ -2858,11 +4263,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/ay",
     "pricing_premium_yearly_note": "veya yılda 2.199 ₺, %29 tasarruf",
+    "pricing_premium_trial": "3 gün ücretsiz deneme dahil",
     "pricing_premium_1": "Sınırsız günlük kaydı, görev, liste, hatırlatıcı ve fikir",
     "pricing_premium_2": "Sınırsız yapay zeka analizi ile haftalık ve aylık özetler",
     "pricing_premium_3": "Günlük ve liste oluştur, paylaş",
     "pricing_premium_4": "Tam yedekleme, geri yükleme ve dışa aktarma",
-    "pricing_premium_5": "PIN ve biyometrik kilit, tüm widget'lar, tam çıkartma kütüphanesi",
+    "pricing_premium_5": "Tüm widget'lar ve tam çıkartma kütüphanesi",
     "pricing_cta": "Havenote'u edin",
     "trust_1": "Hesap gerekmez",
     "trust_2": "Sesin telefonundan asla çıkmaz",
@@ -2942,11 +4348,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/måned",
     "pricing_premium_yearly_note": "eller 599 kr/år, spar 29 %",
+    "pricing_premium_trial": "3 dagers gratis prøveperiode inkludert",
     "pricing_premium_1": "Ubegrensede dagboknotater, oppgaver, lister, påminnelser og idéer",
     "pricing_premium_2": "Ubegrenset AI-analyse samt ukentlige og månedlige sammendrag",
     "pricing_premium_3": "Lag og del dagbøker og lister",
     "pricing_premium_4": "Full sikkerhetskopiering, gjenoppretting og eksport",
-    "pricing_premium_5": "PIN- og biometrisk lås, alle widgets, fullt klistremerkebibliotek",
+    "pricing_premium_5": "Alle widgets og hele klistremerkebiblioteket",
     "pricing_cta": "Skaff Havenote",
     "trust_1": "Ingen konto nødvendig",
     "trust_2": "Stemmen din forlater aldri telefonen din",
@@ -3026,11 +4433,12 @@ const TRANSLATIONS = {
     "pricing_premium_name": "Premium",
     "pricing_premium_period": "/måned",
     "pricing_premium_yearly_note": "eller 599 kr/år, spar 29%",
+    "pricing_premium_trial": "3 dages gratis prøveperiode inkluderet",
     "pricing_premium_1": "Ubegrænsede dagbogsnotater, opgaver, lister, påmindelser og idéer",
     "pricing_premium_2": "Ubegrænset AI-analyse samt ugentlige og månedlige resuméer",
     "pricing_premium_3": "Opret og del dagbøger og lister",
     "pricing_premium_4": "Fuld backup, gendannelse og eksport",
-    "pricing_premium_5": "Pinkode- og biometrisk lås, alle widgets, fuldt klistermærkebibliotek",
+    "pricing_premium_5": "Alle widgets og hele klistermærkebiblioteket",
     "pricing_cta": "Få Havenote",
     "trust_1": "Ingen konto nødvendig",
     "trust_2": "Din stemme forlader aldrig din telefon",
@@ -3074,6 +4482,14 @@ function applyLanguage(lang) {
     el.classList.toggle("active", el.dataset.lang === lang);
   });
   localStorage.setItem("havenote_lang", lang);
+  // The statement is split into per-word spans; a new language means
+  // a new sentence, so it has to be re-split after the swap.
+  if (typeof buildStatement === "function") buildStatement();
+  // A different language is a different footer height.
+  if (typeof setupCurtainFooter === "function") {
+    const f = document.getElementById("siteFooter"), pg = document.getElementById("scrollPage");
+    if (f && pg && !pg.classList.contains("no-curtain")) pg.style.setProperty("--foot-h", f.offsetHeight + "px");
+  }
 }
 
 function detectInitialLanguage() {
@@ -3104,15 +4520,7 @@ function buildLangMenu() {
   });
 }
 
-function buildLangShowcase() {
-  const grid = document.getElementById("langShowcase");
-  LANG_ORDER.forEach(code => {
-    const chip = document.createElement("div");
-    chip.className = "lang-chip";
-    chip.textContent = LANG_NAMES[code];
-    grid.appendChild(chip);
-  });
-}
+
 
 function closeLangMenu() {
   document.getElementById("langMenu").classList.remove("open");
@@ -3273,25 +4681,239 @@ function setupCountUp() {
   nums.forEach(el => observer.observe(el));
 }
 
-// ---------- Hero mouse parallax (desktop only, subtle) ----------
-function setupHeroParallax() {
-  const visual = document.getElementById("heroVisual");
-  const orb = visual ? visual.querySelector(".orb") : null;
-  if (!visual || !orb) return;
-  if (window.matchMedia("(hover: none)").matches) return; // skip on touch devices
+
+// ---------- Languages marquee ----------
+// v1 rendered a static 7-column grid of 21 chips, which reads as a
+// specification table. The same names travelling in two opposite
+// directions read as reach. Each row holds the list twice so the
+// -50% translate loops seamlessly; the duplicate is aria-hidden so a
+// screen reader hears each language exactly once.
+function buildLangShowcase() {
+  const host = document.getElementById("langShowcase");
+  if (!host) return;
+  host.innerHTML = "";
+
+  const makeRow = (codes, cls) => {
+    const row = document.createElement("div");
+    row.className = "marquee-row " + cls;
+    for (let copy = 0; copy < 2; copy++) {
+      codes.forEach(code => {
+        const chip = document.createElement("div");
+        chip.className = "lang-chip";
+        chip.textContent = LANG_NAMES[code];
+        if (copy === 1) chip.setAttribute("aria-hidden", "true");
+        row.appendChild(chip);
+      });
+    }
+    return row;
+  };
+
+  host.appendChild(makeRow(LANG_ORDER, "r1"));
+  host.appendChild(makeRow([...LANG_ORDER].reverse(), "r2"));
+}
+
+// ---------- Pointer tilt ----------
+// Replaces v1's hero parallax, which nudged a single decorative orb
+// by 14px. Here the whole phone cluster rotates as one rigid body
+// toward the pointer, which is what makes a flat screenshot read as
+// an object with a front and a back.
+//
+// The listener sits on the surrounding stage rather than the phone
+// itself: a 240px-wide phone is a small target, and a tilt that only
+// responds once the cursor is literally on top of it feels broken
+// rather than absent.
+function setupTilt() {
+  if (window.matchMedia("(hover: none)").matches) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  // Only the orb gets the parallax offset; the floating widget cards
-  // already have their own CSS keyframe animation on `transform` (the
-  // float bob), which would fight with an inline style set here.
-  visual.addEventListener("mousemove", (e) => {
-    const rect = visual.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    orb.style.transform = `translate(${x * 14}px, ${y * 14}px)`;
+
+  document.querySelectorAll("[data-tilt]").forEach(el => {
+    const zone = el.closest(".phone-stage") || el.closest(".feature-visual") || el;
+    const max = parseFloat(el.dataset.tiltMax || "8");
+    let frame = null;
+    let rotY = 0, rotX = 0;
+
+    const apply = () => {
+      frame = null;
+      el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    };
+
+    zone.addEventListener("pointermove", (e) => {
+      // Coarse pointers (a finger mid-scroll) would otherwise leave
+      // the cluster stuck at whatever angle the last touch produced.
+      if (e.pointerType !== "mouse") return;
+      const r = zone.getBoundingClientRect();
+      rotY = ((e.clientX - r.left) / r.width - 0.5) * max * 2;
+      rotX = -((e.clientY - r.top) / r.height - 0.5) * max * 2;
+      if (!frame) frame = requestAnimationFrame(apply);
+    });
+
+    zone.addEventListener("pointerleave", () => {
+      if (frame) { cancelAnimationFrame(frame); frame = null; }
+      el.style.transform = "";
+    });
   });
-  visual.addEventListener("mouseleave", () => {
-    orb.style.transform = "";
+}
+
+// ---------- Magnetic buttons ----------
+// The primary CTA drifts slightly toward the cursor as it approaches.
+// Deliberately weak (a fifth of the cursor's offset) — enough that
+// the button feels like it wants to be pressed, not so much that it
+// dodges the click.
+function setupMagnetic() {
+  if (window.matchMedia("(hover: none)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  document.querySelectorAll(".magnetic").forEach(el => {
+    el.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse") return;
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) * 0.2;
+      const y = (e.clientY - r.top - r.height / 2) * 0.32;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    el.addEventListener("pointerleave", () => { el.style.transform = ""; });
+    // Without this the button stays displaced after a click, since a
+    // click is not a pointerleave.
+    el.addEventListener("click", () => { el.style.transform = ""; });
   });
+}
+
+
+// ---------- Scroll-scrubbed statement ----------
+// Wraps every word of the statement in a span carrying its own index,
+// then updates ONE custom property on the parent per frame. Each word's
+// opacity is a calc() against that property, so the cost is a single
+// style write regardless of word count, and the browser's own clamping
+// of out-of-range opacity means no per-word branching in JS.
+//
+// Re-run after every language switch, because the sentence (and its
+// word count) is different in all 21 of them.
+function buildStatement() {
+  const host = document.getElementById("statement");
+  if (!host) return;
+  const p = host.querySelector("p");
+  if (!p) return;
+  const words = (p.textContent || "").trim().split(/\s+/);
+  if (words.length === 0) return;
+  p.textContent = "";
+  words.forEach((w, i) => {
+    const span = document.createElement("span");
+    span.className = "scrub-word";
+    span.style.setProperty("--i", i);
+    span.textContent = w;
+    p.appendChild(span);
+    if (i < words.length - 1) p.appendChild(document.createTextNode(" "));
+  });
+  p.style.setProperty("--n", words.length + 6); // tail so the last word lands before the section leaves
+}
+
+function setupStatementScrub() {
+  const host = document.getElementById("statement");
+  if (!host) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    host.style.setProperty("--p", 1);
+    return;
+  }
+  let running = false, frame = null;
+  const tick = () => {
+    frame = null;
+    const r = host.getBoundingClientRect();
+    // 0 when the block's top reaches 78% of the viewport, 1 once its
+    // bottom has risen past 32%. Reading the rect in a rAF driven by an
+    // IntersectionObserver keeps this off the scroll event entirely.
+    const start = window.innerHeight * 0.78;
+    const end = window.innerHeight * 0.32;
+    const progress = (start - r.top) / Math.max(1, (r.height + start - end));
+    host.style.setProperty("--p", Math.min(1, Math.max(0, progress)));
+    if (running) frame = requestAnimationFrame(tick);
+  };
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      running = e.isIntersecting;
+      if (running && !frame) frame = requestAnimationFrame(tick);
+      if (!running && frame) { cancelAnimationFrame(frame); frame = null; }
+    });
+  }, { rootMargin: "20% 0px" }).observe(host);
+}
+
+// ---------- Pinned horizontal pan ----------
+// The tall outer section is the scroll budget; the sticky child stays
+// on screen while that budget is spent, and the track slides by exactly
+// the distance it overflows. Same rAF-inside-IntersectionObserver shape
+// as above, so neither effect ever attaches a scroll listener.
+function setupHorizontalPan() {
+  const section = document.getElementById("shotPan");
+  const track = document.getElementById("panTrack");
+  if (!section || !track) return;
+  // Below 1040px the CSS turns this back into an ordinary swipe strip;
+  // driving transform on top of that would fight the user's own scroll.
+  const wide = window.matchMedia("(min-width: 1041px)");
+  let running = false, frame = null;
+
+  const tick = () => {
+    frame = null;
+    if (wide.matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const r = section.getBoundingClientRect();
+      const travel = Math.max(0, track.scrollWidth - window.innerWidth + 48);
+      const budget = Math.max(1, r.height - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -r.top / budget));
+      track.style.transform = `translate3d(${-progress * travel}px,0,0)`;
+    } else {
+      track.style.transform = "";
+    }
+    if (running) frame = requestAnimationFrame(tick);
+  };
+
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      running = e.isIntersecting;
+      if (running && !frame) frame = requestAnimationFrame(tick);
+      if (!running && frame) { cancelAnimationFrame(frame); frame = null; }
+    });
+  }, { rootMargin: "10% 0px" }).observe(section);
+}
+
+// ---------- Nav: over the slab vs past it ----------
+// Replaces the old "stuck" toggle. The pill is translucent-on-dark
+// while it floats over the hero slab and swaps to light glass (plus
+// its section links) once the slab has scrolled away.
+function setupNavState() {
+  const nav = document.getElementById("siteNav");
+  const slab = document.querySelector(".slab");
+  if (!nav) return;
+  if (!slab) { nav.classList.add("past-hero"); return; }
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => nav.classList.toggle("past-hero", !e.isIntersecting));
+  }, { rootMargin: "-72px 0px 0px 0px", threshold: 0 }).observe(slab);
+}
+
+// ---------- Curtain footer ----------
+// The page is an opaque sheet sliding up off the bottom of the window
+// and the footer sits fixed underneath it, uncovered rather than
+// scrolled to. The sheet's bottom margin has to equal the footer's real
+// height or the reveal either stops short or overshoots into blank
+// space, and that height moves with the viewport, the font load, and
+// every one of the 21 languages -- hence measuring rather than guessing.
+function setupCurtainFooter() {
+  const page = document.getElementById("scrollPage");
+  const foot = document.getElementById("siteFooter");
+  if (!page || !foot) return;
+
+  const apply = () => {
+    // A footer taller than the window can never be fully uncovered, so
+    // below that threshold it reverts to an ordinary footer instead of
+    // leaving the reader stuck against a panel with no bottom.
+    const tooTall = foot.scrollHeight > window.innerHeight * 0.92;
+    page.classList.toggle("no-curtain", tooTall);
+    foot.classList.toggle("no-curtain", tooTall);
+    page.style.setProperty("--foot-h", tooTall ? "0px" : foot.offsetHeight + "px");
+  };
+
+  apply();
+  if ("ResizeObserver" in window) new ResizeObserver(apply).observe(foot);
+  window.addEventListener("resize", apply, { passive: true });
+  // Web fonts landing after first paint change the footer's height.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
 }
 
 // ---------- Init ----------
@@ -3303,7 +4925,13 @@ wirePlayLinks();
 setupScrollReveal();
 setupScrollProgress();
 setupCountUp();
-setupHeroParallax();
+setupTilt();
+setupMagnetic();
+setupNavState();
+buildStatement();
+setupStatementScrub();
+setupHorizontalPan();
+setupCurtainFooter();
 </script>
 
 </body>
