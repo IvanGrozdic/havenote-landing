@@ -56,10 +56,10 @@
 
 <div class="wrap">
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: August 14, 2026</p>
+  <p class="updated">Last updated: September 26, 2026</p>
 
   <div class="callout">
-    <strong>The short version:</strong> Havenote doesn't have accounts. Your voice recordings are transcribed directly on your own phone and deleted immediately after. They never reach our servers. Only the text you explicitly choose to send for AI analysis, or content you choose to share with another person, ever leaves your device.
+    <strong>The short version:</strong> Havenote doesn't have accounts. Your entries and voice recordings are stored on your own phone and are never uploaded to our servers. Only the text you explicitly choose to send for AI analysis, content you choose to share with another person, and anonymous usage counts (described below) ever reach us.
   </div>
 
   <h2>Who we are</h2>
@@ -69,12 +69,13 @@
   <p>Havenote does not require or support creating an account. There is no name, email, or password collected at any point. Each installation is identified only by an anonymous, randomly generated device ID, used solely to check premium subscription status and to enforce the free-tier usage limit.</p>
 
   <h2>Voice recordings</h2>
-  <p>When you record a voice note, the audio is transcribed to text directly on your device. The audio recording itself is stored locally on your phone (so you can play it back within the app) and is never uploaded to our servers as part of that process.</p>
+  <p>When you record a voice note, it is converted to text by your phone's built-in speech recognition (Android's speech service). Depending on your phone and its settings, that service may process the audio on the device or send it to Google to transcribe it; this is governed by your phone's own settings and Google's privacy policy, not by Havenote. The audio recording itself is stored locally on your phone (so you can play it back within the app) and is never uploaded to our servers.</p>
 
   <h2>What does reach our servers</h2>
   <ul>
-    <li><strong>AI analysis requests:</strong> if you use a feature that calls our AI (entry analysis, weekly/monthly recaps, idea expansion, list parsing from voice, transcript correction), the relevant text is sent to our backend, which forwards it to our AI provider (Anthropic) to generate a response. This text is not stored permanently on our servers beyond what's needed to process the request.</li>
+    <li><strong>AI analysis requests:</strong> if you use a feature that calls our AI (entry analysis, weekly/monthly recaps, idea expansion, list parsing from voice, transcript correction), the relevant text is sent to our backend, which forwards it to our AI provider (OpenAI) to generate a response. This text is not stored permanently on our servers beyond what's needed to process the request.</li>
     <li><strong>Shared journals and shared lists:</strong> if you choose to share a journal or list with another person, the entries/items in that shared space (including any photos or voice recordings attached to them) are stored on our servers so they can sync between both participants' devices. This only happens for content inside a space you deliberately created and shared. Nothing in your private journal, tasks, lists, reminders, or ideas is ever sent anywhere unless you take this explicit action.</li>
+    <li><strong>Anonymous usage counts:</strong> to understand where people get stuck between installing the app and subscribing, the app reports a small fixed set of steps to our backend: that the app was opened, which onboarding page was reached, that onboarding was finished, that the subscription screen was shown, whether its offers loaded, and whether the Subscribe button was tapped and the purchase completed or was cancelled. Each report contains only the anonymous device ID, the name of the step, the date and your phone's language code. It never contains anything you wrote or recorded. These records are deleted after 90 days.</li>
     <li><strong>Purchase verification:</strong> if you subscribe to Havenote Premium, your purchase token is verified against Google Play's servers to activate premium features tied to your anonymous device ID.</li>
   </ul>
 
@@ -82,7 +83,7 @@
   <p>Your journal entries, tasks, lists, reminders, ideas, important dates, photos, and voice recordings are stored locally on your phone by default. You control backup and export yourself. Havenote does not automatically back this data up to any server.</p>
 
   <h2>Third-party services</h2>
-  <p>Havenote's backend uses Anthropic's Claude API to generate AI analysis and recaps, and Google Play's billing and developer notification services to handle subscriptions. These providers process only the specific data described above, for the specific purpose of fulfilling your request.</p>
+  <p>Havenote's backend uses OpenAI's API to generate AI analysis and recaps, and Google Play's billing and developer notification services to handle subscriptions. These providers process only the specific data described above, for the specific purpose of fulfilling your request. The developer receives daily totals of the anonymous usage counts, and a notice when a subscription starts or changes (plan, country and a shortened anonymous device ID, no personal data), through a private Telegram chat.</p>
 
   <h2>Your choices</h2>
   <ul>
