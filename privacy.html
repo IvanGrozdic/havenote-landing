@@ -56,10 +56,10 @@
 
 <div class="wrap">
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: September 26, 2026</p>
+  <p class="updated">Last updated: September 29, 2026</p>
 
   <div class="callout">
-    <strong>The short version:</strong> Havenote doesn't have accounts. Your entries and voice recordings are stored on your own phone and are never uploaded to our servers. Only the text you explicitly choose to send for AI analysis, content you choose to share with another person, and anonymous usage counts (described below) ever reach us.
+    <strong>The short version:</strong> Havenote doesn't have accounts. Your entries and voice recordings are stored on your own phone and are never uploaded to our servers. Only the text you explicitly choose to send for AI analysis, content you choose to share with another person, anonymous usage counts, and basic app analytics through Google Analytics for Firebase (all described below) ever leave your phone. None of it includes anything you wrote or recorded.
   </div>
 
   <h2>Who we are</h2>
@@ -75,15 +75,24 @@
   <ul>
     <li><strong>AI analysis requests:</strong> if you use a feature that calls our AI (entry analysis, weekly/monthly recaps, idea expansion, list parsing from voice, transcript correction), the relevant text is sent to our backend, which forwards it to our AI provider (OpenAI) to generate a response. This text is not stored permanently on our servers beyond what's needed to process the request.</li>
     <li><strong>Shared journals and shared lists:</strong> if you choose to share a journal or list with another person, the entries/items in that shared space (including any photos or voice recordings attached to them) are stored on our servers so they can sync between both participants' devices. This only happens for content inside a space you deliberately created and shared. Nothing in your private journal, tasks, lists, reminders, or ideas is ever sent anywhere unless you take this explicit action.</li>
-    <li><strong>Anonymous usage counts:</strong> to understand where people get stuck between installing the app and subscribing, the app reports a small fixed set of steps to our backend: that the app was opened, which onboarding page was reached, that onboarding was finished, that the subscription screen was shown, whether its offers loaded, and whether the Subscribe button was tapped and the purchase completed or was cancelled. Each report contains only the anonymous device ID, the name of the step, the date and your phone's language code. It never contains anything you wrote or recorded. These records are deleted after 90 days.</li>
+    <li><strong>Anonymous usage counts:</strong> to understand where people get stuck between installing the app and subscribing, the app reports a small fixed set of steps to our backend: that the app was opened, which onboarding page was reached, that onboarding was finished, whether a “first step” card was tapped, whether your first entry, task, list, reminder or idea was created (only that it happened, never what it says), that the subscription screen was shown, whether its offers loaded, and whether the Subscribe button was tapped and the purchase completed or was cancelled. Each report contains only the anonymous device ID, the name of the step, the date and your phone's language code. It never contains anything you wrote or recorded. These records are deleted after 90 days.</li>
     <li><strong>Purchase verification:</strong> if you subscribe to Havenote Premium, your purchase token is verified against Google Play's servers to activate premium features tied to your anonymous device ID.</li>
   </ul>
+
+  <h2>App analytics (Google Analytics for Firebase)</h2>
+  <p>The app uses Google Analytics for Firebase, a service from Google, to measure whether people who install Havenote after seeing one of our ads actually open and use it. This lets us stop paying for ads that bring installs nobody uses. It collects:</p>
+  <ul>
+    <li><strong>Automatic app events:</strong> that the app was opened for the first time, app sessions and app updates, together with basic device information (device model, Android version, app version, country derived from your phone's settings or network) and an app-instance identifier.</li>
+    <li><strong>A few milestones:</strong> that onboarding was finished, that your first item was created, that the subscription screen was shown, and that Subscribe was tapped or a purchase completed. Only the fact that the step happened is sent, never any content.</li>
+    <li><strong>Advertising ID:</strong> outside the EU/EEA, the United Kingdom and Switzerland, your device's advertising ID is used to connect an install to the ad that led to it (ad measurement). In the EU/EEA, the UK and Switzerland, ad measurement is switched off and the advertising ID is not used for it. Personalized advertising (remarketing) is switched off for everyone.</li>
+  </ul>
+  <p>Google processes this data under its own <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">privacy policy</a>. You can reset or delete your advertising ID at any time in your phone's settings (Settings → Google → Ads, or Settings → Privacy → Ads, depending on your phone).</p>
 
   <h2>Data you keep entirely on your device</h2>
   <p>Your journal entries, tasks, lists, reminders, ideas, important dates, photos, and voice recordings are stored locally on your phone by default. You control backup and export yourself. Havenote does not automatically back this data up to any server.</p>
 
   <h2>Third-party services</h2>
-  <p>Havenote's backend uses OpenAI's API to generate AI analysis and recaps, and Google Play's billing and developer notification services to handle subscriptions. These providers process only the specific data described above, for the specific purpose of fulfilling your request. The developer receives daily totals of the anonymous usage counts, and a notice when a subscription starts or changes (plan, country and a shortened anonymous device ID, no personal data), through a private Telegram chat.</p>
+  <p>Havenote's backend uses OpenAI's API to generate AI analysis and recaps, and Google Play's billing and developer notification services to handle subscriptions. The app itself uses Google Analytics for Firebase as described above. These providers process only the specific data described above, for the specific purpose of fulfilling your request. The developer receives daily totals of the anonymous usage counts, and a notice when a subscription starts or changes (plan, country and a shortened anonymous device ID, no personal data), through a private Telegram chat.</p>
 
   <h2>Your choices</h2>
   <ul>
